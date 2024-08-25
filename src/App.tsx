@@ -7,6 +7,7 @@ import ConfirmMail from "./pages/confirm-email/ConfirmMail";
 import AddPhno from "./pages/add-phnumber/AddPhno";
 import ConfirmPhno from "./pages/confirm-phnumber/ConfirmPhno";
 import UserDetails from "./pages/user-details/UserDetails";
+import ConnectBroker from "./pages/connect-broker/ConnectBroker";
 function App() {
   return (
     <Router>
@@ -19,6 +20,7 @@ function App() {
         <Route path="/confirm-phno" element={<ConfirmPhno />} />
         <Route path="/user-details" element={<UserDetails />} />
         <Route path="/dashboard" element={<UserDashboard />} />
+        <Route path="/connect-broker" element={<ConnectBroker />} />
       </Routes>
     </Router>
   );

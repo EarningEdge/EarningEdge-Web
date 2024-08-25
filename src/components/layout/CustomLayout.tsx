@@ -20,7 +20,12 @@ const CustomLayout = ({ children }: any) => {
         </div>
 
         <div className="w-full text-center">
-          <ApiFilled className="cursor-pointer" />
+          <ApiFilled
+            className="cursor-pointer"
+            onClick={() => {
+              window.location.href = "/connect-broker";
+            }}
+          />
         </div>
       </Header>
     </Layout>
