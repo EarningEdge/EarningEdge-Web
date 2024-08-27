@@ -4,8 +4,6 @@ export interface ThemeState {
   darkMode: boolean;
 }
 
-// const getSystemDefaultTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
-
 
 const initialState: ThemeState = {
   darkMode: false,

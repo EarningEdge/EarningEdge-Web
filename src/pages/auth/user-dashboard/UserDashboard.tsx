@@ -1,9 +1,7 @@
-import React from 'react'
-import CustomLayout from '../../components/layout/CustomLayout'
 
-type Props = {}
+import CustomLayout from "../../../components/layout/custom-layout/CustomLayout"
 
-const UserDashboard = (props: Props) => {
+const UserDashboard = () => {
   return (
     <CustomLayout>
     <div className="p-5">

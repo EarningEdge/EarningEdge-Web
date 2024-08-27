@@ -5,7 +5,7 @@ const useAxios = () => {
 
   const instance = axios.create({
     //@ts-ignore
-    baseURL:import.meta.env.VITE_BASE_URL,
+    baseURL:import.meta.env.VITE_BASE_URL+"/api/v1",
     headers: {
       "Authorization": `Bearer ${token}` || '',
        'X-Requested-With': 'XMLHttpRequest'

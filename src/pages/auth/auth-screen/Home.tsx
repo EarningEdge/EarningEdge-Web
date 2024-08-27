@@ -1,10 +1,9 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
 
-type Props = {};
-
-const Home = (props: Props) => {
+const Home = () => {
+  const navigate = useNavigate();
   return (
-    <div className="bg-gray-900 min-h-svh flex items-end p-5">
+    <div className="bg-gray-900 min-h-svh flex items-end p-5 auth">
       <div className="flex flex-col text-white gap-3 mb-10">
         <h1 className="text-5xl">
           Welcome to <br />
@@ -14,16 +13,14 @@ const Home = (props: Props) => {
           Empowering Traders, Enhancing Strategies - Your Success Starts Here
         </p>
         <button
-          className="text-xl rounded-md font-semibold p-3 border-2 border-white"
-          onClick={() => {
-            window.location.href = "/signup";
-          }}
+          className="text-xl rounded-md font-semibold p-3 border-2 border-white bg-black"
+          onClick={()=>{navigate("/signup")}}
         >
           Create Account
         </button>
         <button 
         className="text-xl rounded-md font-semibold bg-white text-black p-3"
-        onClick={()=>{window.location.href = "/login"}}
+        onClick={()=>{navigate("/login")}}
         >
           Login
         </button>
