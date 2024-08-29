@@ -204,7 +204,7 @@ const Profile = () => {
                 />
               </div>
               {formData.profileImage && (
-                <Button onClick={handleUpdateProfileImage} className="mb-4">
+                <Button onClick={handleUpdateProfileImage} className="mb-4 bg-red-500 text-white">
                   Update Profile Image
                 </Button>
               )}
