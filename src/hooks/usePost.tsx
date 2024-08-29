@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import useAxios from './useAxios';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
 
 interface UsePostData<T, R> {
   data: R | null;
   loading: boolean;
   error: AxiosError | null;
-  postData: (data: T) => Promise<void>;
+  postData: (data: T, config?: AxiosRequestConfig) => Promise<void>;
 }
 
 const usePostData = <T, R>(endpoint: string): UsePostData<T, R> => {
@@ -15,10 +15,10 @@ const usePostData = <T, R>(endpoint: string): UsePostData<T, R> => {
   const [error, setError] = useState<AxiosError | null>(null);
   const axiosInstance = useAxios();
 
-  const postData = async (postData: T) => {
+  const postData = async (postData: T, config?: AxiosRequestConfig) => {
     setLoading(true);
     try {
-      const response: AxiosResponse<R> = await axiosInstance.post<R>(endpoint, postData);
+      const response: AxiosResponse<R> = await axiosInstance.post<R>(endpoint, postData, config);
       setData(response.data);
     } catch (err) {
       setError(err as AxiosError);

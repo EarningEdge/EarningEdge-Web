@@ -26,7 +26,7 @@ const App = () => {
         },
       }}
     >
-      {user && user.role ? <Navigate to={"/"} /> : <Outlet />}
+      {user && user.role ? <Navigate to={"/home"} /> : <Outlet />}
     </ConfigProvider>
   );
 };

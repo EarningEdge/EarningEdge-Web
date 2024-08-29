@@ -1,3 +1,5 @@
+
+
 export interface IUser{
     _id:string;
     firstName:string;
@@ -19,8 +21,9 @@ export interface ISales{
   paidUsersCount: number;
 }
 export interface IQuestion{
+    _id: string;
     key: string;
-    question: string;
+    title: string;
     type: string;
     responses: number;
     created: string;
@@ -112,4 +115,17 @@ export interface Conversation {
   participants: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IJournalEntry extends Document {
+  date: string | number | Date;
+  _id: string;
+  userId: string;
+  type: 'entry' | 'exit';
+  responses: {
+    question: any;
+    answer: string;
+  }[];
+  reviewId:string|null;
+  isActive: boolean;
 }

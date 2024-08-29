@@ -1,194 +1,109 @@
-import React, { useState } from "react";
-import { Avatar, ConfigProvider, Dropdown, Layout, Menu,Switch } from "antd";
-import {  menuItems } from "../../../utils/menuItems";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import React, { useState, useEffect, ReactNode } from "react";
+import {  ConfigProvider,  Layout, Menu } from "antd";
+import { menuItems } from "../../../utils/menuItems";
+import {  useAppSelector } from "../../../redux/hooks";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { LogoutOutlined, EditOutlined } from "@ant-design/icons";
-import { logout } from "../../../redux/slices/authSlice";
 
-import { toggleDarkMode } from "../../../redux/slices/themeSlice";
-import { SunOutlined, MoonOutlined } from "@ant-design/icons";
+const {  Sider, Content } = Layout;
 
-const { Header, Sider, Content } = Layout;
-
-interface CustomLayoutProps {
-  children: React.ReactNode;
-}
-
-const lightTheme = {
-  token: {
-    colorBgBase: "#ffffff",
-    colorText: "#000000",
-    // Add more tokens as needed
-  },
-};
-
-const darkTheme = {
-  token: {
-    colorBgBase: "#262633",
-    colorText: "#ffffff",
-    colorTextPlaceholder: "#ffffff",
-    colorBorder: "#ffffff",
-    fill: "#ffffff",
-    itemActiveBg: "#ffffff",
-    itemColor: "#ffffff",
-    itemHoverBg: "#ffffff",
-
-    // Add more tokens as needed
-  },
-};
-
-const CustomLayout: React.FC<CustomLayoutProps> = ({ children }) => {
+const CustomLayout = ({ children }: { children: ReactNode }) => {
   const { user } = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
   const location = useLocation();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
 
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleMenuClick = (item: { key: string; path: string }) => {
-    navigate(item.path);
-  };
-
-  const renderMenuItems = (items: any[]) => {
-    return items.map((item) => {
+  const renderMenuItems = (items: any) => {
+    return items.map((item: any) => {
       if (item.children) {
-        return (
-          <Menu.SubMenu key={item.key} icon={item.icon} title={item.label}>
-            {renderMenuItems(item.children)}
-          </Menu.SubMenu>
-        );
+        return null; // Skip submenus on mobile
       }
       return (
         <Menu.Item key={item.path} icon={item.icon}>
-          <Link to={item.path}>{item.label}</Link>
+          <Link to={item.path}>{isMobile ? '' : item.label}</Link>
         </Menu.Item>
       );
     });
   };
 
+
+
   if (!user) {
-    return <div></div>;
+    return null;
   }
 
-  const items = [
-    {
-      label: "Username: " + user.firstName + " " + user.lastName,
-      key: "0",
-    },
-    {
-      label: "Email: " + user.email,
-      key: "1",
-    },
-    {
-      label: (
-        <button onClick={showModal}>
-          <EditOutlined /> Edit profile
-        </button>
-      ),
-      key: "3",
-    },
-    {
-      label: (
-        <button
-          className="text-red-500 font-bold"
-          onClick={() => {
-            dispatch(logout());
-            navigate("/login");
-          }}
-        >
-          <LogoutOutlined /> Logout
-        </button>
-      ),
-      key: "4",
-    },
-  ];
-
-  const darkMode = useAppSelector((state) => state.theme.darkMode);
-
   return (
-    <Layout style={{ minHeight: "100vh" }}  className={darkMode ? "dark" : ""}>
-      <ConfigProvider theme={darkMode ? darkTheme : lightTheme}>
-        <Sider
-          className="bg-dark-blue"
-          style={{
-            background: "#262633",
-            // boxShadow: "5px 0 5px -2px rgba(0, 0, 0, 0.5)",
-            height: "100vh",
-            position: "fixed",
-            left: 0,
-            // overflowY: "auto",
-          }}
-        >
-          <div className="text-xl text-white text-center mt-4 mb-8 font-bold">
-            EarningEdge<span className="text-[#637CFF]">.in</span>
-          </div>
-          <Menu
-            
-            theme="dark"
-            mode="inline"
-            selectedKeys={[location.pathname]}
-            onClick={({ key }) => {
-              const item = menuItems.find(
-                (item: any) =>
-                  item.key === key ||
-                  (item.children &&
-                    item.children.some((child: any) => child.key === key))
-              );
-              if (item) handleMenuClick(item);
+    <ConfigProvider
+    
+    >
+      <Layout style={{ minHeight: "100vh" }} >
+        {!isMobile && (
+          <Sider
+            className="bg-dark-blue"
+            style={{
+              background: "#262633",
+              position: "fixed",
+              left: 0,
+              height: '100vh',
+              zIndex: 1000,
             }}
-            style={{ background: "#262633",minHeight:"100vh" }}
           >
-            {renderMenuItems(menuItems)}
-          </Menu>
-          </Sider>
-        <Layout style={{ marginLeft: 200 }}>
-          <Header className="flex justify-end items-center pr-4 dark:bg-dark-blue bg-white">
-            <Switch
-            checkedChildren={<SunOutlined />}
-            unCheckedChildren={<MoonOutlined />}
-            checked={darkMode}
-            onChange={() => dispatch(toggleDarkMode())}
-          />
-            <Dropdown
-              menu={{ items }}
-              trigger={["click"]}
-              className="cursor-pointer"
+            <div className="text-xl text-white text-center mt-4 mb-8 font-bold">
+              EarningEdge<span className="text-[#637CFF]">.in</span>
+            </div>
+            <Menu
+              theme="dark"
+              mode="inline"
+              selectedKeys={[location.pathname]}
+              style={{ background: "#262633" }}
             >
-              <Avatar size={40} src={user.profile_image_url || "/avatar.png"} />
-            </Dropdown>
-            </Header>
+              {renderMenuItems(menuItems)}
+            </Menu>
+          </Sider>
+        )}
+        <Layout style={{ marginLeft: isMobile ? 0 : 200 }}>
+
           <Content
-            style={{ 
-              // height: "calc(100vh - 64px)", 
-              overflowY: "hidden",
+            style={{
+              overflowY: "auto",
               display: "flex",
               flexDirection: "column",
+              padding: "20px",
+              marginBottom: isMobile ? "60px" : "0",
             }}
-            className="bg-white dark:bg-dark-blue dark:text-white"
+            className="bg-white "
           >
             {children}
           </Content>
         </Layout>
-        {/* <EditProfile
-          isModalOpen={isModalOpen}
-          handleOk={handleOk}
-          handleCancel={handleCancel}
-        /> */}
-      </ConfigProvider>
-    </Layout>
+        {isMobile && (
+          <div className="mobile-nav">
+            <nav>
+              {menuItems.map((item: any) => (
+                <Link key={item.path} to={item.path}>
+                  {React.cloneElement(item.icon, { style: { fontSize: '24px' } })}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        )}
+      </Layout>
+    </ConfigProvider>
   );
 };
 

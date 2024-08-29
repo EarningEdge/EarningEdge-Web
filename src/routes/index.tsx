@@ -8,9 +8,13 @@ import ErrorBoundary from "../components/layout/error/ErrorBoundary";
 
 // Lazy Loading all the pages
 const AddPhno = lazy(() => import("../pages/auth/add-phnumber/AddPhno"));
+const Profile = lazy(() => import("../pages/profile"));
 const UserOB = lazy(() => import("../pages/auth/user-details/UserDetails"));
 const ConfirmMail = lazy(
   (): any => import("../pages/auth/confirm-email/ConfirmMail")
+);
+const Home = lazy(
+  (): any => import("../pages/home")
 );
 const ConfirmPhno = lazy(
   (): any => import("../pages/auth/confirm-phnumber/ConfirmPhno")
@@ -20,8 +24,9 @@ const ConnectBroker = lazy(
 );
 const Login = lazy((): any => import("../pages/auth/user-login/UserLogin"));
 const Signup = lazy((): any => import("../pages/auth/user-signup/UserSignup"));
-const Journal = lazy((): any => import("../pages/auth/auth-screen/Home"));
+const Journal = lazy((): any => import("../pages/journal"));
 const Auth = lazy((): any => import("../pages/auth/auth-screen/Home"));
+const ResetPassword = lazy((): any => import("../pages/auth/forgot-password"));
 
 const router = createBrowserRouter([
   {
@@ -62,6 +67,10 @@ const router = createBrowserRouter([
         path: "confirm-phno",
         element: <ConfirmPhno />,
       }, 
+     {
+        path: "reset-password",
+        element: <ResetPassword />,
+      }, 
       {
         path: "user-details",
         element: <UserOB />,
@@ -70,6 +79,21 @@ const router = createBrowserRouter([
         path: "connectbroker",
         element: <ProtectedRoute />,
         children: [{ path: "", element: <ConnectBroker /> }],
+      },
+      {
+        path: "home",
+        element:  <ProtectedRoute />,
+        children: [{ path: "", element: <Home /> }],
+      },
+      {
+        path: "journal",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <Journal /> }],
+      },
+      {
+        path: "profile",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <Profile /> }],
       },
 
       {
