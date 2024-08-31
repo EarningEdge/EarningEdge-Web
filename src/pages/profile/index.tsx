@@ -98,6 +98,12 @@ const Profile = () => {
       newOccupation: formData.occupation,
     });
     console.log(response)
+    dispatch(updateuser({
+      ...user,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      occupation: formData.occupation,
+    }));
     setIsModalOpen(false);
   };
 
