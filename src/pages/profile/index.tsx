@@ -10,7 +10,7 @@ const Profile = () => {
   if (!user) {
     return <div className="text-center text-white">Loading...</div>;
   }
-
+  console.log(user)
   return (
     <CustomLayout>
       <div className="bg-gray-100 min-h-screen p-5 flex flex-col items-center">

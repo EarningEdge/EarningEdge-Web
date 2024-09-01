@@ -27,6 +27,7 @@ const Signup = lazy((): any => import("../pages/auth/user-signup/UserSignup"));
 const Journal = lazy((): any => import("../pages/journal"));
 const Auth = lazy((): any => import("../pages/auth/auth-screen/Home"));
 const ResetPassword = lazy((): any => import("../pages/auth/forgot-password"));
+const Sales = lazy((): any => import("../pages/sales"));
 
 const router = createBrowserRouter([
   {
@@ -94,6 +95,11 @@ const router = createBrowserRouter([
         path: "profile",
         element: <ProtectedRoute />,
         children: [{ path: "", element: <Profile /> }],
+      },
+      {
+        path: "sales",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <Sales/> }],
       },
 
       {

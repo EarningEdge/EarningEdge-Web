@@ -41,10 +41,7 @@ const Index = () => {
     data: { _id: string; date: string }[];
   } | null>("/journal/monthlyEntry/user?month=8&year=2024");
 
-  const { postData: addJournalPost, data: addJournalResponse } = usePostData<
-    any,
-    { data: any }
-  >("/journal/add");
+  // const { postData: addJournalPost, data: addJournalResponse } = usePostData<any,any>("/journal/add");
 
   useEffect(() => {
     if (questionsResponse && questionsResponse.status === "success") {
@@ -73,45 +70,50 @@ const Index = () => {
       }
     });
   };
-
+ 
   const handleSubmitJournal = async () => {
     try {
-      await addJournalPost({
+      // Calling postData to add a journal
+      const addJournalResponse:{data:{status:string,data:any},status:number} = await api.post("/journal/add",{
         type: journalType,
         responses: responses,
       });
-      console.log(addJournalResponse);
-      if (
-        addJournalResponse &&
-        addJournalResponse.data &&
-        addJournalResponse.data.journal
-      ) {
-        const journalIdResponseId = addJournalResponse.data.journal._id;
-        if (file && journalIdResponseId != "") {
+      console.log(addJournalResponse)
+
+  
+      // Check if addJournalResponse has updated after the request
+      if (addJournalResponse && addJournalResponse.data.status === 'success') {
+        console.log(addJournalResponse); // Ensure this logs the correct response
+  
+        const journalIdResponseId = addJournalResponse.data.data?.journal?._id;
+        if (journalIdResponseId && file) {
           const formData = new FormData();
           formData.append("files", file);
+  
           try {
-            const uploadResponse = await api.post(
-              "/upload/" + journalEntryResponse,
-              formData,
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              }
-            );
-            if (uploadResponse.status === 200) {
-              message.success("Uploaded file");
-            }
+            // Upload the file related to the journal entry
+            // const uploadResponse = await api.post(
+            //   `/upload/${journalIdResponseId}`, // Ensure the correct endpoint
+            //   formData,
+            //   {
+            //     headers: {
+            //       "Content-Type": "multipart/form-data",
+            //     },
+            //   }
+            // );
+            // if (uploadResponse.status === 200) {
+            //   message.success("Uploaded file");
+            // }
           } catch (error) {
             message.error("Failed to upload file");
           }
         }
-
-        if (emotionVal && journalIdResponseId != "") {
+  
+        // Handling the emotions API call
+        if (emotionVal && journalIdResponseId) {
           try {
             const postEmotionResponse = await api.post(
-              "/emotion/" + journalEntryResponse,
+              `/emotion/${journalIdResponseId}`,
               { value: emotionVal }
             );
             if (postEmotionResponse.status === 200) {
@@ -121,21 +123,26 @@ const Index = () => {
             message.error("Emotion saving failed");
           }
         }
-
+  
+        // Reset the states after successful submission
         setResponses([]);
         setFile(null);
         setEmotionVal("");
         setIsAddJournalDrawerOpen(false);
+      } else {
+        message.error("Failed to add journal. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting journal:", error);
+      message.error("Error submitting journal");
     }
   };
+  
   const { data: journalEntry } = useFetchData<{
     status: string;
     data: IJournalEntry;
   }>(`/journal/${selectedJournal}`);
-  console.log(journalEntry);
+
   const handleViewJournal = (journal: string) => {
     setSelectedJournal(journal);
     setIsViewJournalDrawerOpen(true);
@@ -235,7 +242,7 @@ const Index = () => {
                   </div>
                 )
             )}
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <h1 className="font-medium text-gray-700 mb-1">Upload file</h1>
             <label className="block bg-slate-100 border-dashed border-2 border-gray-300 rounded-md p-6 text-center cursor-pointer">
               <input
@@ -250,7 +257,7 @@ const Index = () => {
                 <small className="text-gray-400">JPEG PNG JPG &lt; 5 MB</small>
               </div>
             </label>
-          </div>
+          </div> */}
 
           <div className="mb-4">
             <h1 className="font-medium text-gray-700 mb-1">Emotions</h1>

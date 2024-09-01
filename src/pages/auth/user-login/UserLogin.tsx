@@ -29,7 +29,7 @@ const UserLogin = () => {
 
   };
   return (
-    <div className="bg-gray-900 min-h-svh flex items-end p-5">
+    <div className="bg-gray-900 min-h-svh flex items-end p-5 auth">
       <div className="flex flex-col text-white gap-3 mb-10 w-full">
         <h1 className="text-5xl">
           Login to <br /> <b>Earning Edge</b>
@@ -60,6 +60,9 @@ const UserLogin = () => {
         </button>
         <Link to={"/reset-password"}>
           <h1>Forgot password?</h1>
+        </Link>
+        <Link to={"/signup"}>
+          <h1>Create an account</h1>
         </Link>
       </div>
     </div>

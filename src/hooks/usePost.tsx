@@ -19,6 +19,7 @@ const usePostData = <T, R>(endpoint: string): UsePostData<T, R> => {
     setLoading(true);
     try {
       const response: AxiosResponse<R> = await axiosInstance.post<R>(endpoint, postData, config);
+      console.log(response)
       setData(response.data);
     } catch (err) {
       setError(err as AxiosError);

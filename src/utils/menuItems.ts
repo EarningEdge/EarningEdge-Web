@@ -1,6 +1,6 @@
 import React from "react";
 
-import {HomeFilled,BookFilled, UserOutlined} from "@ant-design/icons"
+import { HomeFilled, BookFilled, UserOutlined } from "@ant-design/icons";
 
 export const menuItems = [
   {
@@ -20,7 +20,5 @@ export const menuItems = [
     icon: React.createElement(UserOutlined),
     label: "Profile",
     path: "/profile",
-  }
-
+  },
 ];
-     
