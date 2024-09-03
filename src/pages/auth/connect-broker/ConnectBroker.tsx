@@ -21,7 +21,7 @@ const ConnectBroker: React.FC = () => {
       message.success("Connected!");
       navigate("/")
     }else{
-      message.error("Failed to connect")
+      message.error("Failed to connect, please try again")
     }
   };
 

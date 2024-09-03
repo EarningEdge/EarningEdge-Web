@@ -18,12 +18,12 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      navigate("/auth");
     }
   }, [user, navigate]);
   const fetchuser = async () => {
     const userResponse:{userData:IUser} = await fetchUserData(user?._id!);
-    if(userResponse.userData.isBD && menuItems.length==3){
+    if(userResponse && userResponse.userData.isBD && menuItems.length==3){
       menuItems.push({
         key: "4",
         icon: React.createElement(LineChartOutlined),
@@ -35,7 +35,8 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    fetchuser();
+    if(user)
+      fetchuser();
   }, [window.location.href])
  
 

@@ -1,47 +1,42 @@
-import  { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
-import { Drawer, Button, List, message } from "antd";
+import { Drawer, Button, List, message, DatePicker } from "antd";
 import useFetchData from "../../hooks/useFetch";
 import { IJournalEntry, IQuestion } from "../../types/data";
 import RatingTrendChart from "./ratingsChart";
 import { useAppSelector } from "../../redux/hooks";
 import { useNavigate } from "react-router-dom";
-
-
 import useAxios from "../../hooks/useAxios";
+import dayjs from 'dayjs';
 
 const Index = () => {
   const user = useAppSelector((state) => state.auth.user);
   const navigate = useNavigate();
-  if (!user) {
-    navigate("/login");
-    return null;
-  }
   const api = useAxios();
 
   const [isAddJournalDrawerOpen, setIsAddJournalDrawerOpen] = useState(false);
   const [journalType, setJournalType] = useState<"entry" | "exit">("entry");
   const [questions, setQuestions] = useState<IQuestion[] | null>(null);
-  const [responses, setResponses] = useState<
-    { question: string; answer: string }[]
-  >([]);
+  const [responses, setResponses] = useState<{ question: string; answer: string }[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [emotionVal, setEmotionVal] = useState("");
-
   const [selectedJournal, setSelectedJournal] = useState<string | null>(null);
   const [isViewJournalDrawerOpen, setIsViewJournalDrawerOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(dayjs());
 
   const { data: questionsResponse } = useFetchData<{
     status: string;
     data: IQuestion[];
   } | null>("/question");
 
-  const { data: journalEntryResponse } = useFetchData<{
-    status: string;
-    data: { _id: string; date: string }[];
-  } | null>("/journal/monthlyEntry/user?month=8&year=2024");
+  const fetchJournalEntries = useCallback(() => {
+    return `/journal/monthlyEntry/user?month=${selectedMonth.month() + 1}&year=${selectedMonth.year()}`;
+  }, [selectedMonth]);
 
-  // const { postData: addJournalPost, data: addJournalResponse } = usePostData<any,any>("/journal/add");
+  const { data: journalEntryResponse, fetchData: refetchJournalEntries } = useFetchData<{
+    status: string;
+    data: { _id: string; date: string; type: "entry" | "exit" }[];
+  } | null>(fetchJournalEntries());
 
   useEffect(() => {
     if (questionsResponse && questionsResponse.status === "success") {
@@ -49,67 +44,61 @@ const Index = () => {
     }
   }, [questionsResponse]);
 
-  // const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files) {
-  //     setFile(e.target.files[0]);
-  //   }
-  // };
+  useEffect(() => {
+    refetchJournalEntries();
+  }, [selectedMonth]);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+    }
+  };
 
   const handleInputChange = (questionId: string, value: string) => {
     setResponses((prev) => {
       const existingIndex = prev.findIndex((r) => r.question === questionId);
       if (existingIndex !== -1) {
         const newResponses = [...prev];
-        newResponses[existingIndex] = {
-          ...newResponses[existingIndex],
-          answer: value,
-        };
+        newResponses[existingIndex] = { ...newResponses[existingIndex], answer: value };
         return newResponses;
       } else {
         return [...prev, { question: questionId, answer: value }];
       }
     });
   };
- 
+
   const handleSubmitJournal = async () => {
     try {
-      // Calling postData to add a journal
-      const addJournalResponse:{data:{status:string,data:any},status:number} = await api.post("/journal/add",{
+      const addJournalResponse = await api.post("/journal/add", {
         type: journalType,
         responses: responses,
       });
-      console.log(addJournalResponse)
 
-  
-      // Check if addJournalResponse has updated after the request
       if (addJournalResponse && addJournalResponse.data.status === 'success') {
-        console.log(addJournalResponse); // Ensure this logs the correct response
-  
         const journalIdResponseId = addJournalResponse.data.data?.journal?._id;
+        
         if (journalIdResponseId && file) {
           const formData = new FormData();
           formData.append("files", file);
-  
+
           try {
-            // Upload the file related to the journal entry
-            // const uploadResponse = await api.post(
-            //   `/upload/${journalIdResponseId}`, // Ensure the correct endpoint
-            //   formData,
-            //   {
-            //     headers: {
-            //       "Content-Type": "multipart/form-data",
-            //     },
-            //   }
-            // );
-            // if (uploadResponse.status === 200) {
-            //   message.success("Uploaded file");
-            // }
+            const uploadResponse = await api.post(
+              `/upload/${journalIdResponseId}`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            if (uploadResponse.status === 200) {
+              message.success("Uploaded file");
+            }
           } catch (error) {
             message.error("Failed to upload file");
           }
         }
-  
-        // Handling the emotions API call
+
         if (emotionVal && journalIdResponseId) {
           try {
             const postEmotionResponse = await api.post(
@@ -123,12 +112,12 @@ const Index = () => {
             message.error("Emotion saving failed");
           }
         }
-  
-        // Reset the states after successful submission
+
         setResponses([]);
         setFile(null);
         setEmotionVal("");
         setIsAddJournalDrawerOpen(false);
+        refetchJournalEntries();
       } else {
         message.error("Failed to add journal. Please try again.");
       }
@@ -137,7 +126,7 @@ const Index = () => {
       message.error("Error submitting journal");
     }
   };
-  
+
   const { data: journalEntry } = useFetchData<{
     status: string;
     data: IJournalEntry;
@@ -147,6 +136,18 @@ const Index = () => {
     setSelectedJournal(journal);
     setIsViewJournalDrawerOpen(true);
   };
+
+  const isJournalSubmittedForToday = useCallback((type: "entry" | "exit") => {
+    const today = dayjs().format('YYYY-MM-DD');
+    return journalEntryResponse?.data.some(entry => 
+      dayjs(entry.date).format('YYYY-MM-DD') === today && entry.type === type
+    );
+  }, [journalEntryResponse]);
+
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
 
   return (
     <CustomLayout>
@@ -165,7 +166,8 @@ const Index = () => {
                 setIsAddJournalDrawerOpen(true);
                 setJournalType("entry");
               }}
-              className="bg-white text-black px-5 py-2 rounded-sm mt-2"
+              disabled={isJournalSubmittedForToday("entry")}
+              className={`bg-white text-black px-5 py-2 rounded-sm mt-2 ${isJournalSubmittedForToday("entry") ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               Enter
             </button>
@@ -177,7 +179,8 @@ const Index = () => {
                 setIsAddJournalDrawerOpen(true);
                 setJournalType("exit");
               }}
-              className="bg-white text-black px-5 py-2 rounded-sm mt-2"
+              disabled={isJournalSubmittedForToday("exit")}
+              className={`bg-white text-black px-5 py-2 rounded-sm mt-2 ${isJournalSubmittedForToday("exit") ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               Enter
             </button>
@@ -192,7 +195,12 @@ const Index = () => {
           ]}
         />
 
-        {/* List of Journal Entries */}
+        <DatePicker.MonthPicker 
+          value={selectedMonth} 
+          onChange={(date) => setSelectedMonth(date || dayjs())} 
+          className="mb-4"
+        />
+
         <List
           className="journal-entries-list mb-4"
           dataSource={journalEntryResponse?.data || []}
@@ -211,7 +219,6 @@ const Index = () => {
           )}
         />
 
-        {/* Drawer for Adding Journal */}
         <Drawer
           height="90%"
           open={isAddJournalDrawerOpen}
@@ -242,7 +249,7 @@ const Index = () => {
                   </div>
                 )
             )}
-          {/* <div className="mb-4">
+          <div className="mb-4">
             <h1 className="font-medium text-gray-700 mb-1">Upload file</h1>
             <label className="block bg-slate-100 border-dashed border-2 border-gray-300 rounded-md p-6 text-center cursor-pointer">
               <input
@@ -257,7 +264,7 @@ const Index = () => {
                 <small className="text-gray-400">JPEG PNG JPG &lt; 5 MB</small>
               </div>
             </label>
-          </div> */}
+          </div>
 
           <div className="mb-4">
             <h1 className="font-medium text-gray-700 mb-1">Emotions</h1>
@@ -298,15 +305,14 @@ const Index = () => {
           open={isViewJournalDrawerOpen}
         >
           {journalEntry?.data.responses.map((res) => (
-            <div>
+            <div key={res.question._id}>
               <h1>{res.question.title}</h1>
               <input
-              disabled
-                      className="bg-slate-100 rounded-md border-[0.7px] w-full border-slate-400 p-2"
-                      value={res.answer}
-                      readOnly
-                      
-                    />
+                disabled
+                className="bg-slate-100 rounded-md border-[0.7px] w-full border-slate-400 p-2"
+                value={res.answer}
+                readOnly
+              />
             </div>
           ))}
         </Drawer>

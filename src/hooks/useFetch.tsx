@@ -25,22 +25,22 @@ const useFetchData = <T,>(endpoint: string): UseFetchData<T> => {
     setError(null);
     try {
       const response = await axiosInstance.get<T>(endpoint);
-        setData(response.data);
-      } catch (err: any) {
-        if(err.response?.status===401){
-          message.error("Session expired, login again");
-          dispatch(logout())
-          window.location.reload()
-        }
+      setData(response.data);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        message.error("Session expired, login again");
+        dispatch(logout());
+        window.location.reload();
+      }
       setError(err as AxiosError);
     } finally {
       setLoading(false);
     }
-  }, [endpoint, axiosInstance]);
+  }, [endpoint, axiosInstance, dispatch]);
 
   useEffect(() => {
     fetchData();
-  }, [endpoint]); 
+  }, []); 
 
   return { data, loading, error, fetchData };
 };

@@ -46,9 +46,9 @@ const Index = () => {
     }
   };
 
-  const handleReadMore = () => {
-    // Logic to navigate to a detailed news page or load more news items
-  };
+  // const handleReadMore = () => {
+  //   // Logic to navigate to a detailed news page or load more news items
+  // };
 
   const renderAlert = (alert: { _id: string; createdAt: string; value: string }) => (
     <Alert
@@ -110,9 +110,9 @@ const Index = () => {
         ))}
       </Row>
 
-      <Button type="primary" onClick={handleReadMore} style={{ marginTop: "16px" }}>
+      {/* <Button type="primary" onClick={handleReadMore} style={{ marginTop: "16px" }}>
         Read More
-      </Button>
+      </Button> */}
 
       {/* WebView for selected news (optional feature) */}
       {selectedNewsUrl && (
