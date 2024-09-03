@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoutes";
 import App from "../App";

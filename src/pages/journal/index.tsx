@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
 import { Drawer, Button, List, message } from "antd";
 import useFetchData from "../../hooks/useFetch";
@@ -7,7 +7,7 @@ import RatingTrendChart from "./ratingsChart";
 import { useAppSelector } from "../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 
-import usePostData from "../../hooks/usePost";
+
 import useAxios from "../../hooks/useAxios";
 
 const Index = () => {
@@ -49,11 +49,11 @@ const Index = () => {
     }
   }, [questionsResponse]);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
-  };
+  // const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files) {
+  //     setFile(e.target.files[0]);
+  //   }
+  // };
 
   const handleInputChange = (questionId: string, value: string) => {
     setResponses((prev) => {

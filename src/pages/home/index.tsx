@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import usePostData from "../../hooks/usePost";
 import { login } from "../../redux/slices/authSlice";
+
 interface ConnectResponse {
   status: string;
   message: string;
@@ -27,7 +28,7 @@ const Index = () => {
 
   const [selectedNewsUrl, setSelectedNewsUrl] = useState<string | null>(null);
 
-  const { loading, error, postData,data } = usePostData<{}, ConnectResponse>('/broker/disconnect');
+  const {  postData,data } = usePostData<{}, ConnectResponse>('/broker/disconnect');
 
   const navigate = useNavigate();
   const handleDisConnect = async () => {
@@ -35,11 +36,11 @@ const Index = () => {
     if(data?.status==="success"){
       message.success("Disconnected!");
       window.location.reload()
-      // if(user)
-      // dispatch(login({
-      //   user: { ...user, isBrokerConnected: false },
-      //   token
-      // }));
+      if(user)
+      dispatch(login({
+        user: { ...user, isBrokerConnected: false },
+        token
+      }));
     }else{
       message.error("Failed to disconnect")
     }
