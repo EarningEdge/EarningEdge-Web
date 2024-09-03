@@ -152,3 +152,10 @@ export interface IJournalEntry extends Document {
   reviewId:string|null;
   isActive: boolean;
 }
+
+export type UserLoginResponse ={
+  user:IUser,
+  message:string,
+  success:boolean,
+  token:string
+}

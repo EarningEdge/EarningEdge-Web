@@ -2,39 +2,57 @@ import  { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../redux/hooks";
 import { login } from "../../../redux/slices/authSlice";
-import usePostData from "../../../hooks/usePost";
-import { IUser } from "../../../types/data";
+
+import {  UserLoginResponse } from "../../../types/data";
+import { useMutation } from "@tanstack/react-query";
+import useAxios from "../../../hooks/useAxios";
+import { notify } from "../../../utils/notify";
+import { AxiosError } from "axios";
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { postData, error, loading } = usePostData<{}, { success: boolean; user: IUser; token: string }>("/user/login");
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  const handleLogin = async () => {
-    if (!email) {
-      alert("Enter email please");
-      return;
-    }
-    if (!password) {
-      alert("Enter password please");
-      return;
-    }
-    
-    try {
-      const response = await postData({ email, password });
-      if (response && response.success) {
-        dispatch(login({ user: response.user, token: response.token }));
-        navigate("/");
-      } else {
-        alert("Login failed. Please check your credentials.");
+  const api = useAxios();
+  const { mutateAsync: loginUser, error,isPending } = useMutation({
+    mutationKey:["loginUser"],
+    mutationFn:async(credentials:{email:string,password:string})=>{
+      const response = await api.post("/user/login",credentials)
+      return response.data
+    },
+    onSuccess:(data:UserLoginResponse)=>{
+      const {user,token} = data;
+      dispatch(login({
+        user,token
+      }))
+      notify("Login Success!","success");
+      navigate("/")
+      
+    },
+    onError:(error:AxiosError)=>{
+      console.log(error)
+      if(error.status==404){
+        notify("User not found","error");
+        return;
       }
-    } catch (err:any) {
-      console.error(err);
-      alert(err.message || "An error occurred during login");
+      if(error.status==401){
+        notify("Invalid credentials","error");
+        return;
+      }
+      notify("Oops something went wrong!","error")
     }
-  };
+  })
+  const handleLogin = async()=>{
+    try {
+      await loginUser({email,password})
+    } catch (error) {
+      
+    }
+  }
+  
+  
 
   return (
     <div className="bg-gray-900 min-h-svh flex items-end p-5 auth">
@@ -59,9 +77,9 @@ const UserLogin = () => {
         <button
           className="text-xl rounded-md font-semibold bg-white text-black p-3"
           onClick={handleLogin}
-          disabled={loading}
+          disabled={isPending}
         >
-          {loading ? "Logging in..." : "Login"}
+          {isPending ? "Logging in..." : "Login"}
         </button>
         {error && <p className="text-red-500">{error.message}</p>}
         <Link to="/reset-password">
