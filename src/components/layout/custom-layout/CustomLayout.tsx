@@ -1,18 +1,11 @@
 import React, { useState, useEffect, ReactNode } from "react";
 import { ConfigProvider, Layout, Menu } from "antd";
 import { menuItems } from "../../../utils/menuItems";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import {  useAppSelector } from "../../../redux/hooks";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { fetchUserData } from "../../../utils/api";
-import { login } from "../../../redux/slices/authSlice";
-import { IUser } from "../../../types/data";
-import { LineChartOutlined } from "@ant-design/icons";
-
 const { Sider, Content } = Layout;
-
 const CustomLayout = ({ children }: { children: ReactNode }) => {
-  const { user,token} = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
+  const { user} = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -21,25 +14,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
       navigate("/auth");
     }
   }, [user, navigate]);
-  const fetchuser = async () => {
-    const userResponse:{userData:IUser} = await fetchUserData(user?._id!);
-    if(userResponse && userResponse.userData.isBD && menuItems.length==3){
-      menuItems.push({
-        key: "4",
-        icon: React.createElement(LineChartOutlined),
-        label: "Sales",
-        path: "/sales",
-      },)
-    }
-    dispatch(login({user:userResponse.userData,token}))
-  };
-
-  useEffect(() => {
-    if(user)
-      fetchuser();
-  }, [window.location.href])
- 
-
+  
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -98,10 +73,10 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
               overflowY: "auto",
               display: "flex",
               flexDirection: "column",
-              padding: "20px",
+              padding:  isMobile?"10px":"20px",
               marginBottom: isMobile ? "60px" : "0",
             }}
-            className="bg-gray-100  "
+            className="bg-darkBg "
           >
             {children}
           </Content>

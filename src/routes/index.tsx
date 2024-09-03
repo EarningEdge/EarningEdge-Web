@@ -25,7 +25,7 @@ const ConnectBroker = lazy(
 );
 const Login = lazy((): any => import("../pages/auth/user-login/UserLogin"));
 const Signup = lazy((): any => import("../pages/auth/user-signup/UserSignup"));
-// const Journal = lazy((): any => import("../pages/journal"));
+const Journal = lazy((): any => import("../pages/journal"));
 const Auth = lazy((): any => import("../pages/auth/auth-screen/Home"));
 const ResetPassword = lazy((): any => import("../pages/auth/forgot-password"));
 const Sales = lazy((): any => import("../pages/sales"));
@@ -90,7 +90,7 @@ const router = createBrowserRouter([
       {
         path: "journal",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <NotAvailable /> }],
+        children: [{ path: "", element: <Journal /> }],
       },
       {
         path: "news",
