@@ -41,10 +41,10 @@ const AddPhno: React.FC = () => {
         <p>Phone number</p>
         <form onSubmit={handleSubmit}>
           <div className="flex gap-2">
-            <input type="text" value="+91" className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-16" readOnly />
+            <input type="text" value="+91" className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-16" readOnly />
             <input
               type="tel"
-              className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full"
+              className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full"
               placeholder="Phone number"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}

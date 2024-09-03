@@ -61,7 +61,7 @@ const UserDetails: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full mb-3"
+            className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full mb-3"
             placeholder="First Name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
@@ -69,7 +69,7 @@ const UserDetails: React.FC = () => {
           />
           <input
             type="text"
-            className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full mb-3"
+            className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full mb-3"
             placeholder="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
@@ -77,7 +77,7 @@ const UserDetails: React.FC = () => {
           />
           <input
             type="password"
-            className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full mb-3"
+            className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full mb-3"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -85,7 +85,7 @@ const UserDetails: React.FC = () => {
           />
           <input
             type="password"
-            className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full mb-3"
+            className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full mb-3"
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -93,7 +93,7 @@ const UserDetails: React.FC = () => {
           />
           <input
             type="text"
-            className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full mb-3"
+            className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full mb-3"
             placeholder="Occupation"
             value={occupation}
             onChange={(e) => setOccupation(e.target.value)}
@@ -101,7 +101,7 @@ const UserDetails: React.FC = () => {
           />
           <input
             type="text"
-            className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full mb-3"
+            className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full mb-3"
             placeholder="Referral Code (Optional)"
             value={referralCode}
             onChange={(e) => setReferralCode(e.target.value)}

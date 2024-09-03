@@ -41,7 +41,7 @@ const ConfirmPhno: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full"
+            className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full"
             placeholder="Enter OTP"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}

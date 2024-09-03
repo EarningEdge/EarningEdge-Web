@@ -6,7 +6,7 @@ interface UsePostData<T, R> {
   data: R | null;
   loading: boolean;
   error: AxiosError | null;
-  postData: (data: T, config?: AxiosRequestConfig) => Promise<void>;
+  postData: (data: T, config?: AxiosRequestConfig) => Promise<R | null>;
 }
 
 const usePostData = <T, R>(endpoint: string): UsePostData<T, R> => {
@@ -15,14 +15,17 @@ const usePostData = <T, R>(endpoint: string): UsePostData<T, R> => {
   const [error, setError] = useState<AxiosError | null>(null);
   const axiosInstance = useAxios();
 
-  const postData = async (postData: T, config?: AxiosRequestConfig) => {
+  const postData = async (postData: T, config?: AxiosRequestConfig): Promise<R | null> => {
     setLoading(true);
+    setError(null);
     try {
       const response: AxiosResponse<R> = await axiosInstance.post<R>(endpoint, postData, config);
-      console.log(response)
       setData(response.data);
+      return response.data;
     } catch (err) {
-      setError(err as AxiosError);
+      const axiosError = err as AxiosError;
+      setError(axiosError);
+      return null;
     } finally {
       setLoading(false);
     }
