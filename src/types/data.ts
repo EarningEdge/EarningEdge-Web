@@ -1,17 +1,40 @@
 
 
-export interface IUser{
-    _id:string;
-    firstName:string;
-    lastName:string;
-    email:string;
-    phoneNumber:string;
-    role?:"mentor"|"admin";
-    occupation?:string;
-    isBrokerConnected?:boolean;
-    profile_image_url?:string;
-    isBD?: boolean; 
-    referralCode: string;
+export interface IUser  {
+  //Personal details
+  _id: string;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  occupation: string | undefined;
+  role: string;
+  email: string;
+  phoneNumber: string | undefined;
+  password: string | undefined;
+  isEmailVerified: boolean;
+  isPhoneVerified: boolean;
+  email_otp: number | undefined;
+  email_otp_expire: Date | undefined;
+
+
+  //Broker details
+  dhan_auth_token: string | undefined;
+  dhan_client_id: string | undefined;
+  isBrokerConnected: boolean;
+  mentorId: string | null,
+  mentor?: IUser | null
+
+  //Profile image
+  profile_image_key: string;
+  profile_image_url: string;
+
+  //BD
+  isBD: boolean;
+  referralCode: string ;
+  reffererId: string | null;
+  usersCount: number;
+  paidUsersCount: number;
+
+
 }
 export interface ISales{
   _id: string;

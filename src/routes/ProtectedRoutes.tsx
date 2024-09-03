@@ -11,8 +11,7 @@ export const ProtectedRoute = () => {
   const dispatch = useAppDispatch();
   const { token, user } = authObject;
   const [isChecking, setIsChecking] = React.useState(true);
-  console.log(token)
-  console.log(user)
+
   React.useEffect(() => {
     if (!token || !user) {
       navigate("/login");

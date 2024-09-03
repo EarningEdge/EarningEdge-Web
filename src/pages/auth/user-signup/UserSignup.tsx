@@ -45,7 +45,7 @@ const UserSignup: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <input
             type="email"
-            className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full"
+            className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full"
             placeholder="name@company.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

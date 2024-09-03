@@ -60,7 +60,7 @@ const ForgotPassword = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="text"
-              className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full"
+              className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full"
               placeholder="Enter your email"
             />
             <button
@@ -78,21 +78,21 @@ const ForgotPassword = () => {
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               type="text"
-              className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full"
+              className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full"
               placeholder="Enter OTP"
             />
             <input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               type="password"
-              className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full"
+              className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full"
               placeholder="New Password"
             />
             <input
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               type="password"
-              className="p-3 bg-transparent text-white text-xl border-2 border-white rounded-md w-full"
+              className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full"
               placeholder="Confirm Password"
             />
             <button

@@ -5,7 +5,7 @@ import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
 interface ConnectResponse {
-  success: boolean;
+  status: string;
   message: string;
 }
 
@@ -17,9 +17,11 @@ const ConnectBroker: React.FC = () => {
   const handleConnect = async (e: React.FormEvent) => {
     e.preventDefault();
     await postData({ clientId, accessToken });
-    if(data?.success){
+    if(data?.status==="success"){
       message.success("Connected!");
       navigate("/")
+    }else{
+      message.error("Failed to connect, please try again")
     }
   };
 

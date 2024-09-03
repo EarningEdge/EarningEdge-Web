@@ -16,6 +16,7 @@ const Profile = () => {
     return <div className="text-center text-white">Loading...</div>;
   }
 
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [formData, setFormData] = useState({
@@ -110,6 +111,7 @@ const Profile = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
 
   return (
     <CustomLayout>

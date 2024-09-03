@@ -1,31 +1,51 @@
 import React, { useState, useEffect, ReactNode } from "react";
-import {  ConfigProvider,  Layout, Menu } from "antd";
+import { ConfigProvider, Layout, Menu } from "antd";
 import { menuItems } from "../../../utils/menuItems";
-import {  useAppSelector } from "../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { fetchUserData } from "../../../utils/api";
+import { login } from "../../../redux/slices/authSlice";
+import { IUser } from "../../../types/data";
+import { LineChartOutlined } from "@ant-design/icons";
 
-const {  Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const CustomLayout = ({ children }: { children: ReactNode }) => {
-  const { user } = useAppSelector((state) => state.auth);
-
+  const { user,token} = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      navigate("/auth");
     }
   }, [user, navigate]);
+  const fetchuser = async () => {
+    const userResponse:{userData:IUser} = await fetchUserData(user?._id!);
+    if(userResponse && userResponse.userData.isBD && menuItems.length==3){
+      menuItems.push({
+        key: "4",
+        icon: React.createElement(LineChartOutlined),
+        label: "Sales",
+        path: "/sales",
+      },)
+    }
+    dispatch(login({user:userResponse.userData,token}))
+  };
+
+  useEffect(() => {
+    if(user)
+      fetchuser();
+  }, [window.location.href])
+ 
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const renderMenuItems = (items: any) => {
@@ -35,23 +55,19 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
       }
       return (
         <Menu.Item key={item.path} icon={item.icon}>
-          <Link to={item.path}>{isMobile ? '' : item.label}</Link>
+          <Link to={item.path}>{isMobile ? "" : item.label}</Link>
         </Menu.Item>
       );
     });
   };
-
-
 
   if (!user) {
     return null;
   }
 
   return (
-    <ConfigProvider
-    
-    >
-      <Layout style={{ minHeight: "100vh" }} >
+    <ConfigProvider>
+      <Layout style={{ minHeight: "100vh" }}>
         {!isMobile && (
           <Sider
             className="bg-dark-blue"
@@ -59,7 +75,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
               background: "#262633",
               position: "fixed",
               left: 0,
-              height: '100vh',
+              height: "100vh",
               zIndex: 1000,
             }}
           >
@@ -77,7 +93,6 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
           </Sider>
         )}
         <Layout style={{ marginLeft: isMobile ? 0 : 200 }}>
-
           <Content
             style={{
               overflowY: "auto",
@@ -86,7 +101,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
               padding: "20px",
               marginBottom: isMobile ? "60px" : "0",
             }}
-            className="bg-white "
+            className="bg-gray-100  "
           >
             {children}
           </Content>
@@ -96,7 +111,9 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
             <nav>
               {menuItems.map((item: any) => (
                 <Link key={item.path} to={item.path}>
-                  {React.cloneElement(item.icon, { style: { fontSize: '24px' } })}
+                  {React.cloneElement(item.icon, {
+                    style: { fontSize: "24px" },
+                  })}
                 </Link>
               ))}
             </nav>
