@@ -34,6 +34,7 @@ export interface IUser  {
   usersCount: number;
   paidUsersCount: number;
 
+  createdAt?:string
 
 }
 export interface ISales{

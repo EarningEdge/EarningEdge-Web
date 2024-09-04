@@ -265,11 +265,7 @@ const Index = () => {
                   </div>
                 <div className="flex justify-center items-center space-x-2 mr-1 md:mr-3">
                   <span
-                    className={`border-[0.4px] flex justify-center items-center w-12 md:w-16 text-center text-sm  rounded-md px-3 py-2 ${
-                      entry.type !== "entry"
-                        ? " border-blue-500 text-blue-500"
-                        : " border-green-500 text-green-600"
-                    }`}
+                    className={`border-[0.4px] flex justify-center items-center w-12 md:w-16 text-center text-sm  rounded-md px-3 py-2 border-slate-400 text-slate-400`}
                   >
                     {entry.type}
                   </span>

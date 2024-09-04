@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import useAxios from "../../hooks/useAxios";
 import { CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import BlurBlobs from "../journal/Blurblobs";
 
 // interface ConnectResponse {
 //   status: string;
@@ -63,23 +64,17 @@ const Index = () => {
   // };
 
   const renderAlert = (alert: { _id: string; createdAt: string; value: string }) => (
-    <Alert
-      key={alert._id}
-      message="Earning Edge Notice"
-      description={
-        <>
-          <p>{alert.value}</p>
-          <p style={{ fontSize: "0.8rem", color: "#666" }}>
-            {moment(alert.createdAt).fromNow()}
-          </p>
-        </>
-      }
-      type="info"
-      showIcon
-      style={{ marginBottom: "16px" }}
-    />
+    <div className="relative border-darkStroke px-3 py-3 rounded-md border-[0.4px] my-3 overflow-hidden">
+      {/* Animated blob inside the container */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[0px] right-[20px] w-96 h-96 bg-green-500 bg-opacity-45 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+      </div>
+      <p className="text-white z-10 relative">{alert.value}</p>
+      <p className="text-white z-10 relative">
+        {moment(alert.createdAt).fromNow()}
+      </p>
+    </div>
   );
-
   const renderNewsItem = (item: any) => (
     <Card
       className="bg-darkSecondary border-[0.2px] border-[#34323d] text-white"

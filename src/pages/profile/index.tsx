@@ -1,78 +1,251 @@
+import { CopyOutlined, DisconnectOutlined, LineChartOutlined, PoweroffOutlined, UserOutlined } from "@ant-design/icons";
+import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import CustomLayout from '../../components/layout/custom-layout/CustomLayout';
-import { logout } from '../../redux/slices/authSlice';
+import { Card, CardContent } from "./card";
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Modal } from 'antd';
+import { useEffect, useState } from 'react';
+import { login, logout } from "../../redux/slices/authSlice";
+import { AxiosError } from "axios";
+import { notify } from "../../utils/notify";
+import useAxios from "../../hooks/useAxios";
+import { IUser } from "../../types/data";
+import moment from "moment";
 
-const Profile = () => {
-  const user = useAppSelector((state) => state.auth.user);
+const UserDashboard = () => {
+  const { user, token } = useAppSelector((state) => state.auth);
+  const [leads, setLeads] = useState<null | IUser[]>(null);
+
+  const api = useAxios();
   const dispatch = useAppDispatch();
-    console.log(user?.profile_image_url)
+
+  const { mutateAsync: disconnectUser } = useMutation({
+    mutationKey: ["disconnect"],
+    mutationFn: async () => {
+      const response = await api.post("/broker/disconnect");
+      return response;
+    },
+    onSuccess: () => {
+      notify("Broker Disconnected", "success");
+      dispatch(login({ user: { ...user!, isBrokerConnected: false }, token }));
+    },
+    onError: (error: AxiosError) => {
+      notify(error.message, "error");
+    }
+  });
+
+  const { data: leadsResponse, isLoading: isLeadsLoading, isError: isLeadsError, error: leadsError } = useQuery({
+    queryKey: ["leads"],
+    queryFn: async () => { return api.get("/sales/getLeads/" + user?._id); }
+  });
+
+  useEffect(() => {
+    if (leadsResponse && leadsResponse.data) {
+      setLeads(leadsResponse?.data?.data);
+    }
+  }, [leadsResponse]);
+
+  const { data: userDetails, isLoading: isUserDetailsLoading, isError: isUserError, error: userError } = useQuery({
+    queryKey: ["userDetails"],
+    queryFn: async () => { return api.get("/user/details/" + user?._id); }
+  });
+
+  useEffect(() => {
+    if (userDetails && userDetails.data) {
+      dispatch(login({ user: userDetails?.data?.data?.userData, token }));
+    }
+  }, [userDetails]);
+
+  // State to control modal visibility
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isAnalyticsModalVisible, setIsAnalyticsModalVisible] = useState(false);
+  const [actionType, setActionType] = useState('');
+
+  const copyReferralCode = () => {
+    navigator.clipboard.writeText(user?.referralCode || "");
+  };
+
+  const showConfirmModal = (action: any) => {
+    setActionType(action);
+    setIsModalVisible(true);
+  };
+
+  const handleOk = async () => {
+    setIsModalVisible(false);
+    if (actionType === 'logout') {
+      dispatch(logout());
+    } else if (actionType === 'disconnect') {
+      await disconnectUser();
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const showAnalyticsModal = () => {
+    setIsAnalyticsModalVisible(true);
+  };
+
+  const handleAnalyticsCancel = () => {
+    setIsAnalyticsModalVisible(false);
+  };
+
   if (!user) {
     return <div className="text-center text-white">Loading...</div>;
   }
-  console.log(user)
+
   return (
     <CustomLayout>
-      <div className="bg-gray-100 min-h-screen p-5 flex flex-col items-center">
-        <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-          <div className="flex flex-col items-center">
-            {/* Profile Image */}
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
-              <img
-                src={user.profile_image_url!="" && user.profile_image_url  || 'https://github.com/shadcn.png'}
-                alt="Profile"
-                className="object-cover w-full h-full"
-              />
-            </div>
-
-            {/* User Details */}
-            <h1 className="text-2xl font-semibold mt-4">
-              {user.firstName} {user.lastName}
-            </h1>
-            <p className="text-gray-600">{user.occupation || "Occupation not provided"}</p>
-            <p className="text-gray-500 text-sm mt-1">
-              Role: <span className="capitalize">{user.role || 'User'}</span>
-            </p>
-            {user.isBD && <span className="text-blue-600 text-sm font-semibold mt-1">BD User</span>}
-          </div>
-
-          <hr className="my-4" />
-
-          {/* Contact Information */}
-          <div className="text-left space-y-2">
-            <div className="flex items-center">
-              <span className="font-semibold w-24">Email:</span>
-              <span className="text-gray-700">{user.email}</span>
-            </div>
-            <div className="flex items-center">
-              <span className="font-semibold w-24">Phone:</span>
-              <span className="text-gray-700">{user.phoneNumber || 'Not provided'}</span>
-            </div>
-            {user.isBrokerConnected && (
-              <div className="flex items-center">
-                <span className="font-semibold w-24">Broker:</span>
-                <span className="text-green-500">Connected</span>
-              </div>
-            )}
-            <div className="flex items-center">
-              <span className="font-semibold w-24">Referral:</span>
-              <span className="text-gray-700">{user.referralCode || "Not Available"}</span>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-4 mt-6">
-            {/* <button className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 transition">
-              Edit Profile
-            </button> */}
-            <button onClick={()=>{dispatch(logout())}} className="w-full bg-red-500 text-white py-2 rounded-md font-semibold hover:bg-red-600 transition">
-              Logout
-            </button>
-          </div>
+      <div className="min-h-screen bg-darkBg p-4 md:p-8">
+        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-50px] left-[-120px] w-96 h-96 bg-purple-500 bg-opacity-45 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
         </div>
+        <Card className="max-w-4xl mx-auto">
+          <CardContent className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Personal Details</h2>
+            {/* Personal Details Content */}
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-shrink-0">
+                <div className="relative">
+                  <img
+                    src={user.profile_image_url || "/fallback_profile.jpg"}
+                    alt={`${user.firstName} ${user.lastName}`}
+                    className="w-24 h-24 rounded-full"
+                  />
+                  <button className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md">
+                    <UserOutlined className="text-gray-600" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-100">First Name</label>
+                  <input type="text" value={user.firstName} readOnly className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-100">Last Name</label>
+                  <input type="text" value={user.lastName} readOnly className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-100">Email</label>
+                  <input type="email" value={user.email} readOnly className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-100">Phone</label>
+                  <input type="tel" value={user.phoneNumber || ''} readOnly className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm" />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold mb-6 flex md:flex-row  justify-between items-start md:items-center w-full">
+                <span className="w-1/2">Referral and Earnings</span>
+                <button 
+                  onClick={showAnalyticsModal}
+                  className="text-sm font-medium space-x-3  text-white border-[0.2px] border-darkStroke  px-2 md:px-4 py-2 rounded-md shadow-md flex justify-center items-center w-1/2"
+                >
+                  <span>Analytics</span> <LineChartOutlined/>
+                </button>
+              </h2>
+              <div className="flex flex-col md:flex-row gap-4 items-start md:items-end">
+                <div className="flex-grow w-full">
+                  <label className="block text-sm font-medium text-gray-100">Referral Code</label>
+                  <div className="mt-1 flex rounded-md shadow-sm w-full">
+                    <input type="text" value={user.referralCode || ''} readOnly className="flex-grow px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md w-3/4" />
+                    <button 
+                      onClick={copyReferralCode}
+                      className="inline-flex items-center px-4 py-2 border border-transparent rounded-r-md shadow-sm text-sm font-medium text-white w-1/4 "
+                    >
+                      <CopyOutlined className="h-4 w-4 mr-2" />
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 grid grid-cols-2 md:grid-cols-2 gap-4">
+                <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
+                  <h3 className="text-lg font-light mb-2">Leads Count</h3>
+                  <p className="text-3xl font-bold">{user.usersCount || 0}</p>
+                </div>
+                <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
+                  <h3 className="text-lg font-light mb-2">Paid Leads</h3>
+                  <p className="text-3xl font-bold">{user.paidUsersCount || 0}</p>
+                </div>
+              </div>
+                <div className="bg-darkSecondary border-[0.4px] mt-4 border-darkStroke p-4 rounded-md shadow">
+                  <h3 className="text-lg font-light mb-2">Credits Earned</h3>
+                  <p className="text-3xl font-bold text-green-500">₹{user.usersCount || 0}</p>
+                </div>
+            </div>
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold mb-4">Actions</h2>
+              <div className="flex items-center space-x-2">
+                <button 
+                  className="text-red-400 border-[0.7px] border-red-400 rounded-md px-2 py-1" 
+                  onClick={() => showConfirmModal('logout')}
+                >
+                  <PoweroffOutlined className="text-red-400"/> Logout
+                </button>
+                {user.isBrokerConnected && 
+                  <button 
+                    className="text-red-400 border-[0.7px] border-red-400 rounded-md px-2 py-1" 
+                    onClick={() => showConfirmModal('disconnect')}
+                  > 
+                    <DisconnectOutlined className="text-red-400"/> Disconnect broker
+                  </button>
+                }
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Confirmation Modal */}
+        <Modal 
+          title="Confirmation"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          okText="Yes"
+          cancelText="No"
+        >
+          {actionType === 'logout' ? 
+            <p>Are you sure you want to log out?</p> 
+            : 
+            <p>Are you sure you want to disconnect the broker?</p>
+          }
+        </Modal>
+
+        <Modal
+          title="Leads Analytics"
+          visible={isAnalyticsModalVisible}
+          onCancel={handleAnalyticsCancel}
+          footer={null}
+        >
+          <div className="space-y-4">
+            <h1 className="text-slate-200">Your Leads</h1>
+            {leads?.map((lead) => (
+              <div key={lead._id} className="flex items-center p-2 bg-darkSecondary rounded-md">
+                <img 
+                  src={lead.profile_image_url || "/fallback_profile.jpg"}
+                  alt={lead.firstName+" "+lead.lastName}
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <div className="text-white">
+                  <p className="text-sm font-semibold">{lead.firstName+" "+lead.lastName}</p>
+                  <p className="text-xs text-gray-400">{lead.email}</p>
+                  <p className="text-xs text-gray-400">Joined {  moment(lead.createdAt).fromNow()}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Modal>
       </div>
     </CustomLayout>
   );
 };
 
-export default Profile;
+export default UserDashboard;

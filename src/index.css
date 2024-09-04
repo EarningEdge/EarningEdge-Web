@@ -95,3 +95,16 @@
     scrollbar-width: none;
   }
 }
+.ant-modal-content{
+  background: #13111c !important;
+}
+.ant-modal-title{
+  color: #fff !important;
+  background: #13111c !important;
+}
+.ant-modal-close-x{
+  color: #fff !important;
+}
+.ant-modal-body{
+  color: #fff;
+}
