@@ -47,7 +47,7 @@ const MonthList: React.FC<MonthListProps> = ({ onSelectMonth }) => {
   };
 
   return (
-    <div className="relative  mt-4 bg-darkSecondary border-darkStroke border-[0.4px] mb-4 rounded-md">
+    <div className="relative  mt-4 bg-darkSecondary border-darkStroke border-[0.4px] mb-4 px-2 rounded-md">
       <button 
         onClick={() => scroll('left')} 
         className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-darkSecondary p-1 rounded-full z-10"
@@ -56,7 +56,7 @@ const MonthList: React.FC<MonthListProps> = ({ onSelectMonth }) => {
       </button>
       
       <div ref={scrollContainerRef} className="overflow-x-auto no-scrollbar px-8">
-        <div className="flex items-center gap-2 min-w-max p-2">
+        <div className="flex items-center gap-2 min-w-max p-2 justify-center">
           {months.map((month: string) => (
             <button
               key={month}

@@ -184,7 +184,6 @@ const Index = () => {
       <section className="p-4 relative z-10">
         <div className="text-black mb-4">
           <h1 className="text-2xl text-slate-200">Hello {user.firstName}, {getGreeting()}! </h1>
-          {/* <h1 className="text-2xl text-slate-200"></h1> */}
         </div>
         <div className="flex justify-center items-center space-x-3 mb-4">
           <div className="w-1/2  bg-darkSecondary rounded-md h-32 flex items-center flex-col justify-center border-[0.4px] border-darkStroke">

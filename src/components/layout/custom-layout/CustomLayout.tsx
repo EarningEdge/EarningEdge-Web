@@ -1,11 +1,12 @@
 import React, { useState, useEffect, ReactNode } from "react";
 import { ConfigProvider, Layout, Menu } from "antd";
 import { menuItems } from "../../../utils/menuItems";
-import {  useAppSelector } from "../../../redux/hooks";
+import { useAppSelector } from "../../../redux/hooks";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { Header } from "antd/es/layout/layout";
 const { Sider, Content } = Layout;
 const CustomLayout = ({ children }: { children: ReactNode }) => {
-  const { user} = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -14,7 +15,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
       navigate("/auth");
     }
   }, [user, navigate]);
-  
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -68,12 +69,17 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
           </Sider>
         )}
         <Layout style={{ marginLeft: isMobile ? 0 : 200 }}>
+          <Header className="py-0 w-full flex justify-end items-center bg-darkSecondary">
+              <button className=" w-fit">
+                <img className="h-10 w-10 rounded-full" src={user.profile_image_url || "fallback_profile.jpg"}/> 
+              </button>
+          </Header>
           <Content
             style={{
               overflowY: "auto",
               display: "flex",
               flexDirection: "column",
-              padding:  isMobile?"10px":"20px",
+              padding: isMobile ? "10px" : "20px",
               marginBottom: isMobile ? "60px" : "0",
             }}
             className="bg-darkBg "
