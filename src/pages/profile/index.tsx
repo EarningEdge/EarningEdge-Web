@@ -1,24 +1,32 @@
-import { CopyOutlined, DisconnectOutlined, LineChartOutlined, PoweroffOutlined, UserOutlined } from "@ant-design/icons";
-import { useAppSelector, useAppDispatch } from '../../redux/hooks';
+import {
+  CopyOutlined,
+  DisconnectOutlined,
+  DownloadOutlined,
+  LineChartOutlined,
+  PoweroffOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 
-import CustomLayout from '../../components/layout/custom-layout/CustomLayout';
+import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
 import { Card, CardContent } from "./card";
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { Modal } from 'antd';
-import { useEffect, useState } from 'react';
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Modal } from "antd";
+import { useEffect, useState } from "react";
 import { login, logout } from "../../redux/slices/authSlice";
 import { AxiosError } from "axios";
 import { notify } from "../../utils/notify";
 import useAxios from "../../hooks/useAxios";
 import { IUser } from "../../types/data";
 import moment from "moment";
-import  { QRCodeSVG } from 'qrcode.react';
+import { QRCodeSVG } from "qrcode.react";
+import Beam from "./Beam";
 
 const UserDashboard = () => {
   const { user, token } = useAppSelector((state) => state.auth);
   const [leads, setLeads] = useState<null | IUser[]>(null);
-  const [referralUrl, setReferralUrl] = useState('');
-    const api = useAxios(); 
+  const [referralUrl, setReferralUrl] = useState("");
+  const api = useAxios();
   const dispatch = useAppDispatch();
 
   const { mutateAsync: disconnectUser } = useMutation({
@@ -33,14 +41,17 @@ const UserDashboard = () => {
     },
     onError: (error: AxiosError) => {
       notify(error.message, "error");
-    }
+    },
   });
 
-  const { data: leadsResponse, 
-    // isLoading: isLeadsLoading, isError: isLeadsError, error: leadsError 
+  const {
+    data: leadsResponse,
+    // isLoading: isLeadsLoading, isError: isLeadsError, error: leadsError
   } = useQuery({
     queryKey: ["leads"],
-    queryFn: async () => { return api.get("/sales/getLeads/" + user?._id); }
+    queryFn: async () => {
+      return api.get("/sales/getLeads/" + user?._id);
+    },
   });
 
   useEffect(() => {
@@ -49,11 +60,14 @@ const UserDashboard = () => {
     }
   }, [leadsResponse]);
 
-  const { data: userDetails, 
-    // isLoading: isUserDetailsLoading, isError: isUserError, error: userError 
+  const {
+    data: userDetails,
+    // isLoading: isUserDetailsLoading, isError: isUserError, error: userError
   } = useQuery({
     queryKey: ["userDetails"],
-    queryFn: async () => { return api.get("/user/details/" + user?._id); }
+    queryFn: async () => {
+      return api.get("/user/details/" + user?._id);
+    },
   });
 
   useEffect(() => {
@@ -63,14 +77,16 @@ const UserDashboard = () => {
   }, [userDetails]);
   useEffect(() => {
     if (user && user._id) {
-      setReferralUrl(`${import.meta.env.REACT_APP_FRONTEND_URL}?referralCode=${user._id}`);
+      setReferralUrl(
+        `${import.meta.env.REACT_APP_FRONTEND_URL}?inviteCode=${user._id}`
+      );
     }
   }, [user]);
 
   // State to control modal visibility
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAnalyticsModalVisible, setIsAnalyticsModalVisible] = useState(false);
-  const [actionType, setActionType] = useState('');
+  const [actionType, setActionType] = useState("");
 
   const copyReferralCode = () => {
     navigator.clipboard.writeText(user?.referralCode || "");
@@ -83,9 +99,9 @@ const UserDashboard = () => {
 
   const handleOk = async () => {
     setIsModalVisible(false);
-    if (actionType === 'logout') {
+    if (actionType === "logout") {
       dispatch(logout());
-    } else if (actionType === 'disconnect') {
+    } else if (actionType === "disconnect") {
       await disconnectUser();
     }
   };
@@ -102,6 +118,25 @@ const UserDashboard = () => {
     setIsAnalyticsModalVisible(false);
   };
 
+  const handleDownload = () => {
+    const svg = document.querySelector(".qr-code-svg");
+    const svgData = new XMLSerializer().serializeToString(svg!);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.download = "qr-code.png";
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+  };
+
   if (!user) {
     return <div className="text-center text-white">Loading...</div>;
   }
@@ -111,6 +146,7 @@ const UserDashboard = () => {
       <div className="min-h-screen bg-darkBg p-4 md:p-8">
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-50px] left-[-120px] w-96 h-96 bg-purple-500 bg-opacity-45 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+          <div className="absolute bottom-[-50px] right-[-25%] w-96 h-96 bg-purple-500 bg-opacity-45 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
         </div>
         <Card className="max-w-4xl mx-auto">
           <CardContent className="p-6">
@@ -129,44 +165,78 @@ const UserDashboard = () => {
                   </button>
                 </div>
               </div>
-              
+
               <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-100">First Name</label>
-                  <input type="text" value={user.firstName} readOnly className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm" />
+                  <label className="block text-sm font-medium text-gray-100">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    value={user.firstName}
+                    readOnly
+                    className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm"
+                  />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-100">Last Name</label>
-                  <input type="text" value={user.lastName} readOnly className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm" />
+                  <label className="block text-sm font-medium text-gray-100">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    value={user.lastName}
+                    readOnly
+                    className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm"
+                  />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-100">Email</label>
-                  <input type="email" value={user.email} readOnly className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm" />
+                  <label className="block text-sm font-medium text-gray-100">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={user.email}
+                    readOnly
+                    className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm"
+                  />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-100">Phone</label>
-                  <input type="tel" value={user.phoneNumber || ''} readOnly className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm" />
+                  <label className="block text-sm font-medium text-gray-100">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    value={user.phoneNumber || ""}
+                    readOnly
+                    className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm"
+                  />
                 </div>
               </div>
             </div>
 
             <div className="mt-8">
-
               <h2 className="text-2xl font-bold mb-6 flex md:flex-row  justify-between items-start md:items-center w-full">
                 <span className="w-1/2">Referral and Earnings</span>
-                <button 
+                <button
                   onClick={showAnalyticsModal}
-                  className="text-sm font-medium space-x-3  text-white border-[0.2px] border-darkStroke  px-2 md:px-4 py-2 rounded-md shadow-md flex justify-center items-center w-1/2"
+                  className="text-sm font-medium space-x-3  text-green-600 border-[0.2px] border-darkStroke  px-2 md:px-4 py-2 rounded-md shadow-md flex justify-center items-center w-1/2 md:w-1/4"
                 >
-                  <span>Analytics</span> <LineChartOutlined/>
+                  <span>Analytics</span> <LineChartOutlined />
                 </button>
               </h2>
               <div className="flex flex-col md:flex-row gap-4 items-start md:items-end">
                 <div className="flex-grow w-full">
-                  <label className="block text-sm font-medium text-gray-100">Referral Code</label>
+                  <label className="block text-sm font-medium text-gray-100">
+                    Referral Code
+                  </label>
                   <div className="mt-1 flex rounded-md shadow-sm w-full">
-                    <input type="text" value={user.referralCode || ''} readOnly className="flex-grow px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md w-3/4" />
-                    <button 
+                    <input
+                      type="text"
+                      value={user.referralCode || ""}
+                      readOnly
+                      className="flex-grow px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md w-3/4"
+                    />
+                    <button
                       onClick={copyReferralCode}
                       className="inline-flex items-center px-4 py-2 border border-transparent rounded-r-md shadow-sm text-sm font-medium text-white w-1/4 "
                     >
@@ -176,7 +246,7 @@ const UserDashboard = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-6 grid grid-cols-2 md:grid-cols-2 gap-4">
                 <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
                   <h3 className="text-lg font-light mb-2">Leads Count</h3>
@@ -184,47 +254,71 @@ const UserDashboard = () => {
                 </div>
                 <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
                   <h3 className="text-lg font-light mb-2">Paid Leads</h3>
-                  <p className="text-3xl font-bold">{user.paidUsersCount || 0}</p>
+                  <p className="text-3xl font-bold">
+                    {user.paidUsersCount || 0}
+                  </p>
                 </div>
               </div>
-                <div className="bg-darkSecondary border-[0.4px] mt-4 border-darkStroke p-4 rounded-md shadow">
-                  <h3 className="text-lg font-light mb-2">Credits Earned</h3>
-                  <p className="text-3xl font-bold text-green-500">₹{user.usersCount || 0}</p>
-                </div>
-                <Card className="max-w-4xl mx-auto mt-8">
-          <CardContent className="p-6">
-            <h2 className="text-2xl font-bold mb-6">Referral QR Code</h2>
-            <div className="flex flex-col items-center">
-              <QRCodeSVG value={referralUrl} size={200} />
-              <p className="mt-4 text-sm text-gray-400">Scan this QR code to invite friends</p>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="bg-darkSecondary border-[0.4px] mt-4 border-darkStroke p-4 rounded-md shadow">
+                <h3 className="text-lg font-light mb-2">Credits Earned</h3>
+                <p className="text-3xl font-bold text-green-500">
+                  ₹{user.usersCount || 0}
+                </p>
+              </div>
+              <Card className="max-w-4xl mx-auto mt-8">
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold">Referral QR Code</h2>
+                    <button
+                      onClick={handleDownload}
+                      className="border-darkStroke border-[0.5px] rounded-md px-2 py-1 text-green-600"
+                    >
+                      <DownloadOutlined className="text-xl mr-1" />
+                      Download QR
+                    </button>
+                  </div>
+                  <div className="flex flex-col w-fit mx-auto p-3 items-center relative">
+                    <Beam className="top-0 left-0" />
+                    <Beam className="top-0 right-0" />
+                    <Beam className="bottom-0 left-0" />
+                    <Beam className="bottom-0 right-0" />
+                    <QRCodeSVG
+                      value={referralUrl}
+                      size={200}
+                      className="qr-code-svg relative"
+                    />
+                    <p className="mt-4 text-sm text-gray-400">
+                      Scan this QR code to invite friends
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
             <div className="mt-8">
               <h2 className="text-2xl font-bold mb-4">Actions</h2>
               <div className="flex items-center space-x-2">
-                <button 
-                  className="text-red-400 border-[0.7px] border-red-400 rounded-md px-2 py-1" 
-                  onClick={() => showConfirmModal('logout')}
+                <button
+                  className="text-red-400 border-[0.7px] border-red-400 rounded-md px-2 py-1"
+                  onClick={() => showConfirmModal("logout")}
                 >
-                  <PoweroffOutlined className="text-red-400"/> Logout
+                  <PoweroffOutlined className="text-red-400" /> Logout
                 </button>
-                {user.isBrokerConnected && 
-                  <button 
-                    className="text-red-400 border-[0.7px] border-red-400 rounded-md px-2 py-1" 
-                    onClick={() => showConfirmModal('disconnect')}
-                  > 
-                    <DisconnectOutlined className="text-red-400"/> Disconnect broker
+                {user.isBrokerConnected && (
+                  <button
+                    className="text-red-400 border-[0.7px] border-red-400 rounded-md px-2 py-1"
+                    onClick={() => showConfirmModal("disconnect")}
+                  >
+                    <DisconnectOutlined className="text-red-400" /> Disconnect
+                    broker
                   </button>
-                }
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Confirmation Modal */}
-        <Modal 
+        <Modal
           title="Confirmation"
           visible={isModalVisible}
           onOk={handleOk}
@@ -232,11 +326,11 @@ const UserDashboard = () => {
           okText="Yes"
           cancelText="No"
         >
-          {actionType === 'logout' ? 
-            <p>Are you sure you want to log out?</p> 
-            : 
+          {actionType === "logout" ? (
+            <p>Are you sure you want to log out?</p>
+          ) : (
             <p>Are you sure you want to disconnect the broker?</p>
-          }
+          )}
         </Modal>
 
         <Modal
@@ -248,16 +342,23 @@ const UserDashboard = () => {
           <div className="space-y-4">
             <h1 className="text-slate-200">Your Leads</h1>
             {leads?.map((lead) => (
-              <div key={lead._id} className="flex items-center p-2 bg-darkSecondary rounded-md">
-                <img 
+              <div
+                key={lead._id}
+                className="flex items-center p-2 bg-darkSecondary rounded-md"
+              >
+                <img
                   src={lead.profile_image_url || "/fallback_profile.jpg"}
-                  alt={lead.firstName+" "+lead.lastName}
+                  alt={lead.firstName + " " + lead.lastName}
                   className="w-12 h-12 rounded-full mr-4"
                 />
                 <div className="text-white">
-                  <p className="text-sm font-semibold">{lead.firstName+" "+lead.lastName}</p>
+                  <p className="text-sm font-semibold">
+                    {lead.firstName + " " + lead.lastName}
+                  </p>
                   <p className="text-xs text-gray-400">{lead.email}</p>
-                  <p className="text-xs text-gray-400">Joined {  moment(lead.createdAt).fromNow()}</p>
+                  <p className="text-xs text-gray-400">
+                    Joined {moment(lead.createdAt).fromNow()}
+                  </p>
                 </div>
               </div>
             ))}

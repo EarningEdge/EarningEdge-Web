@@ -30,14 +30,8 @@ const router = createBrowserRouter([
         <Suspense
           fallback={
             <div className="h-screen bg-darkBg w-full flex items-center justify-center">
-              <video
-                src="/loading.webm"
-                autoPlay
-                loop
-                muted
-                className="w-40 h-40"
-                aria-label="Loading animation"
-              />
+                 <div className="w-16 h-16 border-4 border-t-4 border-blue-600 rounded-full animate-spin"></div>
+
             </div>
           }
         >
