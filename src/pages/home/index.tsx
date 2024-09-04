@@ -1,29 +1,18 @@
-import { Alert, Card, Button, Row, Col } from "antd";
+import {  Card, Button, Row, Col } from "antd";
 import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
 import useFetchData from "../../hooks/useFetch";
 import {
-  //  useAppDispatch,
    useAppSelector } from "../../redux/hooks";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-// import usePostData from "../../hooks/usePost";
-// import { login } from "../../redux/slices/authSlice";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import useAxios from "../../hooks/useAxios";
 import { CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import BlurBlobs from "../journal/Blurblobs";
-
-// interface ConnectResponse {
-//   status: string;
-//   message: string;
-// }
 const Index = () => {
   const user = useAppSelector((state) => state.auth.user);
   const api = useAxios()
-  // const token = useAppSelector((state) => state.auth.token);
   const [news,setNews] = useState<null|any[]>(null)
-  // const dispatch = useAppDispatch()
   const {data:newsData,isLoading:isNewsLoading,isError:isNewsError,error:newsError} = useQuery({
     queryKey:["news"],
     queryFn:async()=>{
@@ -37,35 +26,12 @@ const Index = () => {
     data: { _id: string; createdAt: string; value: string }[];
   }>("/adminAlert/getAlerts");
 
-
   const [selectedNewsUrl, setSelectedNewsUrl] = useState<string | null>(null);
-
-  // const {  postData,data } = usePostData<{}, ConnectResponse>('/broker/disconnect');
-
   const navigate = useNavigate();
 
-  // const handleDisConnect = async () => {
-  //   await postData({});
-  //   if(data?.status==="success"){
-  //     message.success("Disconnected!");
-  //     window.location.reload()
-  //     if(user)
-  //     dispatch(login({
-  //       user: { ...user, isBrokerConnected: false },
-  //       token
-  //     }));
-  //   }else{
-  //     message.error("Failed to disconnect")
-  //   }
-  // };
-
-  // const handleReadMore = () => {
-  //   // Logic to navigate to a detailed news page or load more news items
-  // };
 
   const renderAlert = (alert: { _id: string; createdAt: string; value: string }) => (
     <div className="relative border-darkStroke px-3 py-3 rounded-md border-[0.4px] my-3 overflow-hidden">
-      {/* Animated blob inside the container */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[0px] right-[20px] w-96 h-96 bg-green-500 bg-opacity-45 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
       </div>
@@ -100,7 +66,7 @@ const Index = () => {
   return (
     <CustomLayout>
       
-      {/* Alerts */}
+
       {alert?.data?.map(renderAlert)}
       {
         user?.isBrokerConnected?<div className="bg-green-300 px-3 w-full h-10 flex items-center justify-center space-x-3  border-[0.7px] border-green-800 rounded-md"><CheckCircleOutlined className=" text-2xl text-green-800" />
@@ -109,8 +75,12 @@ const Index = () => {
         <div onClick={()=>{navigate("/connectbroker")}} className=" px-3 w-full h-10 flex items-center justify-center space-x-3  border-[0.7px] border-orange-800 rounded-md cursor-pointer"><ExclamationCircleOutlined className=" text-2xl text-red-300" />
             <h1 className="text-red-300">Broker not connected</h1>
         </div>
-
       }
+      <div className="text-white mt-2 border-[0.4px] border-darkStroke p-2 rounded-md flex items-center py-4">
+        <h1>Hi {user?.firstName}!</h1>
+        <p>Have any queries?</p>
+        <p>Feel free to <Link className="bg-white text-black px-3 py-2 rounded-md" to={"/contact"}> contact us</Link></p>
+      </div>
 
      
       <h2 className="text-2xl my-2 text-white">Top News</h2>

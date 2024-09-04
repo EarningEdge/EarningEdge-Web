@@ -12,12 +12,13 @@ import { notify } from "../../utils/notify";
 import useAxios from "../../hooks/useAxios";
 import { IUser } from "../../types/data";
 import moment from "moment";
+import  { QRCodeSVG } from 'qrcode.react';
 
 const UserDashboard = () => {
   const { user, token } = useAppSelector((state) => state.auth);
   const [leads, setLeads] = useState<null | IUser[]>(null);
-
-  const api = useAxios();
+  const [referralUrl, setReferralUrl] = useState('');
+    const api = useAxios(); 
   const dispatch = useAppDispatch();
 
   const { mutateAsync: disconnectUser } = useMutation({
@@ -35,7 +36,9 @@ const UserDashboard = () => {
     }
   });
 
-  const { data: leadsResponse, isLoading: isLeadsLoading, isError: isLeadsError, error: leadsError } = useQuery({
+  const { data: leadsResponse, 
+    // isLoading: isLeadsLoading, isError: isLeadsError, error: leadsError 
+  } = useQuery({
     queryKey: ["leads"],
     queryFn: async () => { return api.get("/sales/getLeads/" + user?._id); }
   });
@@ -46,7 +49,9 @@ const UserDashboard = () => {
     }
   }, [leadsResponse]);
 
-  const { data: userDetails, isLoading: isUserDetailsLoading, isError: isUserError, error: userError } = useQuery({
+  const { data: userDetails, 
+    // isLoading: isUserDetailsLoading, isError: isUserError, error: userError 
+  } = useQuery({
     queryKey: ["userDetails"],
     queryFn: async () => { return api.get("/user/details/" + user?._id); }
   });
@@ -56,6 +61,11 @@ const UserDashboard = () => {
       dispatch(login({ user: userDetails?.data?.data?.userData, token }));
     }
   }, [userDetails]);
+  useEffect(() => {
+    if (user && user._id) {
+      setReferralUrl(`${import.meta.env.REACT_APP_FRONTEND_URL}?referralCode=${user._id}`);
+    }
+  }, [user]);
 
   // State to control modal visibility
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -141,6 +151,7 @@ const UserDashboard = () => {
             </div>
 
             <div className="mt-8">
+
               <h2 className="text-2xl font-bold mb-6 flex md:flex-row  justify-between items-start md:items-center w-full">
                 <span className="w-1/2">Referral and Earnings</span>
                 <button 
@@ -180,6 +191,15 @@ const UserDashboard = () => {
                   <h3 className="text-lg font-light mb-2">Credits Earned</h3>
                   <p className="text-3xl font-bold text-green-500">₹{user.usersCount || 0}</p>
                 </div>
+                <Card className="max-w-4xl mx-auto mt-8">
+          <CardContent className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Referral QR Code</h2>
+            <div className="flex flex-col items-center">
+              <QRCodeSVG value={referralUrl} size={200} />
+              <p className="mt-4 text-sm text-gray-400">Scan this QR code to invite friends</p>
+            </div>
+          </CardContent>
+        </Card>
             </div>
             <div className="mt-8">
               <h2 className="text-2xl font-bold mb-4">Actions</h2>

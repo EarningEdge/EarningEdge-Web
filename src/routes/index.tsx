@@ -3,7 +3,7 @@ import { Suspense, lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoutes";
 import App from "../App";
 
-import CustomLayout from "../components/layout/custom-layout/CustomLayout";
+
 import ErrorBoundary from "../components/layout/error/ErrorBoundary";
 
 // Lazy Loading all the pages
@@ -11,31 +11,36 @@ const AddPhno = lazy(() => import("../pages/auth/add-phnumber/AddPhno"));
 const Profile = lazy(() => import("../pages/profile"));
 const UserOB = lazy(() => import("../pages/auth/user-details/UserDetails"));
 const NotAvailable = lazy(() => import("../pages/not-available"));
-const ConfirmMail = lazy(
-  (): any => import("../pages/auth/confirm-email/ConfirmMail")
-);
-const Home = lazy(
-  (): any => import("../pages/home")
-);
-const ConfirmPhno = lazy(
-  (): any => import("../pages/auth/confirm-phnumber/ConfirmPhno")
-);
-const ConnectBroker = lazy(
-  (): any => import("../pages/auth/connect-broker/ConnectBroker")
-);
-const Login = lazy((): any => import("../pages/auth/user-login/UserLogin"));
-const Signup = lazy((): any => import("../pages/auth/user-signup/UserSignup"));
-const Journal = lazy((): any => import("../pages/journal"));
-const Auth = lazy((): any => import("../pages/auth/auth-screen/Home"));
-const ResetPassword = lazy((): any => import("../pages/auth/forgot-password"));
-const Sales = lazy((): any => import("../pages/sales"));
+const ConfirmMail = lazy(() => import("../pages/auth/confirm-email/ConfirmMail"));
+const Home = lazy(() => import("../pages/home"));
+const ConfirmPhno = lazy(() => import("../pages/auth/confirm-phnumber/ConfirmPhno"));
+const ConnectBroker = lazy(() => import("../pages/auth/connect-broker/ConnectBroker"));
+const Login = lazy(() => import("../pages/auth/user-login/UserLogin"));
+const Signup = lazy(() => import("../pages/auth/user-signup/UserSignup"));
+const Journal = lazy(() => import("../pages/journal"));
+const Auth = lazy(() => import("../pages/auth/auth-screen/Home"));
+const ResetPassword = lazy(() => import("../pages/auth/forgot-password"));
+const Sales = lazy(() => import("../pages/sales"));
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <ErrorBoundary>
-        <Suspense fallback={<CustomLayout> </CustomLayout>}>
+        <Suspense
+          fallback={
+            <div className="h-screen bg-darkBg w-full flex items-center justify-center">
+              <video
+                src="/loading.webm"
+                autoPlay
+                loop
+                muted
+                className="w-40 h-40"
+                aria-label="Loading animation"
+              />
+            </div>
+          }
+        >
           <Outlet />
         </Suspense>
       </ErrorBoundary>
@@ -46,16 +51,16 @@ const router = createBrowserRouter([
         element: <App />,
       },
       {
-        path: "/auth",
-        element: <Auth />,
-      },
-      {
         path: "login",
         element: <Login />,
       },
       {
         path: "signup",
         element: <Signup />,
+      },
+      {
+        path: "auth",
+        element: <Auth />,
       },
       {
         path: "add-phno",
@@ -65,18 +70,19 @@ const router = createBrowserRouter([
         path: "confirm-email",
         element: <ConfirmMail />,
       },
-     {
+      {
         path: "confirm-phno",
         element: <ConfirmPhno />,
-      }, 
-     {
+      },
+      {
         path: "reset-password",
         element: <ResetPassword />,
-      }, 
+      },
       {
         path: "user-details",
         element: <UserOB />,
       },
+
       {
         path: "connectbroker",
         element: <ProtectedRoute />,
@@ -84,7 +90,7 @@ const router = createBrowserRouter([
       },
       {
         path: "home",
-        element:  <ProtectedRoute />,
+        element: <ProtectedRoute />,
         children: [{ path: "", element: <Home /> }],
       },
       {
@@ -95,7 +101,7 @@ const router = createBrowserRouter([
       {
         path: "news",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: < NotAvailable/> }],
+        children: [{ path: "", element: <NotAvailable /> }],
       },
       {
         path: "stocks",
@@ -110,9 +116,8 @@ const router = createBrowserRouter([
       {
         path: "sales",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <Sales/> }],
+        children: [{ path: "", element: <Sales /> }],
       },
-
       {
         path: "*",
         element: <h1>Not Found</h1>,
