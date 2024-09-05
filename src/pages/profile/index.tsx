@@ -20,7 +20,7 @@ import useAxios from "../../hooks/useAxios";
 import { IUser } from "../../types/data";
 import moment from "moment";
 import { QRCodeSVG } from "qrcode.react";
-import Beam from "./Beam";
+import Beam from "../../components/aceternity/Beam";
 
 const UserDashboard = () => {
   const { user, token } = useAppSelector((state) => state.auth);

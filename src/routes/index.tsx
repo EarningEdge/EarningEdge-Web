@@ -103,6 +103,11 @@ const router = createBrowserRouter([
         children: [{ path: "", element: <NotAvailable /> }],
       },
       {
+        path: "course",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <NotAvailable /> }],
+      },
+      {
         path: "profile",
         element: <ProtectedRoute />,
         children: [{ path: "", element: <Profile /> }],

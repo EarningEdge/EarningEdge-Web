@@ -1,4 +1,4 @@
-import  { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { twMerge } from "tailwind-merge";
 import styles from "./style.module.css";
 
@@ -43,7 +43,7 @@ const Beam = ({ className }: any) => {
     <span
       ref={meteorRef}
       className={twMerge(
-        "absolute z-[40]    h-[0.1rem] w-[0.1rem] rounded-[9999px] bg-blue-700 shadow-[0_0_0_1px_#ffffff10] rotate-[180deg]",
+        "absolute z-[40] h-[0.1rem] w-[0.1rem] rounded-[9999px] bg-blue-400 shadow-[0_0_0_1px_#ffffff10] rotate-[180deg]",
         styles.meteor,
         className
       )}
@@ -52,4 +52,3 @@ const Beam = ({ className }: any) => {
 };
 
 export default Beam;
-

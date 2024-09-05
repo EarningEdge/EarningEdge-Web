@@ -1,9 +1,11 @@
 import React, { useState, useEffect, ReactNode } from "react";
-import { ConfigProvider, Layout, Menu } from "antd";
+import { ConfigProvider, Layout, Menu, Dropdown, MenuProps } from "antd";
 import { menuItems } from "../../../utils/menuItems";
 import { useAppSelector } from "../../../redux/hooks";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
+import { IndianRupee, LogOut, User } from "lucide-react";
+import moment from "moment";
 const { Sider, Content } = Layout;
 const CustomLayout = ({ children }: { children: ReactNode }) => {
   const { user } = useAppSelector((state) => state.auth);
@@ -15,7 +17,6 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
       navigate("/auth");
     }
   }, [user, navigate]);
-
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -23,6 +24,50 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  const daysSinceCreation = moment().diff(moment(user?.createdAt), 'days');
+  const freeTrialDaysLeft = 30 - daysSinceCreation;
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      label: (
+        <div className="bg-darkBg border-darkStroke border-[0.4px] rounded-md px-24 flex justify-center flex-col items-center py-7 relative">
+          <h1 className="text-slate-400 absolute top-1 left-1 rounded-md bg-slate-700 border-[0.4px] border-darkStroke text-center px-2">Free trial</h1>
+          <img
+            className="h-12 w-12 rounded-full"
+            src={user?.profile_image_url || "fallback_profile.jpg"}
+          ></img>
+          <h1 className=" text-slate-400">
+            {user?.firstName + " " + user?.lastName}
+          </h1>
+        </div>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <Link to={"/profile"}>
+          <h1 className=" text-slate-300">View Profile</h1>
+        </Link>
+      ),
+      icon: <User color="grey" size={15} />,
+    },
+    {
+      key: "3",
+      label: (
+        <Link to={"/"}>
+          <h1 className=" text-slate-300">Manage Subscription</h1>
+        </Link>
+      ),
+      icon: <IndianRupee color="grey" size={15} />,
+      disabled: true,
+    },
+    {
+      key: "4",
+      danger: true,
+      icon: <LogOut color="red" size={15} />,
+      label: <button>Logout</button>,
+    },
+  ];
 
   const renderMenuItems = (items: any) => {
     return items.map((item: any) => {
@@ -69,10 +114,20 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
           </Sider>
         )}
         <Layout style={{ marginLeft: isMobile ? 0 : 200 }}>
-          <Header className="py-0 w-full flex justify-end items-center bg-darkSecondary">
+          
+          <Header className="py-0 w-full flex justify-end items-center bg-darkSecondary z-10">
+          <h1 className="text-slate-500 mr-1">
+              {freeTrialDaysLeft<=0? <span className="text-red-400 ml-1"> Free trial expired {freeTrialDaysLeft*-1} days ago </span>: `Free trail expires in ${freeTrialDaysLeft} days` } 
+            </h1>
+            <Dropdown className="bg-black" menu={{ items }}>
               <button className=" w-fit">
-                <img className="h-10 w-10 rounded-full" src={user.profile_image_url || "fallback_profile.jpg"}/> 
+                <img
+                  className="h-10 w-10 rounded-full"
+                  src={user.profile_image_url || "fallback_profile.jpg"}
+                />
               </button>
+            </Dropdown>
+           
           </Header>
           <Content
             style={{

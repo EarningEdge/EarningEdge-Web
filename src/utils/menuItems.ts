@@ -1,7 +1,7 @@
 import React from "react";
 
 
-import {Newspaper,CandlestickChartIcon,House,NotebookPen} from 'lucide-react'
+import {Newspaper,CandlestickChartIcon,House,NotebookPen, PlayCircle} from 'lucide-react'
 export const menuItems = [
   {
     key: "1",
@@ -27,10 +27,11 @@ export const menuItems = [
     label: "Stocks Screen",
     path: "/stocks",
   },
-  // {
-  //   key: "5",
-  //   icon: React.createElement(UserOutlined),
-  //   label: "Profile",
-  //   path: "/profile",
-  // },
+  {
+    key: "5",
+    icon: React.createElement(PlayCircle),
+    label: "Course",
+    path: "/course",
+  },
+  
 ];
