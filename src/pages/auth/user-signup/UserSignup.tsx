@@ -33,7 +33,12 @@ const UserSignup: React.FC = () => {
       if (data.data._id && data.data.email) {
         localStorage.setItem("userId", data.data._id);
         localStorage.setItem("userEmail", data.data.email);
+        if(data.data.isEmailVerified){
+          navigate("/add-phno");
+        }
+        else
         navigate("/confirm-email");
+
       }
     } else if (data) {
       message.error(data.message || "Signup failed");

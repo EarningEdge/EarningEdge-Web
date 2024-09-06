@@ -93,9 +93,9 @@ const Index = () => {
           <h1 className="text-red-300">Broker not connected</h1>
         </div>
       )}
-      <div className="text-white mt-2 border-[0.4px] border-darkStroke p-2 rounded-md flex items-center py-4">
-        <h1>Hi {user?.firstName}!</h1>
-        <p>Have any queries?</p>
+      <div className="text-white mt-2 border-[0.4px] border-darkStroke p-2 rounded-md flex space-x-1 items-center py-4">
+        <h1>Hi {user?.firstName}!{" "} </h1>
+        <p> Have any queries?</p>
         <p>
           Feel free to{" "}
           <Link

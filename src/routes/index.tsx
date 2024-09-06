@@ -21,6 +21,7 @@ const Journal = lazy(() => import("../pages/journal"));
 const Auth = lazy(() => import("../pages/auth/auth-screen/Home"));
 const ResetPassword = lazy(() => import("../pages/auth/forgot-password"));
 const Sales = lazy(() => import("../pages/sales"));
+const Contact = lazy(() => import("../pages/contact"));
 
 const router = createBrowserRouter([
   {
@@ -116,6 +117,11 @@ const router = createBrowserRouter([
         path: "sales",
         element: <ProtectedRoute />,
         children: [{ path: "", element: <Sales /> }],
+      },
+      {
+        path: "contact",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <Contact /> }],
       },
       {
         path: "*",

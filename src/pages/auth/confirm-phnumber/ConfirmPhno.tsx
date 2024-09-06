@@ -14,7 +14,7 @@ const ConfirmPhno: React.FC = () => {
     e.preventDefault();
     const phoneNumber = localStorage.getItem('userPhoneNumber');
     if (otp && phoneNumber) {
-      await postData({ otp, phoneNumber });
+      await postData({ otp, phoneNumber:"91"+phoneNumber });
     }
   };
 

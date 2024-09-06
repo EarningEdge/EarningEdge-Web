@@ -6,11 +6,14 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
 import { IndianRupee, LogOut, User } from "lucide-react";
 import moment from "moment";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../redux/slices/authSlice";
 const { Sider, Content } = Layout;
 const CustomLayout = ({ children }: { children: ReactNode }) => {
   const { user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   useEffect(() => {
     if (!user) {
@@ -65,7 +68,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
       key: "4",
       danger: true,
       icon: <LogOut color="red" size={15} />,
-      label: <button>Logout</button>,
+      label: <button className="w-full text-left" onClick={()=>{dispatch(logout())}}>Logout</button>,
     },
   ];
 
