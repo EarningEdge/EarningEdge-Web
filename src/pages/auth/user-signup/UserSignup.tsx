@@ -33,12 +33,9 @@ const UserSignup: React.FC = () => {
       if (data.data._id && data.data.email) {
         localStorage.setItem("userId", data.data._id);
         localStorage.setItem("userEmail", data.data.email);
-        if(data.data.isEmailVerified){
+        if (data.data.isEmailVerified) {
           navigate("/add-phno");
-        }
-        else
-        navigate("/confirm-email");
-
+        } else navigate("/confirm-email");
       }
     } else if (data) {
       message.error(data.message || "Signup failed");
@@ -54,7 +51,7 @@ const UserSignup: React.FC = () => {
   }, [error]);
 
   return (
-    <div className="bg-gray-900 min-h-svh flex items-end p-5 auth relative">
+    <div className="bg-gray-900 min-h-screen flex items-end p-5 auth relative">
       <div className=" h-[90vh] w-full dark:bg-black bg-black  dark:bg-dot-white/[0.2] bg-dot-white/[0.2] relative flex items-end justify-center">
         <div className="absolute top-0">
           <div className="flex  flex-col w-fit mx-auto p-3 items-center relative ">
@@ -77,7 +74,7 @@ const UserSignup: React.FC = () => {
           <form className="w-full" onSubmit={handleSubmit}>
             <input
               type="email"
-              className="p-3 bg-black text-white text-xl border-2 border-white rounded-md w-full"
+              className="p-3 bg-black text-white text-xl border-[0.5px] border-white rounded-md w-full focus:outline-none"
               placeholder="name@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -88,17 +85,18 @@ const UserSignup: React.FC = () => {
               className="mt-3 text-xl rounded-md bg-white text-black p-3 w-full"
               disabled={loading}
             >
-              {loading ? "Sending..." : "Next"}
+              {loading ? "Sending..." : "Send OTP"}
             </button>
-            <button
+            {/* <button
               type="submit"
               className="mt-3 text-xl rounded-md bg-black border border-white text-white p-3 w-full"
               disabled={loading}
             >
               Cancel
-            </button>
+            </button> */}
           </form>
         </div>
+        <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
       </div>
     </div>
   );

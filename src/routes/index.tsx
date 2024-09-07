@@ -32,7 +32,6 @@ const router = createBrowserRouter([
           fallback={
             <div className="h-screen bg-darkBg w-full flex items-center justify-center">
                  <div className="w-16 h-16 border-4 border-t-4 border-blue-600 rounded-full animate-spin"></div>
-
             </div>
           }
         >
@@ -96,17 +95,17 @@ const router = createBrowserRouter([
       {
         path: "news",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <NotAvailable /> }],
+        children: [{ path: "", element: <NotAvailable servicename="News" /> }],
       },
       {
         path: "stocks",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <NotAvailable /> }],
+        children: [{ path: "", element: <NotAvailable servicename="Stock Screener" /> }],
       },
       {
         path: "course",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <NotAvailable /> }],
+        children: [{ path: "", element: <NotAvailable servicename="Course section" /> }],
       },
       {
         path: "profile",

@@ -1,9 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Beam from "../../../components/aceternity/Beam";
 
 const Home = () => {
+  const [searchParams] = useSearchParams();
+  const inviteCode = searchParams.get('inviteCode');
+  const username = searchParams.get('username');
+  if(inviteCode && username){
+    localStorage.setItem("inviteCode",inviteCode)
+    localStorage.setItem("refferalUserName",username)
+  }
   return (
-    <div className="bg-gray-900 min-h-svh flex items-end p-5 auth relative">
+    <div className="bg-gray-900 min-h-screen flex items-end p-5 auth relative">
       <div className=" h-[90vh] w-full dark:bg-black bg-black  dark:bg-dot-white/[0.2] bg-dot-white/[0.2] relative flex items-end justify-center">
         <div className="absolute top-0">
           <div className="flex  flex-col w-fit mx-auto p-3 items-center relative ">

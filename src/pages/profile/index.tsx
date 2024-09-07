@@ -78,7 +78,11 @@ const UserDashboard = () => {
   useEffect(() => {
     if (user && user._id) {
       setReferralUrl(
-        `${import.meta.env.REACT_APP_FRONTEND_URL}?inviteCode=${user._id}`
+        `${import.meta.env.VITE_REACT_APP_FRONTEND_URL}/auth?inviteCode=${
+          user.referralCode
+        }&username=${
+          user.firstName?.toLowerCase() + "_" + user.lastName?.toLowerCase()
+        }`
       );
     }
   }, [user]);
