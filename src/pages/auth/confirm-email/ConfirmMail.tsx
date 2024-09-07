@@ -61,7 +61,7 @@ const ConfirmMail: React.FC = () => {
             <br /> <b>Account</b>
           </h1>
           <p>OTP sent to {localStorage.getItem("userEmail")}</p>
-          <form onSubmit={handleSubmit}>s
+          <form onSubmit={handleSubmit}>
             <input
               type="text"
               className="p-3 bg-black text-white text-xl border-[0.5px] border-white rounded-md w-full focus:outline-none"
