@@ -4,6 +4,7 @@ import { message, Modal, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
+// import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 
 interface ConnectResponse {
   status: string;
@@ -33,6 +34,7 @@ const ConnectBroker: React.FC = () => {
     onSuccess: (data) => {
       if (data.status === "success") {
         message.success("Connected!");
+        
         navigate("/");
       } else {
         message.error("Failed to connect, please try again");
@@ -146,13 +148,13 @@ const ConnectBroker: React.FC = () => {
           <div className="space-y-4">
             <Button
               onClick={() => handleAccountChoice(true)}
-              className="w-full"
+              className="w-full text-white"
             >
               Yes, I already have an account
             </Button>
             <Button
               onClick={() => handleAccountChoice(false)}
-              className="w-full"
+              className="w-full text-white"
             >
               No, I don't have an account
             </Button>

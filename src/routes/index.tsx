@@ -22,6 +22,7 @@ const Auth = lazy(() => import("../pages/auth/auth-screen/Home"));
 const ResetPassword = lazy(() => import("../pages/auth/forgot-password"));
 const Sales = lazy(() => import("../pages/sales"));
 const Contact = lazy(() => import("../pages/contact"));
+const Learning = lazy(() => import("../pages/learning"));
 
 const router = createBrowserRouter([
   {
@@ -105,7 +106,7 @@ const router = createBrowserRouter([
       {
         path: "course",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <NotAvailable servicename="Course section" /> }],
+        children: [{ path: "", element: <Learning/> }],
       },
       {
         path: "profile",

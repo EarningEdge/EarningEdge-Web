@@ -5,7 +5,7 @@ import { useAppSelector } from "../../../redux/hooks";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
 import { IndianRupee, LogOut, User } from "lucide-react";
-import moment from "moment";
+
 import { useDispatch } from "react-redux";
 import { logout } from "../../../redux/slices/authSlice";
 const { Sider, Content } = Layout;
@@ -27,8 +27,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  const daysSinceCreation = moment().diff(moment(user?.createdAt), 'days');
-  const freeTrialDaysLeft = 30 - daysSinceCreation;
+
   const items: MenuProps["items"] = [
     {
       key: "1",
@@ -104,7 +103,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
             }}
           >
             <div className="text-xl text-white text-center mt-4 mb-8 font-bold">
-              EarningEdge<span className="text-[#637CFF]">.in</span>
+              EarningEdge<span className="text-[#637CFF]">.app</span>
             </div>
             <Menu
               theme="dark"
@@ -119,9 +118,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
         <Layout style={{ marginLeft: isMobile ? 0 : 200 }}>
           
           <Header className="py-0 w-full flex justify-end items-center bg-darkSecondary z-10">
-          <h1 className="text-slate-500 mr-1">
-              {freeTrialDaysLeft<=0? <span className="text-red-400 ml-1"> Free trial expired {freeTrialDaysLeft*-1} days ago </span>: `Free trail expires in ${freeTrialDaysLeft} days` } 
-            </h1>
+          
             <Dropdown className="bg-black" menu={{ items }}>
               <button className=" w-fit">
                 <img
