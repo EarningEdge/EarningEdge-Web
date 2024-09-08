@@ -10,7 +10,7 @@ const LearningSection: React.FC = () => {
   // List of video IDs and titles
   const videos: Video[] = [
     { id: '508c10J-ipc', title: 'Introduction' },
-    // { id: 'ZZ5LpwO-An4', title: 'Video 2' },
+    { id: 'rAGkne08UXM', title: 'Connect Dhan' },
     // { id: 'y6120QOlsfU', title: 'Video 3' },
     // { id: '9bZkp7q19f0', title: 'Video 4' },
   ];
