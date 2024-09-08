@@ -360,6 +360,7 @@ const UserDashboard = () => {
                     {lead.firstName + " " + lead.lastName}
                   </p>
                   <p className="text-xs text-gray-400">{lead.email}</p>
+                  <p className="text-xs text-gray-400">{lead.phoneNumber}</p>
                   <p className="text-xs text-gray-400">
                     Joined {moment(lead.createdAt).fromNow()}
                   </p>
