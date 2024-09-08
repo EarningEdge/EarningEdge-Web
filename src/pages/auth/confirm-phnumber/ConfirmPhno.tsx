@@ -20,7 +20,14 @@ const ConfirmPhno: React.FC = () => {
   };
 
   useEffect(() => {
+    if(!localStorage.getItem("userPhoneNumber")){
+      return navigate("/add-phno")
+    }
+    if(localStorage.getItem("phoneVerified")==="true"){
+      return navigate("/user-details")
+    }
     if (data?.status==="success") {
+      localStorage.setItem("phoneVerified","true")
       navigate('/user-details');
     } else if (data) {
       message.error(data.message || 'Verification failed');

@@ -24,6 +24,12 @@ const AddPhno: React.FC = () => {
   };
 
   useEffect(() => {
+    if(!localStorage.getItem("userEmail")){
+      return navigate("/signup");
+    }
+    if(localStorage.getItem("userPhoneNumber")){
+      return navigate("/confirm-phno");
+    }
     if (data?.status === "success") {
       localStorage.setItem("userPhoneNumber", phoneNumber);
       navigate("/confirm-phno");

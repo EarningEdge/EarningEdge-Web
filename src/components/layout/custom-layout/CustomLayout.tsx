@@ -67,7 +67,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
       key: "4",
       danger: true,
       icon: <LogOut color="red" size={15} />,
-      label: <button className="w-full text-left" onClick={()=>{dispatch(logout())}}>Logout</button>,
+      label: <button className="w-full text-left" onClick={()=>{dispatch(logout());navigate("/auth")}}>Logout</button>,
     },
   ];
 

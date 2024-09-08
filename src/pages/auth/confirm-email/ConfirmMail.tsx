@@ -25,9 +25,17 @@ const ConfirmMail: React.FC = () => {
   };
 
   useEffect(() => {
+    if(!localStorage.getItem("userEmail")){
+      return navigate("/signup")
+    }
+    if(localStorage.getItem("emailVerified")==="true"){
+      return navigate("/add-phno");
+    }
     if (data?.status === "success") {
+      localStorage.setItem("emailVerified","true")
       navigate("/add-phno");
     } else if (error) {
+      localStorage.setItem("emailVerified","false")
       message.error(error.message || "Verification failed");
     }
   }, [data, navigate]);

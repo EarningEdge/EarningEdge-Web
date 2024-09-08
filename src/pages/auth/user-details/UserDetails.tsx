@@ -41,9 +41,17 @@ const UserDetails: React.FC = () => {
   };
 
   useEffect(() => {
+    if(!localStorage.getItem("phoneVerified")){
+      return navigate("/confirm-phno")
+    }
     if (data?.success) {
       localStorage.removeItem("refferalUserName");
       localStorage.removeItem("inviteCode");
+      localStorage.removeItem("emailVerified");
+      localStorage.removeItem("userPhoneNumber");
+      localStorage.removeItem("phoneVerified");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userEmail");
       dispatch(login({ user: data.user!, token: data.token }));
       navigate('/');
     } else if (error) {
