@@ -24,14 +24,14 @@ export const ProtectedRoute = () => {
         dispatch(logout());
         navigate("/login");
       } 
-    
+  
     } catch (error) {
       console.log(error);
       navigate("/login");
     } finally {
       setIsChecking(false);
     }
-  }, [token, navigate, dispatch]);
+  }, [token, window.location.pathname, dispatch]);
 
   if (isChecking) {
     return <Loader />;
