@@ -4,10 +4,13 @@ import { message } from "antd";
 import usePostData from "../../../hooks/usePut";
 import { IUser } from "../../../types/data";
 import Beam from "../../../components/aceternity/Beam";
+import { cancelSignUp } from "../../../utils/api";
+import { notify } from "../../../utils/notify";
 
 const ConfirmMail: React.FC = () => {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
+  const [isCancelling,setIsCancelling] = useState(false);
   const { data, loading, error, postData } = usePostData<
     { otp: string; email: string },
     {
@@ -39,7 +42,7 @@ const ConfirmMail: React.FC = () => {
       message.error(error.message || "Verification failed");
     }
   }, [data, navigate]);
-
+  
   useEffect(() => {
     if (error) {
       message.error(
@@ -48,6 +51,29 @@ const ConfirmMail: React.FC = () => {
       );
     }
   }, [error]);
+  
+  const handleCancel = async()=>{
+    try {
+      setIsCancelling(true);
+      const userId = localStorage.getItem("userId");
+      if(!userId){
+        notify("UserId not found","error")
+        return
+      }
+      const res = await cancelSignUp(userId+"")
+      if(res?.status===202){
+        notify("Process canceled","success")
+        localStorage.clear();
+        navigate("/")
+      }
+    } catch (error) {
+      notify("Failed to cancel the process","error");
+    }
+    finally{
+      setIsCancelling(false);
+    }
+  }
+
   return (
     <div className="bg-gray-900 min-h-screen flex items-end p-5 auth relative">
       <div className=" h-[90vh] w-full dark:bg-black bg-black  dark:bg-dot-white/[0.2] bg-dot-white/[0.2] relative flex items-end justify-center">
@@ -84,6 +110,14 @@ const ConfirmMail: React.FC = () => {
               disabled={loading}
             >
               {loading ? "Verifying..." : "Next"}
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="mt-3 text-xl rounded-md bg-black text-white p-3 w-full"
+              disabled={isCancelling}
+            >
+              {isCancelling ? "Cancelling..." : "Cancel"}
             </button>
           </form>
         </div>

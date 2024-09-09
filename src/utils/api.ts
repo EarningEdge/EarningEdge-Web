@@ -8,3 +8,11 @@ export const fetchUserData = async (userId:string)=>{
         
     }
 }
+export const cancelSignUp = async (userId:string)=>{
+    try {
+        const response = await axios.post(`${SERVER_URL}/user/delete-account/${userId}`);
+        return response
+    } catch (error) {
+        
+    }
+}

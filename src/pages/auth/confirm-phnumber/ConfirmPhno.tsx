@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import usePostData from '../../../hooks/usePut';
 import Beam from '../../../components/aceternity/Beam';
-
+import { cancelSignUp } from "../../../utils/api";
+import { notify } from "../../../utils/notify";
 const ConfirmPhno: React.FC = () => {
   const [otp, setOtp] = useState('');
   const navigate = useNavigate();
   const { data, loading, error, postData } = usePostData<{ otp: string; phoneNumber: string }, {
     message: string; status: string; user?: any 
 }>('/user/verifyPhoneNumber');
+const [isCancelling,setIsCancelling] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,6 +20,27 @@ const ConfirmPhno: React.FC = () => {
       await postData({ otp, phoneNumber:"91"+phoneNumber });
     }
   };
+  const handleCancel = async()=>{
+    try {
+      setIsCancelling(true);
+      const userId = localStorage.getItem("userId");
+      if(!userId){
+        notify("UserId not found","error")
+        return
+      }
+      const res = await cancelSignUp(userId+"")
+      if(res?.status===202){
+        notify("Process canceled","success")
+        localStorage.clear();
+        navigate("/")
+      }
+    } catch (error) {
+      notify("Failed to cancel the process","error");
+    }
+    finally{
+      setIsCancelling(false);
+    }
+  }
 
   useEffect(() => {
     if(!localStorage.getItem("userPhoneNumber")){
@@ -75,6 +98,14 @@ const ConfirmPhno: React.FC = () => {
           >
             {loading ? 'Verifying...' : 'Verify'}
           </button>
+          <button
+              type="button"
+              onClick={handleCancel}
+              className="mt-3 text-xl rounded-md bg-black text-white p-3 w-full"
+              disabled={isCancelling}
+            >
+              {isCancelling ? "Cancelling..." : "Cancel"}
+            </button>
         </form>
       </div>
       <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>

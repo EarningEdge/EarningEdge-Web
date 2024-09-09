@@ -4,10 +4,13 @@ import { message } from "antd";
 import usePostData from "../../../hooks/usePost";
 import { IUser } from "../../../types/data";
 import Beam from "../../../components/aceternity/Beam";
-
+import { cancelSignUp } from "../../../utils/api";
+import { notify } from "../../../utils/notify";
 const UserSignup: React.FC = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const [isCancelling,setIsCancelling] = useState(false);
+
   const { data, loading, error, postData } = usePostData<
     { email: string },
     {
@@ -26,6 +29,28 @@ const UserSignup: React.FC = () => {
       await postData({ email });
     }
   };
+  const handleCancel = async()=>{
+    try {
+      setIsCancelling(true);
+      const userId = localStorage.getItem("userId");
+      if(!userId){
+        notify("UserId not found","error")
+        return
+      }
+      const res = await cancelSignUp(userId+"")
+      if(res?.status===202){
+        notify("Process canceled","success")
+        localStorage.clear();
+        navigate("/")
+      }
+    } catch (error) {
+      notify("Failed to cancel the process","error");
+    }
+    finally{
+      setIsCancelling(false);
+    }
+  }
+
 
   useEffect(() => {
     console.log(data);
@@ -86,6 +111,14 @@ const UserSignup: React.FC = () => {
               disabled={loading}
             >
               {loading ? "Sending..." : "Send OTP"}
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="mt-3 text-xl rounded-md bg-black text-white p-3 w-full"
+              disabled={isCancelling}
+            >
+              {isCancelling ? "Cancelling..." : "Cancel"}
             </button>
             {/* <button
               type="submit"
