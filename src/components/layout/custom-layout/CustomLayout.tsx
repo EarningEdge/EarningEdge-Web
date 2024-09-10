@@ -16,14 +16,49 @@ import { IndianRupee, LogOut, User } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../../redux/slices/authSlice";
 import { BellOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
+import useAxios from "../../../hooks/useAxios";
 const { Sider, Content } = Layout;
 const CustomLayout = ({ children }: { children: ReactNode }) => {
   const { user } = useAppSelector((state) => state.auth);
+  console.log("🚀 ~ CustomLayout ~ user:", user?._id);
+  const api = useAxios();
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [open, setOpen] = useState(false);
+  const [notificationList, setNotificationList] = useState<
+    | [
+        {
+          notificationContent: {
+            title: string;
+            message: string;
+          };
+        }
+      ]
+    | []
+  >([]);
+
+  const {
+    data: notificationResponse,
+    // isLoading: isLeadsLoading, isError: isLeadsError, error: leadsError
+  } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: async () => {
+      return api.get("/notification/list/" + user?._id);
+    },
+  });
+
+  useEffect(() => {
+    if (notificationResponse && notificationResponse.data) {
+      console.log(
+        "🚀 ~ useEffect ~ notificationResponse.data:",
+        notificationResponse.data
+      );
+      setNotificationList(notificationResponse.data.data);
+    }
+  }, [notificationResponse]);
 
   const showDrawer = () => {
     setOpen(true);
@@ -158,10 +193,21 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
               <button className="w-fit items-center mx-4" onClick={showDrawer}>
                 <BellOutlined className=" self-center mt-5 text-3xl text-white" />
               </button>
-              <Drawer title="Basic Drawer" onClose={onClose} open={open}>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
+              <Drawer title="Notifications" onClose={onClose} open={open}>
+                {notificationList &&
+                  notificationList.length > 0 &&
+                  notificationList.map((item, index) => {
+                    return (
+                      <div>
+                        <div className="text-lg text-black font-bold">
+                          {item.notificationContent.title}
+                        </div>
+                        <div className="text-base text-black">
+                          {item.notificationContent.message}
+                        </div>
+                      </div>
+                    );
+                  })}
               </Drawer>
             </div>
           </Header>
