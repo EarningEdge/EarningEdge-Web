@@ -44,6 +44,21 @@ const UserDashboard = () => {
     },
   });
 
+  const { mutateAsync: updateUserDetails } = useMutation({
+    mutationKey: ["updateUserDetails"],
+    mutationFn: async (updatedUserDetails: object) => {
+      const response = await api.put("user/update/user-details", {
+        userId: user?._id,
+        ...updatedUserDetails,
+      });
+      return response;
+    },
+    onSuccess: (_, updatedUserDetails) => {
+      notify("Update successfully!", "success");
+      dispatch(login({ user: { ...user!, ...updatedUserDetails }, token }));
+    },
+  });
+
   const {
     data: leadsResponse,
     // isLoading: isLeadsLoading, isError: isLeadsError, error: leadsError
@@ -141,6 +156,32 @@ const UserDashboard = () => {
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
 
+  let timeoutId: NodeJS.Timeout; // Declare outside the function to persist
+
+  const handleUpdateDetails = async (field: string, value: any) => {
+    if (!value) {
+      clearTimeout(timeoutId);
+      notify("Please fill something!", "error");
+      return;
+    }
+    let updatedUserDetails: object;
+    switch (field) {
+      case "firstName":
+        updatedUserDetails = { newFirstName: value };
+        break;
+      case "lastName":
+        updatedUserDetails = { newLastName: value };
+        break;
+    }
+    // Clear the previous timeout before setting a new one
+    clearTimeout(timeoutId);
+
+    // Set a new timeout for the debounce
+    timeoutId = setTimeout(async () => {
+      await updateUserDetails(updatedUserDetails);
+    }, 1000);
+  };
+
   if (!user) {
     return <div className="text-center text-white">Loading...</div>;
   }
@@ -177,8 +218,10 @@ const UserDashboard = () => {
                   </label>
                   <input
                     type="text"
-                    value={user.firstName}
-                    readOnly
+                    defaultValue={user.firstName}
+                    onChange={(e) => {
+                      handleUpdateDetails("firstName", e.target.value);
+                    }}
                     className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm"
                   />
                 </div>
@@ -188,8 +231,10 @@ const UserDashboard = () => {
                   </label>
                   <input
                     type="text"
-                    value={user.lastName}
-                    readOnly
+                    defaultValue={user.lastName}
+                    onChange={(e) => {
+                      handleUpdateDetails("lastName", e.target.value);
+                    }}
                     className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm"
                   />
                 </div>
