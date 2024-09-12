@@ -6,6 +6,8 @@ import {
   Dropdown,
   MenuProps,
   Drawer,
+  Divider,
+  Segmented,
 } from "antd";
 import { menuItems } from "../../../utils/menuItems";
 import { useAppSelector } from "../../../redux/hooks";
@@ -14,21 +16,33 @@ import { Header } from "antd/es/layout/layout";
 import { IndianRupee, LogOut, User } from "lucide-react";
 
 import { useDispatch } from "react-redux";
-import { logout } from "../../../redux/slices/authSlice";
+import { login, logout } from "../../../redux/slices/authSlice";
 import { BellOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
+
 const { Sider, Content } = Layout;
 const CustomLayout = ({ children }: { children: ReactNode }) => {
-  const { user } = useAppSelector((state) => state.auth);
-  console.log("🚀 ~ CustomLayout ~ user:", user?._id);
+  const { user, token } = useAppSelector((state) => state.auth);
   const api = useAxios();
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [open, setOpen] = useState(false);
-  const [notificationList, setNotificationList] = useState<
+  const [currentTab, setCurrentTab] = useState("Unread");
+  const [unreadNotificationList, setUnreadNotificationList] = useState<
+    | [
+        {
+          notificationContent: {
+            title: string;
+            message: string;
+          };
+        }
+      ]
+    | []
+  >([]);
+  const [readNotificationList, setReadNotificationList] = useState<
     | [
         {
           notificationContent: {
@@ -40,32 +54,85 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
     | []
   >([]);
 
-  const {
-    data: notificationResponse,
-    // isLoading: isLeadsLoading, isError: isLeadsError, error: leadsError
-  } = useQuery({
-    queryKey: ["notifications"],
-    queryFn: async () => {
-      return api.get("/notification/list/" + user?._id);
+  const { mutateAsync: updateUserDetails } = useMutation({
+    mutationKey: ["updateUserDetails"],
+    mutationFn: async () => {
+      const response = await api.put("user/update/user-details", {
+        userId: user?._id,
+        lastNotificationViewedAt: new Date().toISOString(),
+      });
+
+      return response;
+    },
+    onSuccess: () => {
+      const date = new Date().toISOString().replace("Z", "+00:00");
+      dispatch(
+        login({
+          user: {
+            ...user!,
+            lastNotificationViewedAt: date,
+          },
+          token: token,
+        })
+      );
     },
   });
 
+  const {
+    data: unreadNotifications,
+    // isLoading: isUnreadNotificationsLoading, isError: isUnreadNotificationsError, error: unUeadNotificationsError
+  } = useQuery({
+    queryKey: ["unreadNotifications"],
+    queryFn: async () => {
+      return api.get("/notification/list/" + user?._id, {
+        params: {
+          fetchRead: false,
+          lastNotificationViewedAt: user?.lastNotificationViewedAt,
+        },
+      });
+    },
+  });
+
+  const {
+    data: readNotifications,
+    refetch: refetchReadNotifications,
+    // isLoading: isReadNotificationsLoading, isError: isReadNotificationsError, error: unRdNotificationsError
+  } = useQuery({
+    queryKey: ["readNotifications"],
+    queryFn: async () => {
+      return api.get("/notification/list/" + user?._id, {
+        params: {
+          fetchRead: true,
+          lastNotificationViewedAt: user?.lastNotificationViewedAt,
+        },
+      });
+    },
+    enabled: false,
+  });
+
   useEffect(() => {
-    if (notificationResponse && notificationResponse.data) {
-      console.log(
-        "🚀 ~ useEffect ~ notificationResponse.data:",
-        notificationResponse.data
-      );
-      setNotificationList(notificationResponse.data.data);
+    if (unreadNotifications && unreadNotifications.data) {
+      setUnreadNotificationList(unreadNotifications.data.data);
     }
-  }, [notificationResponse]);
+  }, [unreadNotifications]);
+
+  useEffect(() => {
+    if (readNotifications && readNotifications.data) {
+      setReadNotificationList(readNotifications.data.data);
+    }
+  }, [readNotifications]);
+
+  const handleFetchReadNotification = () => {
+    refetchReadNotifications();
+  };
 
   const showDrawer = () => {
     setOpen(true);
   };
 
-  const onClose = () => {
+  const onClose = async () => {
     setOpen(false);
+    await updateUserDetails();
   };
   useEffect(() => {
     if (!user) {
@@ -193,19 +260,80 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
               <button className="w-fit items-center mx-4" onClick={showDrawer}>
                 <BellOutlined className=" self-center mt-5 text-3xl text-white" />
               </button>
-              <Drawer title="Notifications" onClose={onClose} open={open}>
-                {notificationList &&
-                  notificationList.length > 0 &&
-                  notificationList.map((item, index) => {
+              <Drawer
+                title="Notifications"
+                onClose={onClose}
+                open={open}
+                styles={{
+                  body: {
+                    padding: 0,
+                  },
+                }}
+              >
+                <div className="px-8 py-4">
+                  <Segmented
+                    options={["Unread", "Read"]}
+                    onChange={(value) => {
+                      setCurrentTab(value);
+                      if (value === "Read") {
+                        handleFetchReadNotification();
+                      }
+                      console.log(value); // string
+                    }}
+                    block
+                    defaultValue="Unread"
+                  />
+                </div>
+                {currentTab === "Unread" &&
+                  unreadNotificationList &&
+                  unreadNotificationList.length > 0 &&
+                  unreadNotificationList.map((item, index) => {
                     return (
-                      <div>
-                        <div className="text-lg text-black font-bold">
-                          {item.notificationContent.title}
+                      <>
+                        <div>
+                          <div className="px-4">
+                            <div className="text-lg text-black font-bold">
+                              {item.notificationContent.title}
+                            </div>
+                            <div className="text-base text-black">
+                              {item.notificationContent.message}
+                            </div>
+                          </div>
+                          <Divider
+                            style={{
+                              margin: 0,
+                              marginTop: 8,
+                              marginBottom: 8,
+                            }}
+                          />
                         </div>
-                        <div className="text-base text-black">
-                          {item.notificationContent.message}
+                      </>
+                    );
+                  })}
+                {currentTab === "Read" &&
+                  readNotificationList &&
+                  readNotificationList.length > 0 &&
+                  readNotificationList.map((item, index) => {
+                    return (
+                      <>
+                        <div>
+                          <div className="px-4">
+                            <div className="text-lg text-black font-bold">
+                              {item.notificationContent.title}
+                            </div>
+                            <div className="text-base text-black">
+                              {item.notificationContent.message}
+                            </div>
+                          </div>
+                          <Divider
+                            style={{
+                              margin: 0,
+                              marginTop: 8,
+                              marginBottom: 8,
+                            }}
+                          />
                         </div>
-                      </div>
+                      </>
                     );
                   })}
               </Drawer>
