@@ -266,7 +266,7 @@ const UserDashboard = () => {
               <div className="bg-darkSecondary border-[0.4px] mt-4 border-darkStroke p-4 rounded-md shadow">
                 <h3 className="text-lg font-light mb-2">Credits Earned</h3>
                 <p className="text-3xl font-bold text-green-500">
-                  ₹{user.usersCount || 0}
+                  ₹{user.usersCount*500 || 0}
                 </p>
               </div>
               <Card className="max-w-4xl mx-auto mt-8">
