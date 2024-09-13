@@ -5,8 +5,10 @@ import usePostData from "../../../hooks/usePut";
 import Beam from "../../../components/aceternity/Beam";
 import { cancelSignUp } from "../../../utils/api";
 import { notify } from "../../../utils/notify";
+import { useSignupFlow } from "../../../hooks/useUserFlowManager";
 const AddPhno: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const {validateCurrentStep,updateState}  = useSignupFlow()
   const navigate = useNavigate();
   const [isCancelling,setIsCancelling] = useState(false);
   const { data, loading, error, postData } = usePostData<
@@ -26,14 +28,9 @@ const AddPhno: React.FC = () => {
   };
 
   useEffect(() => {
-    if(!localStorage.getItem("userEmail")){
-      return navigate("/signup");
-    }
-    if(localStorage.getItem("userPhoneNumber")){
-      return navigate("/confirm-phno");
-    }
+    validateCurrentStep()
     if (data?.status === "success") {
-      localStorage.setItem("userPhoneNumber", phoneNumber);
+      updateState({phoneNumber})
       navigate("/confirm-phno");
     } else if (error) {
       message.error(error.message || "Failed to add phone number");
@@ -58,7 +55,7 @@ const AddPhno: React.FC = () => {
       }
       const res = await cancelSignUp(userId+"")
       if(res?.status===202){
-        notify("Process canceled","success")
+        notify("Process terminated!","success")
         localStorage.clear();
         navigate("/")
       }

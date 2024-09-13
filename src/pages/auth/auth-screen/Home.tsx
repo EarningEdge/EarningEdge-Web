@@ -7,7 +7,6 @@ const Home = () => {
   const inviteCode = searchParams.get('inviteCode');
   const username = searchParams.get('username');
   useEffect(()=>{
-    localStorage.clear()
     if(inviteCode && username){
       localStorage.setItem("inviteCode",inviteCode)
       localStorage.setItem("refferalUserName",username)

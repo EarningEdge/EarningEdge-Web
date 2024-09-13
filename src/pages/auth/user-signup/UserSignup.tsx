@@ -4,12 +4,12 @@ import { message } from "antd";
 import usePostData from "../../../hooks/usePost";
 import { IUser } from "../../../types/data";
 import Beam from "../../../components/aceternity/Beam";
-import { cancelSignUp } from "../../../utils/api";
-import { notify } from "../../../utils/notify";
+import { useSignupFlow } from "../../../hooks/useUserFlowManager";
+
 const UserSignup: React.FC = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  const [isCancelling,setIsCancelling] = useState(false);
+  const { getState, updateState, validateCurrentStep } = useSignupFlow();
 
   const { data, loading, error, postData } = usePostData<
     { email: string },
@@ -23,55 +23,44 @@ const UserSignup: React.FC = () => {
     }
   >("/user/addEmail");
 
+  useEffect(() => {
+    validateCurrentStep();
+    const state = getState();
+    if (state.email) {
+      setEmail(state.email);
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
       await postData({ email });
     }
   };
-  const handleCancel = async()=>{
-    try {
-      setIsCancelling(true);
-      const userId = localStorage.getItem("userId");
-      if(!userId){
-        notify("UserId not found","error")
-        return
-      }
-      const res = await cancelSignUp(userId+"")
-      if(res?.status===202){
-        notify("Process canceled","success")
-        localStorage.clear();
-        navigate("/")
-      }
-    } catch (error) {
-      notify("Failed to cancel the process","error");
-    }
-    finally{
-      setIsCancelling(false);
-    }
-  }
-
 
   useEffect(() => {
-    console.log(data);
     if (data?.status === "success") {
-      if (data.data._id && data.data.email) {
-        localStorage.setItem("userId", data.data._id);
-        localStorage.setItem("userEmail", data.data.email);
-        if (data.data.isEmailVerified) {
-          navigate("/add-phno");
-        } else navigate("/confirm-email");
-      }
+      localStorage.setItem("userId",data.data._id)
+      updateState({
+        email: data.data.email,
+        // currentStep: "", // Move to EMAIL_OTP step
+      });
+      navigate("/confirm-email");
     } else if (data) {
       message.error(data.message || "Signup failed");
     }
   }, [data, navigate]);
+
   useEffect(() => {
     if (error) {
-      message.error(
-        //@ts-ignore
-        error.response?.data?.message || "An error occurred. Please try again."
-      );
+      if (error.status === 409) {
+        message.error("Email already taken!");
+      } else {
+        message.error(
+          //@ts-ignore
+          error.response?.data?.message || "An error occurred. Please try again."
+        );
+      }
     }
   }, [error]);
 
@@ -112,14 +101,14 @@ const UserSignup: React.FC = () => {
             >
               {loading ? "Sending..." : "Send OTP"}
             </button>
-            <button
+            {/* <button
               type="button"
               onClick={handleCancel}
               className="mt-3 text-xl rounded-md bg-black text-white p-3 w-full"
               disabled={isCancelling}
             >
               {isCancelling ? "Cancelling..." : "Cancel"}
-            </button>
+            </button> */}
             {/* <button
               type="submit"
               className="mt-3 text-xl rounded-md bg-black border border-white text-white p-3 w-full"

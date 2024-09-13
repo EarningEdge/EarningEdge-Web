@@ -5,9 +5,12 @@ import usePostData from '../../../hooks/usePut';
 import Beam from '../../../components/aceternity/Beam';
 import { cancelSignUp } from "../../../utils/api";
 import { notify } from "../../../utils/notify";
+import { useSignupFlow } from '../../../hooks/useUserFlowManager';
 const ConfirmPhno: React.FC = () => {
   const [otp, setOtp] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const navigate = useNavigate();
+  const {validateCurrentStep,getState,updateState} = useSignupFlow()
   const { data, loading, error, postData } = usePostData<{ otp: string; phoneNumber: string }, {
     message: string; status: string; user?: any 
 }>('/user/verifyPhoneNumber');
@@ -15,7 +18,6 @@ const [isCancelling,setIsCancelling] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const phoneNumber = localStorage.getItem('userPhoneNumber');
     if (otp && phoneNumber) {
       await postData({ otp, phoneNumber:"91"+phoneNumber });
     }
@@ -30,7 +32,7 @@ const [isCancelling,setIsCancelling] = useState(false);
       }
       const res = await cancelSignUp(userId+"")
       if(res?.status===202){
-        notify("Process canceled","success")
+        notify("Process terminated!","success")
         localStorage.clear();
         navigate("/")
       }
@@ -43,14 +45,11 @@ const [isCancelling,setIsCancelling] = useState(false);
   }
 
   useEffect(() => {
-    if(!localStorage.getItem("userPhoneNumber")){
-      return navigate("/add-phno")
-    }
-    if(localStorage.getItem("phoneVerified")==="true"){
-      return navigate("/user-details")
-    }
+    validateCurrentStep()
+    const ph = getState().phoneNumber;
+    setPhoneNumber(ph)
     if (data?.status==="success") {
-      localStorage.setItem("phoneVerified","true")
+      updateState({phoneVerified:true})
       navigate('/user-details');
     } else if (data) {
       message.error(data.message || 'Verification failed');
@@ -81,7 +80,7 @@ const [isCancelling,setIsCancelling] = useState(false);
       </div>
       <div className="flex flex-col text-white gap-3 mb-10 z-10 w-full md:w-[30%] ">
         <h1 className="text-5xl">Create an<br /> <b>Account</b></h1>
-        <p>OTP sent to {localStorage.getItem('userPhoneNumber')}</p>
+        <p>OTP sent to {phoneNumber}</p>
         <form onSubmit={handleSubmit}>
           <input
             type="text"

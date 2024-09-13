@@ -6,11 +6,14 @@ import { IUser } from "../../../types/data";
 import Beam from "../../../components/aceternity/Beam";
 import { cancelSignUp } from "../../../utils/api";
 import { notify } from "../../../utils/notify";
+import { useSignupFlow } from "../../../hooks/useUserFlowManager";
 
 const ConfirmMail: React.FC = () => {
   const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const [isCancelling,setIsCancelling] = useState(false);
+  const {validateCurrentStep,getState,updateState} = useSignupFlow();
   const { data, loading, error, postData } = usePostData<
     { otp: string; email: string },
     {
@@ -21,24 +24,28 @@ const ConfirmMail: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const email = localStorage.getItem("userEmail");
     if (otp && email) {
       await postData({ otp, email });
     }
   };
 
   useEffect(() => {
-    if(!localStorage.getItem("userEmail")){
-      return navigate("/signup")
+    validateCurrentStep()
+    const email = getState().email
+    if(!email){
+      alert("Email not found")
+      return;
     }
-    if(localStorage.getItem("emailVerified")==="true"){
-      return navigate("/add-phno");
-    }
+    setEmail(email)
     if (data?.status === "success") {
-      localStorage.setItem("emailVerified","true")
+      updateState({
+        emailVerified: true,
+      });
       navigate("/add-phno");
     } else if (error) {
-      localStorage.setItem("emailVerified","false")
+      updateState({
+        emailVerified: false,
+      });
       message.error(error.message || "Verification failed");
     }
   }, [data, navigate]);
@@ -62,7 +69,7 @@ const ConfirmMail: React.FC = () => {
       }
       const res = await cancelSignUp(userId+"")
       if(res?.status===202){
-        notify("Process canceled","success")
+        notify("Process terminated!","success")
         localStorage.clear();
         navigate("/")
       }
@@ -94,7 +101,7 @@ const ConfirmMail: React.FC = () => {
             Create an
             <br /> <b>Account</b>
           </h1>
-          <p>OTP sent to {localStorage.getItem("userEmail")}</p>
+          <p>OTP sent to {email||"your email address"}</p>
           <form onSubmit={handleSubmit}>
             <input
               type="text"
