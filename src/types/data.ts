@@ -1,6 +1,4 @@
-
-
-export interface IUser  {
+export interface IUser {
   //Personal details
   _id: string;
   firstName: string | undefined;
@@ -15,13 +13,12 @@ export interface IUser  {
   email_otp: number | undefined;
   email_otp_expire: Date | undefined;
 
-
   //Broker details
   dhan_auth_token: string | undefined;
   dhan_client_id: string | undefined;
   isBrokerConnected: boolean;
-  mentorId: string | null,
-  mentor?: IUser | null
+  mentorId: string | null;
+  mentor?: IUser | null;
 
   //Profile image
   profile_image_key: string;
@@ -29,38 +26,37 @@ export interface IUser  {
 
   //BD
   isBD: boolean;
-  referralCode: string ;
+  referralCode: string;
   reffererId: string | null;
   usersCount: number;
   paidUsersCount: number;
 
-  createdAt?:string
-
+  createdAt?: string;
+  lastNotificationViewedAt?: string;
 }
-export interface ISales{
+export interface ISales {
   _id: string;
   referralCode: string;
   userId: string;
   usersCount: number;
   paidUsersCount: number;
 }
-export interface IQuestion{
-    _id: string;
-    key: string;
-    title: string;
-    type: string;
-    responses: number;
-    created: string;
-    status: string;
-    isPre: boolean;
-    isRequired: boolean;
+export interface IQuestion {
+  _id: string;
+  key: string;
+  title: string;
+  type: string;
+  responses: number;
+  created: string;
+  status: string;
+  isPre: boolean;
+  isRequired: boolean;
 }
-export interface IAlert{
+export interface IAlert {
   key: string;
   value: string;
   created: string;
 }
-
 
 export type PositionType = "LONG" | "SHORT" | "CLOSED";
 export type ExchangeSegment =
@@ -75,7 +71,7 @@ export type ProductType = "CNC" | "INTRADAY" | "MARGIN" | "MTF" | "CO" | "BO";
 export type OptionType = "CALL" | "PUT";
 
 export interface IPosition {
-  userId:string;
+  userId: string;
   dhanClientId: string;
   tradingSymbol: string;
   securityId: string;
@@ -105,7 +101,6 @@ export interface IPosition {
   drvStrikePrice: number;
   crossCurrency: boolean;
 }
-
 
 type Exchange = "NSE" | "BSE" | "MCX" | "NCDEX";
 
@@ -145,18 +140,18 @@ export interface IJournalEntry extends Document {
   date: string | number | Date;
   _id: string;
   userId: string;
-  type: 'entry' | 'exit';
+  type: "entry" | "exit";
   responses: {
     question: any;
     answer: string;
   }[];
-  reviewId:string|null;
+  reviewId: string | null;
   isActive: boolean;
 }
 
-export type UserLoginResponse ={
-  user:IUser,
-  message:string,
-  success:boolean,
-  token:string
-}
+export type UserLoginResponse = {
+  user: IUser;
+  message: string;
+  success: boolean;
+  token: string;
+};

@@ -4,7 +4,6 @@ import {
   DownloadOutlined,
   LineChartOutlined,
   PoweroffOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 
@@ -21,6 +20,7 @@ import { IUser } from "../../types/data";
 import moment from "moment";
 import { QRCodeSVG } from "qrcode.react";
 import Beam from "../../components/aceternity/Beam";
+import { PenIcon } from "lucide-react";
 
 const UserDashboard = () => {
   const { user, token } = useAppSelector((state) => state.auth);
@@ -28,6 +28,7 @@ const UserDashboard = () => {
   const [referralUrl, setReferralUrl] = useState("");
   const api = useAxios();
   const dispatch = useAppDispatch();
+  const [files, setFiles] = useState<File>();
 
   const { mutateAsync: disconnectUser } = useMutation({
     mutationKey: ["disconnect"],
@@ -41,6 +42,46 @@ const UserDashboard = () => {
     },
     onError: (error: AxiosError) => {
       notify(error.message, "error");
+    },
+  });
+
+  const { mutateAsync: updateUserDetails } = useMutation({
+    mutationKey: ["updateUserDetails"],
+    mutationFn: async (updatedUserDetails: object) => {
+      const response = await api.put("user/update/user-details", {
+        userId: user?._id,
+        ...updatedUserDetails,
+      });
+      return response;
+    },
+    onSuccess: (_, updatedUserDetails) => {
+      notify("Update successfully!", "success");
+      dispatch(login({ user: { ...user!, ...updatedUserDetails }, token }));
+    },
+  });
+
+  const { mutateAsync: updateProfileImage } = useMutation({
+    mutationKey: ["updateProfileImage"],
+    mutationFn: async () => {
+      const formData = new FormData();
+      formData.append("profile", files as any);
+      const response = await api.put("user/profile-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response;
+    },
+    onSuccess: (data) => {
+      const updatedUser: IUser = data.data.data;
+      dispatch(
+        login({
+          user: {
+            ...user!,
+            profile_image_key: updatedUser.profile_image_key,
+            profile_image_url: updatedUser.profile_image_url,
+          },
+          token,
+        })
+      );
     },
   });
 
@@ -122,6 +163,20 @@ const UserDashboard = () => {
     setIsAnalyticsModalVisible(false);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = e.target.files[0];
+      setFiles(newFiles);
+      // onFileChange([...files, ...newFiles]);
+    }
+  };
+
+  useEffect(() => {
+    if (files) {
+      updateProfileImage();
+    }
+  }, [files]);
+
   const handleDownload = () => {
     const svg = document.querySelector(".qr-code-svg");
     const svgData = new XMLSerializer().serializeToString(svg!);
@@ -139,6 +194,32 @@ const UserDashboard = () => {
       downloadLink.click();
     };
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
+  };
+
+  let timeoutId: NodeJS.Timeout; // Declare outside the function to persist
+
+  const handleUpdateDetails = async (field: string, value: any) => {
+    if (!value) {
+      clearTimeout(timeoutId);
+      notify("Please fill something!", "error");
+      return;
+    }
+    let updatedUserDetails: object;
+    switch (field) {
+      case "firstName":
+        updatedUserDetails = { newFirstName: value };
+        break;
+      case "lastName":
+        updatedUserDetails = { newLastName: value };
+        break;
+    }
+    // Clear the previous timeout before setting a new one
+    clearTimeout(timeoutId);
+
+    // Set a new timeout for the debounce
+    timeoutId = setTimeout(async () => {
+      await updateUserDetails(updatedUserDetails);
+    }, 1000);
   };
 
   if (!user) {
@@ -164,9 +245,21 @@ const UserDashboard = () => {
                     alt={`${user.firstName} ${user.lastName}`}
                     className="w-24 h-24 rounded-full"
                   />
-                  <button className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md">
-                    <UserOutlined className="text-gray-600" />
-                  </button>
+                  <label
+                    htmlFor="fileInput"
+                    style={{ cursor: "pointer" }}
+                    className="absolute bottom-0 right-0 bg-white rounded-full p-[6px] shadow-md "
+                  >
+                    <PenIcon className="text-gray-600" size={20} />
+                  </label>
+                  <input
+                    type="file"
+                    id="fileInput"
+                    accept="image/png, image/jpeg"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                    multiple={false}
+                  />
                 </div>
               </div>
 
@@ -177,8 +270,10 @@ const UserDashboard = () => {
                   </label>
                   <input
                     type="text"
-                    value={user.firstName}
-                    readOnly
+                    defaultValue={user.firstName}
+                    onChange={(e) => {
+                      handleUpdateDetails("firstName", e.target.value);
+                    }}
                     className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm"
                   />
                 </div>
@@ -188,8 +283,10 @@ const UserDashboard = () => {
                   </label>
                   <input
                     type="text"
-                    value={user.lastName}
-                    readOnly
+                    defaultValue={user.lastName}
+                    onChange={(e) => {
+                      handleUpdateDetails("lastName", e.target.value);
+                    }}
                     className="mt-1 block w-full px-3 py-2 bg-darkSecondary border border-darkStroke rounded-md shadow-sm"
                   />
                 </div>

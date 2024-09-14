@@ -1,5 +1,14 @@
 import React, { useState, useEffect, ReactNode } from "react";
-import { ConfigProvider, Layout, Menu, Dropdown, MenuProps } from "antd";
+import {
+  ConfigProvider,
+  Layout,
+  Menu,
+  Dropdown,
+  MenuProps,
+  Drawer,
+  Divider,
+  Segmented,
+} from "antd";
 import { menuItems } from "../../../utils/menuItems";
 import { useAppSelector } from "../../../redux/hooks";
 import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -7,14 +16,124 @@ import { Header } from "antd/es/layout/layout";
 import { IndianRupee, LogOut, User } from "lucide-react";
 
 import { useDispatch } from "react-redux";
-import { logout } from "../../../redux/slices/authSlice";
+import { login, logout } from "../../../redux/slices/authSlice";
+import { BellOutlined } from "@ant-design/icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import useAxios from "../../../hooks/useAxios";
+
 const { Sider, Content } = Layout;
 const CustomLayout = ({ children }: { children: ReactNode }) => {
-  const { user } = useAppSelector((state) => state.auth);
+  const { user, token } = useAppSelector((state) => state.auth);
+  const api = useAxios();
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [open, setOpen] = useState(false);
+  const [currentTab, setCurrentTab] = useState("Unread");
+  const [unreadNotificationList, setUnreadNotificationList] = useState<
+    | [
+        {
+          notificationContent: {
+            title: string;
+            message: string;
+          };
+        }
+      ]
+    | []
+  >([]);
+  const [readNotificationList, setReadNotificationList] = useState<
+    | [
+        {
+          notificationContent: {
+            title: string;
+            message: string;
+          };
+        }
+      ]
+    | []
+  >([]);
+
+  const { mutateAsync: updateUserDetails } = useMutation({
+    mutationKey: ["updateUserDetails"],
+    mutationFn: async () => {
+      const response = await api.put("user/update/user-details", {
+        userId: user?._id,
+        lastNotificationViewedAt: new Date().toISOString(),
+      });
+
+      return response;
+    },
+    onSuccess: () => {
+      const date = new Date().toISOString().replace("Z", "+00:00");
+      dispatch(
+        login({
+          user: {
+            ...user!,
+            lastNotificationViewedAt: date,
+          },
+          token: token,
+        })
+      );
+    },
+  });
+
+  const {
+    data: unreadNotifications,
+    // isLoading: isUnreadNotificationsLoading, isError: isUnreadNotificationsError, error: unUeadNotificationsError
+  } = useQuery({
+    queryKey: ["unreadNotifications"],
+    queryFn: async () => {
+      return api.get("/notification/list/" + user?._id, {
+        params: {
+          fetchRead: false,
+          lastNotificationViewedAt: user?.lastNotificationViewedAt,
+        },
+      });
+    },
+  });
+
+  const {
+    data: readNotifications,
+    refetch: refetchReadNotifications,
+    // isLoading: isReadNotificationsLoading, isError: isReadNotificationsError, error: unRdNotificationsError
+  } = useQuery({
+    queryKey: ["readNotifications"],
+    queryFn: async () => {
+      return api.get("/notification/list/" + user?._id, {
+        params: {
+          fetchRead: true,
+          lastNotificationViewedAt: user?.lastNotificationViewedAt,
+        },
+      });
+    },
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (unreadNotifications && unreadNotifications.data) {
+      setUnreadNotificationList(unreadNotifications.data.data);
+    }
+  }, [unreadNotifications]);
+
+  useEffect(() => {
+    if (readNotifications && readNotifications.data) {
+      setReadNotificationList(readNotifications.data.data);
+    }
+  }, [readNotifications]);
+
+  const handleFetchReadNotification = () => {
+    refetchReadNotifications();
+  };
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = async () => {
+    setOpen(false);
+    await updateUserDetails();
+  };
   useEffect(() => {
     if (!user) {
       navigate("/auth");
@@ -33,7 +152,9 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
       key: "1",
       label: (
         <div className="bg-darkBg border-darkStroke border-[0.4px] rounded-md px-24 flex justify-center flex-col items-center py-7 relative">
-          <h1 className="text-slate-400 absolute top-1 left-1 rounded-md bg-slate-700 border-[0.4px] border-darkStroke text-center px-2">Free trial</h1>
+          <h1 className="text-slate-400 absolute top-1 left-1 rounded-md bg-slate-700 border-[0.4px] border-darkStroke text-center px-2">
+            Free trial
+          </h1>
           <img
             className="h-12 w-12 rounded-full"
             src={user?.profile_image_url || "fallback_profile.jpg"}
@@ -67,7 +188,17 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
       key: "4",
       danger: true,
       icon: <LogOut color="red" size={15} />,
-      label: <button className="w-full text-left" onClick={()=>{dispatch(logout());navigate("/auth")}}>Logout</button>,
+      label: (
+        <button
+          className="w-full text-left"
+          onClick={() => {
+            dispatch(logout());
+            navigate("/auth");
+          }}
+        >
+          Logout
+        </button>
+      ),
     },
   ];
 
@@ -116,18 +247,97 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
           </Sider>
         )}
         <Layout style={{ marginLeft: isMobile ? 0 : 200 }}>
-          
           <Header className="py-0 w-full flex justify-end items-center bg-darkSecondary z-10">
-          
             <Dropdown className="bg-black" menu={{ items }}>
-              <button className=" w-fit">
+              <button className="w-fit">
                 <img
                   className="h-10 w-10 rounded-full"
                   src={user.profile_image_url || "fallback_profile.jpg"}
                 />
               </button>
             </Dropdown>
-           
+            <div>
+              <button className="w-fit items-center mx-4" onClick={showDrawer}>
+                <BellOutlined className=" self-center mt-5 text-3xl text-white" />
+              </button>
+              <Drawer
+                title="Notifications"
+                onClose={onClose}
+                open={open}
+                styles={{
+                  body: {
+                    padding: 0,
+                  },
+                }}
+              >
+                <div className="px-8 py-4">
+                  <Segmented
+                    options={["Unread", "Read"]}
+                    onChange={(value) => {
+                      setCurrentTab(value);
+                      if (value === "Read") {
+                        handleFetchReadNotification();
+                      }
+                      console.log(value); // string
+                    }}
+                    block
+                    defaultValue="Unread"
+                  />
+                </div>
+                {currentTab === "Unread" &&
+                  unreadNotificationList &&
+                  unreadNotificationList.length > 0 &&
+                  unreadNotificationList.map((item, index) => {
+                    return (
+                      <>
+                        <div>
+                          <div className="px-4">
+                            <div className="text-lg text-black font-bold">
+                              {item.notificationContent.title}
+                            </div>
+                            <div className="text-base text-black">
+                              {item.notificationContent.message}
+                            </div>
+                          </div>
+                          <Divider
+                            style={{
+                              margin: 0,
+                              marginTop: 8,
+                              marginBottom: 8,
+                            }}
+                          />
+                        </div>
+                      </>
+                    );
+                  })}
+                {currentTab === "Read" &&
+                  readNotificationList &&
+                  readNotificationList.length > 0 &&
+                  readNotificationList.map((item, index) => {
+                    return (
+                      <>
+                        <div>
+                          <div className="px-4">
+                            <div className="text-lg text-black font-bold">
+                              {item.notificationContent.title}
+                            </div>
+                            <div className="text-base text-black">
+                              {item.notificationContent.message}
+                            </div>
+                          </div>
+                          <Divider
+                            style={{
+                              margin: 0,
+                              marginTop: 8,
+                              marginBottom: 8,
+                            }}
+                          />
+                        </div>
+                      </>
+                    );
+                  })}
+              </Drawer>
+            </div>
           </Header>
           <Content
             style={{
