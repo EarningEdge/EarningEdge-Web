@@ -4,7 +4,6 @@ import {
   DownloadOutlined,
   LineChartOutlined,
   PoweroffOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 
@@ -21,6 +20,7 @@ import { IUser } from "../../types/data";
 import moment from "moment";
 import { QRCodeSVG } from "qrcode.react";
 import Beam from "../../components/aceternity/Beam";
+import { PenIcon } from "lucide-react";
 
 const UserDashboard = () => {
   const { user, token } = useAppSelector((state) => state.auth);
@@ -28,6 +28,7 @@ const UserDashboard = () => {
   const [referralUrl, setReferralUrl] = useState("");
   const api = useAxios();
   const dispatch = useAppDispatch();
+  const [files, setFiles] = useState<File>();
 
   const { mutateAsync: disconnectUser } = useMutation({
     mutationKey: ["disconnect"],
@@ -56,6 +57,31 @@ const UserDashboard = () => {
     onSuccess: (_, updatedUserDetails) => {
       notify("Update successfully!", "success");
       dispatch(login({ user: { ...user!, ...updatedUserDetails }, token }));
+    },
+  });
+
+  const { mutateAsync: updateProfileImage } = useMutation({
+    mutationKey: ["updateProfileImage"],
+    mutationFn: async () => {
+      const formData = new FormData();
+      formData.append("profile", files as any);
+      const response = await api.put("user/profile-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response;
+    },
+    onSuccess: (data) => {
+      const updatedUser: IUser = data.data.data;
+      dispatch(
+        login({
+          user: {
+            ...user!,
+            profile_image_key: updatedUser.profile_image_key,
+            profile_image_url: updatedUser.profile_image_url,
+          },
+          token,
+        })
+      );
     },
   });
 
@@ -137,6 +163,20 @@ const UserDashboard = () => {
     setIsAnalyticsModalVisible(false);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = e.target.files[0];
+      setFiles(newFiles);
+      // onFileChange([...files, ...newFiles]);
+    }
+  };
+
+  useEffect(() => {
+    if (files) {
+      updateProfileImage();
+    }
+  }, [files]);
+
   const handleDownload = () => {
     const svg = document.querySelector(".qr-code-svg");
     const svgData = new XMLSerializer().serializeToString(svg!);
@@ -205,9 +245,21 @@ const UserDashboard = () => {
                     alt={`${user.firstName} ${user.lastName}`}
                     className="w-24 h-24 rounded-full"
                   />
-                  <button className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md">
-                    <UserOutlined className="text-gray-600" />
-                  </button>
+                  <label
+                    htmlFor="fileInput"
+                    style={{ cursor: "pointer" }}
+                    className="absolute bottom-0 right-0 bg-white rounded-full p-[6px] shadow-md "
+                  >
+                    <PenIcon className="text-gray-600" size={20} />
+                  </label>
+                  <input
+                    type="file"
+                    id="fileInput"
+                    accept="image/png, image/jpeg"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                    multiple={false}
+                  />
                 </div>
               </div>
 
