@@ -290,7 +290,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
                   unreadNotificationList.map((item, index) => {
                     return (
                       <>
-                        <div>
+                        <div key={index}>
                           <div className="px-4">
                             <div className="text-lg text-black font-bold">
                               {item.notificationContent.title}
@@ -316,7 +316,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
                   readNotificationList.map((item, index) => {
                     return (
                       <>
-                        <div>
+                        <div key={index}>
                           <div className="px-4">
                             <div className="text-lg text-black font-bold">
                               {item.notificationContent.title}

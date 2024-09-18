@@ -196,7 +196,7 @@ const UserDashboard = () => {
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
 
-  let timeoutId: NodeJS.Timeout; // Declare outside the function to persist
+  let timeoutId: any; // Declare outside the function to persist
 
   const handleUpdateDetails = async (field: string, value: any) => {
     if (!value) {
