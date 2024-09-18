@@ -22,7 +22,9 @@ const Auth = lazy(() => import("../pages/auth/auth-screen/Home"));
 const ResetPassword = lazy(() => import("../pages/auth/forgot-password"));
 const Sales = lazy(() => import("../pages/sales"));
 const Contact = lazy(() => import("../pages/contact"));
-const Learning = lazy(() => import("../pages/learning"));
+
+const AllPlaylists = lazy(() => import("../pages/learning"));
+const SinglePlaylist = lazy(() => import("../pages/learning/singleplaylist"));
 
 const router = createBrowserRouter([
   {
@@ -106,7 +108,12 @@ const router = createBrowserRouter([
       {
         path: "course",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <Learning/> }],
+        children: [{ path: "", element: <AllPlaylists/> }],
+      },
+      {
+        path: "learning/:playlistId",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <SinglePlaylist/> }],
       },
       {
         path: "profile",
