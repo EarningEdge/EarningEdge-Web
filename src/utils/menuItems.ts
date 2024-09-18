@@ -18,7 +18,7 @@ export const menuItems = [
   {
     key: "3",
     icon: React.createElement(Newspaper),
-    label: "news",
+    label: "News",
     path: "/news",
   },
   {
