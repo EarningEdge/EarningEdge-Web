@@ -30,6 +30,7 @@ const UserDashboard = () => {
   const dispatch = useAppDispatch();
   const [files, setFiles] = useState<File>();
 
+
   const { mutateAsync: disconnectUser } = useMutation({
     mutationKey: ["disconnect"],
     mutationFn: async () => {
@@ -116,6 +117,24 @@ const UserDashboard = () => {
       dispatch(login({ user: userDetails?.data?.data?.userData, token }));
     }
   }, [userDetails]);
+
+  const {
+    data: referralData,
+    // isLoading: isUserDetailsLoading, isError: isUserError, error: userError
+  } = useQuery({
+    queryKey: ["referralData"],
+    queryFn: async () => {
+      return (await api.get("/analytics/referralAnalytics/" + user?._id)).data;
+    },
+  });
+
+  useEffect(() => {
+    if (referralData && referralData.data) {
+        console.log(referralData.data.data)
+    }
+  }, [referralData]);
+
+
   useEffect(() => {
     if (user && user._id) {
       setReferralUrl(
@@ -330,7 +349,7 @@ const UserDashboard = () => {
                   <label className="block text-sm font-medium text-gray-100">
                     Referral Code
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm w-full">
+                  <div className="mt-1 flex space-x-1 rounded-md shadow-sm w-full">
                     <input
                       type="text"
                       value={user.referralCode || ""}
@@ -339,7 +358,7 @@ const UserDashboard = () => {
                     />
                     <button
                       onClick={copyReferralCode}
-                      className="inline-flex items-center px-4 py-2 border border-transparent rounded-r-md shadow-sm text-sm font-medium text-white w-1/4 "
+                      className="inline-flex  border-darkStroke border-[0.4px] items-center px-4 py-2  justify-center rounded-md shadow-sm text-sm font-medium text-white w-1/4 "
                     >
                       <CopyOutlined className="h-4 w-4 mr-2" />
                       Copy
@@ -348,22 +367,34 @@ const UserDashboard = () => {
                 </div>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 md:grid-cols-2 gap-4">
+              <h1 className="mt-6 text-lg">Users joined</h1>
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                 <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
-                  <h3 className="text-lg font-light mb-2">Leads Count</h3>
-                  <p className="text-3xl font-bold">{user.usersCount || 0}</p>
+                  <h3 className="text-lg font-light mb-2">Current month</h3>
+                  <p className="text-3xl font-bold">{referralData?.data?.data?.currentMonthCount || 0}</p>
                 </div>
                 <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
-                  <h3 className="text-lg font-light mb-2">Paid Leads</h3>
+                  <h3 className="text-lg font-light mb-2">Total users</h3>
+                  <p className="text-3xl font-bold">{referralData?.data?.data?.totalUsers || 0}</p>
+                </div>
+              </div>
+              <h1 className="mt-6 text-lg">Paid users count</h1>
+              <div className=" grid grid-cols-2 md:grid-cols-2 gap-4">
+                <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
+                  <h3 className="text-lg font-light mb-2">Current Month</h3>
+                  <p className="text-3xl font-bold">{user.paidUsersCount || 0}</p>
+                </div>
+                <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
+                  <h3 className="text-lg font-light mb-2">Overall</h3>
                   <p className="text-3xl font-bold">
                     {user.paidUsersCount || 0}
                   </p>
                 </div>
               </div>
               <div className="bg-darkSecondary border-[0.4px] mt-4 border-darkStroke p-4 rounded-md shadow">
-                <h3 className="text-lg font-light mb-2">Credits Earned</h3>
+                <h3 className="text-lg font-light mb-2">Credits balance</h3>
                 <p className="text-3xl font-bold text-green-500">
-                  ₹{user.usersCount*500 || 0}
+                  ₹{user.paidUsersCount*500 || 0}
                 </p>
               </div>
               <Card className="max-w-4xl mx-auto mt-8">
