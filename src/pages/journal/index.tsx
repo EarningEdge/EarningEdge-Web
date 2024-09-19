@@ -207,7 +207,7 @@ const Index = () => {
     const journalData = { responses };
     console.log(journalData);
     console.log(selectedJournal)
-    const result = await updateJournalMutation.mutateAsync(journalData);
+    await updateJournalMutation.mutateAsync(journalData);
 
     // if (result.status === "success") {
     //   const journalId = result.data?.journal?._id;
