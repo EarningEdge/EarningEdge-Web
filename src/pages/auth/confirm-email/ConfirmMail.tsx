@@ -12,8 +12,9 @@ const ConfirmMail: React.FC = () => {
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  useEffect(()=>{navigate("/")},[])
   const [isCancelling,setIsCancelling] = useState(false);
-  const {validateCurrentStep,getState,updateState} = useSignupFlow();
+  const {validateCurrentStep,getState} = useSignupFlow();
   const { data, loading, error, postData } = usePostData<
     { otp: string; email: string },
     {
@@ -37,17 +38,17 @@ const ConfirmMail: React.FC = () => {
       return;
     }
     setEmail(email)
-    if (data?.status === "success") {
-      updateState({
-        emailVerified: true,
-      });
-      navigate("/add-phno");
-    } else if (error) {
-      updateState({
-        emailVerified: false,
-      });
-      message.error(error.message || "Verification failed");
-    }
+    // if (data?.status === "success") {
+    //   updateState({
+    //     emailVerified: true,
+    //   });
+    //   navigate("/add-phno");
+    // } else if (error) {
+    //   updateState({
+    //     emailVerified: false,
+    //   });
+    //   message.error(error.message || "Verification failed");
+    // }
   }, [data, navigate]);
   
   useEffect(() => {

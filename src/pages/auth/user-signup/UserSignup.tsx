@@ -43,9 +43,8 @@ const UserSignup: React.FC = () => {
       localStorage.setItem("userId",data.data._id)
       updateState({
         email: data.data.email,
-        // currentStep: "", // Move to EMAIL_OTP step
       });
-      navigate("/confirm-email");
+      navigate("/add-phno");
     } else if (data) {
       message.error(data.message || "Signup failed");
     }
@@ -99,7 +98,7 @@ const UserSignup: React.FC = () => {
               className="mt-3 text-xl rounded-md bg-white text-black p-3 w-full"
               disabled={loading}
             >
-              {loading ? "Sending..." : "Send OTP"}
+              {loading ? "Sending..." : "Next"}
             </button>
             {/* <button
               type="button"
