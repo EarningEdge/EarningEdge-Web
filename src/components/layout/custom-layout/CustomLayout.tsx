@@ -12,12 +12,12 @@ import {
 import { menuItems } from "../../../utils/menuItems";
 import { useAppSelector } from "../../../redux/hooks";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Header } from "antd/es/layout/layout";
-import { IndianRupee, LogOut, User } from "lucide-react";
+import { Footer, Header } from "antd/es/layout/layout";
+import {  IndianRupee,   LogOut,  User, Bell } from "lucide-react";
 
 import { useDispatch } from "react-redux";
 import { login, logout } from "../../../redux/slices/authSlice";
-import { BellOutlined } from "@ant-design/icons";
+
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
 
@@ -258,7 +258,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
             </Dropdown>
             <div>
               <button className="w-fit items-center mx-4" onClick={showDrawer}>
-                <BellOutlined className=" self-center mt-5 text-3xl text-white" />
+                <Bell className=" self-center mt-5 text-3xl text-white" />
               </button>
               <Drawer
                 title="Notifications"
@@ -351,6 +351,19 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
           >
             {children}
           </Content>
+          <Footer className="bg-darkBg border-t border-darkStroke text-white">
+            <div className="flex flex-col items-center">
+              <ol className="flex flex-wrap justify-center gap-4 mb-4">
+                <li><a target="_blank" className="text-blue-400 hover:text-blue-300 underline" href="https://earningedge.in/sample-page/">Products/Services Offered</a></li>
+                <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/terms-and-conditions">Terms and Conditions</Link></li>
+                <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/privacy-policy">Privacy Policy</Link></li>
+                <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/refunds-cancellations">Refunds & Cancellations</Link></li>
+                <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/pricing">Pricing</Link></li>
+                <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/contact">Contact Us</Link></li>
+              </ol>
+             
+            </div>
+          </Footer>
         </Layout>
         {isMobile && (
           <div className="mobile-nav">
