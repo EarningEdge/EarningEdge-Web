@@ -25,6 +25,10 @@ const Contact = lazy(() => import("../pages/contact"));
 
 const AllPlaylists = lazy(() => import("../pages/learning"));
 const SinglePlaylist = lazy(() => import("../pages/learning/singleplaylist"));
+const PrivacyPolicy = lazy(()=>import("../pages/company/privacy-policy"))
+const TermsAndConditions = lazy(()=>import("../pages/company/terms-conditions"))
+const Pricing = lazy(()=>import("../pages/company/pricing"))
+const Refunds = lazy(()=>import("../pages/company/refunds"))
 
 const router = createBrowserRouter([
   {
@@ -129,6 +133,26 @@ const router = createBrowserRouter([
         path: "contact",
         element: <ProtectedRoute />,
         children: [{ path: "", element: <Contact /> }],
+      },
+      {
+        path: "privacy-policy",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <PrivacyPolicy /> }],
+      },
+      {
+        path: "terms-and-conditions",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <TermsAndConditions /> }],
+      },
+      {
+        path: "pricing",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <Pricing /> }],
+      },
+      {
+        path: "refunds-cancellations",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <Refunds /> }],
       },
       {
         path: "*",

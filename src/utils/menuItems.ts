@@ -1,7 +1,7 @@
 import React from "react";
 
 
-import {Newspaper,CandlestickChartIcon,House,NotebookPen, PlayCircle} from 'lucide-react'
+import {Newspaper,CandlestickChartIcon,House, Book , PlayCircle} from 'lucide-react'
 export const menuItems = [
   {
     key: "1",
@@ -11,7 +11,7 @@ export const menuItems = [
   },
   {
     key: "2",
-    icon: React.createElement(NotebookPen),
+    icon: React.createElement(Book),
     label: "Journal",
     path: "/journal",
   },
