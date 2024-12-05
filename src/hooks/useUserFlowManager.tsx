@@ -1,8 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-
 enum SignupStep {
   EMAIL = 1,
-  // EMAIL_OTP = 2,
   PHONE = 2,
   PHONE_OTP = 3,
   USER_DETAILS = 4,
@@ -10,14 +8,12 @@ enum SignupStep {
 
 interface SignupState {
   email: string;
-  // emailVerified: boolean;
   phoneNumber: string;
   phoneVerified: boolean;
 }
 
 const initialState: SignupState = {
   email: '',
-  // emailVerified: false,
   phoneNumber: '',
   phoneVerified: false,
 };
@@ -30,8 +26,6 @@ export const useSignupFlow = () => {
     switch (location.pathname) {
       case '/signup':
         return SignupStep.EMAIL;
-      // case '/confirm-email':
-      //   return SignupStep.EMAIL_OTP;
       case '/add-phno':
         return SignupStep.PHONE;
       case '/confirm-phno':
