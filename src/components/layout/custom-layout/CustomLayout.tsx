@@ -100,7 +100,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
 
   const {
     data: readNotifications,
-    refetch: refetchReadNotifications,
+    // refetch: refetchReadNotifications,
     // isLoading: isReadNotificationsLoading, isError: isReadNotificationsError, error: unRdNotificationsError
   } = useQuery({
     queryKey: ["readNotifications"],
