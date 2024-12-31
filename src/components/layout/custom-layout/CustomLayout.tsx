@@ -13,15 +13,15 @@ import { menuItems } from "../../../utils/menuItems";
 import { useAppSelector } from "../../../redux/hooks";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Footer, Header } from "antd/es/layout/layout";
-import {  IndianRupee,   LogOut,  User, Bell } from "lucide-react";
-
+import { IndianRupee, LogOut, User, Bell, CheckCircle } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { login, logout } from "../../../redux/slices/authSlice";
-
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
+import { mockNotifications } from "../../../mock/notificationData"
 
 const { Sider, Content } = Layout;
+
 const CustomLayout = ({ children }: { children: ReactNode }) => {
   const { user, token } = useAppSelector((state) => state.auth);
   const api = useAxios();
@@ -31,28 +31,26 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [open, setOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState("Unread");
-  const [unreadNotificationList, setUnreadNotificationList] = useState<
-    | [
-        {
-          notificationContent: {
-            title: string;
-            message: string;
-          };
+  const [unreadNotificationList, setUnreadNotificationList] = useState(mockNotifications);
+  const [readNotificationList, setReadNotificationList] = useState<typeof mockNotifications>([]);
+
+  const handleMarkAsRead = (id: number) => {
+    const notification = unreadNotificationList.find(
+      n => n.notificationContent.id === id
+    );
+    if (notification) {
+      setUnreadNotificationList(prev =>
+        prev.filter(n => n.notificationContent.id !== id)
+      );
+      setReadNotificationList(prev => [...prev, {
+        ...notification,
+        notificationContent: {
+          ...notification.notificationContent,
+          isRead: true
         }
-      ]
-    | []
-  >([]);
-  const [readNotificationList, setReadNotificationList] = useState<
-    | [
-        {
-          notificationContent: {
-            title: string;
-            message: string;
-          };
-        }
-      ]
-    | []
-  >([]);
+      }]);
+    }
+  };
 
   const { mutateAsync: updateUserDetails } = useMutation({
     mutationKey: ["updateUserDetails"],
@@ -61,7 +59,6 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
         userId: user?._id,
         lastNotificationViewedAt: new Date().toISOString(),
       });
-
       return response;
     },
     onSuccess: () => {
@@ -78,6 +75,14 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
     },
   });
 
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = async () => {
+    setOpen(false);
+    await updateUserDetails();
+  };
   const {
     data: unreadNotifications,
     // isLoading: isUnreadNotificationsLoading, isError: isUnreadNotificationsError, error: unUeadNotificationsError
@@ -122,18 +127,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
     }
   }, [readNotifications]);
 
-  const handleFetchReadNotification = () => {
-    refetchReadNotifications();
-  };
 
-  const showDrawer = () => {
-    setOpen(true);
-  };
-
-  const onClose = async () => {
-    setOpen(false);
-    await updateUserDetails();
-  };
   useEffect(() => {
     if (!user) {
       navigate("/auth");
@@ -252,16 +246,31 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
               <button className="w-fit">
                 <img
                   className="h-10 w-10 rounded-full"
-                  src={user.profile_image_url || "fallback_profile.jpg"}
+                  src={user?.profile_image_url || "fallback_profile.jpg"}
+                  alt="Profile"
                 />
               </button>
             </Dropdown>
             <div>
-              <button className="w-fit items-center mx-4" onClick={showDrawer}>
-                <Bell className=" self-center mt-5 text-3xl text-white" />
+              <button className="w-fit items-center mx-4 relative" onClick={showDrawer}>
+                <Bell className="self-center mt-5 text-3xl text-white" />
+                {unreadNotificationList.length > 0 && (
+                  <span className="absolute -top-0 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {unreadNotificationList.length}
+                  </span>
+                )}
               </button>
               <Drawer
-                title="Notifications"
+                title={
+                  <div className="flex items-center justify-between">
+                    <span>Notifications</span>
+                    {unreadNotificationList.length > 0 && (
+                      <span className="text-sm text-gray-500">
+                        {unreadNotificationList.length} unread
+                      </span>
+                    )}
+                  </div>
+                }
                 onClose={onClose}
                 open={open}
                 styles={{
@@ -274,68 +283,67 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
                   <Segmented
                     options={["Unread", "Read"]}
                     onChange={(value) => {
-                      setCurrentTab(value);
-                      if (value === "Read") {
-                        handleFetchReadNotification();
-                      }
-                      console.log(value); // string
+                      setCurrentTab(value.toString());
                     }}
                     block
                     defaultValue="Unread"
                   />
                 </div>
-                {currentTab === "Unread" &&
-                  unreadNotificationList &&
-                  unreadNotificationList.length > 0 &&
-                  unreadNotificationList.map((item, index) => {
-                    return (
-                      <>
-                        <div key={index}>
-                          <div className="px-4">
-                            <div className="text-lg text-black font-bold">
-                              {item.notificationContent.title}
-                            </div>
-                            <div className="text-base text-black">
-                              {item.notificationContent.message}
-                            </div>
-                          </div>
-                          <Divider
-                            style={{
-                              margin: 0,
-                              marginTop: 8,
-                              marginBottom: 8,
-                            }}
-                          />
+
+                {currentTab === "Unread" && unreadNotificationList.map((item) => (
+                  <div key={item.notificationContent.id} className="px-4 py-3 hover:bg-gray-50">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="text-lg text-black font-bold">
+                          {item.notificationContent.title}
                         </div>
-                      </>
-                    );
-                  })}
-                {currentTab === "Read" &&
-                  readNotificationList &&
-                  readNotificationList.length > 0 &&
-                  readNotificationList.map((item, index) => {
-                    return (
-                      <>
-                        <div key={index}>
-                          <div className="px-4">
-                            <div className="text-lg text-black font-bold">
-                              {item.notificationContent.title}
-                            </div>
-                            <div className="text-base text-black">
-                              {item.notificationContent.message}
-                            </div>
-                          </div>
-                          <Divider
-                            style={{
-                              margin: 0,
-                              marginTop: 8,
-                              marginBottom: 8,
-                            }}
-                          />
+                        <div className="text-base text-gray-600">
+                          {item.notificationContent.message}
                         </div>
-                      </>
-                    );
-                  })}
+                        <div className="text-sm text-gray-400 mt-1">
+                          {item.notificationContent.createdAt}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleMarkAsRead(item.notificationContent.id)}
+                        className="ml-4 text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1.5 group"
+                      >
+                        <CheckCircle size={14} className="group-hover:scale-110 transition-transform" />
+                        <span className="border-b border-transparent group-hover:border-blue-800">Read</span>
+                      </button>
+                    </div>
+                    <Divider style={{ margin: '8px 0' }} />
+                  </div>
+                ))}
+
+                {currentTab === "Read" && readNotificationList.map((item) => (
+                  <div key={item.notificationContent.id} className="px-4 py-3 bg-gray-50">
+                    <div>
+                      <div className="text-lg text-gray-700 font-bold">
+                        {item.notificationContent.title}
+                      </div>
+                      <div className="text-base text-gray-600">
+                        {item.notificationContent.message}
+                      </div>
+                      <div className="text-sm text-gray-400 mt-1">
+                        {item.notificationContent.createdAt}
+                      </div>
+                    </div>
+                    <Divider style={{ margin: '8px 0' }} />
+                  </div>
+                ))}
+
+                {currentTab === "Unread" && unreadNotificationList.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No unread notifications
+                  </div>
+                )}
+
+                {currentTab === "Read" && readNotificationList.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No read notifications
+                  </div>
+                )}
               </Drawer>
             </div>
           </Header>
@@ -361,7 +369,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
                 <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/pricing">Pricing</Link></li>
                 <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/contact">Contact Us</Link></li>
               </ol>
-             
+
             </div>
           </Footer>
         </Layout>
