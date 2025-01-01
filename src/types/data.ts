@@ -155,3 +155,26 @@ export type UserLoginResponse = {
   success: boolean;
   token: string;
 };
+
+export type NewsItemType = {
+  title: string;
+  description: string;
+  date: string;
+  source: string;
+  link: string;
+  props: {
+    image?: string;
+  };
+  created_at: string;
+}
+
+export type NewsResponse = {
+  success: boolean;
+  news: {
+    total: number;
+    news: NewsItemType[];
+    next_cursor?: string;
+  };
+}
+
+export type NewsCategory = 'NSE' | 'BSE' | 'Equity' | 'Derivatives' | 'Commodities' | 'Forex' | 'ETFs' | 'IPO' | 'Mutual Funds';

@@ -18,6 +18,7 @@ const ConnectBroker = lazy(() => import("../pages/auth/connect-broker/ConnectBro
 const Login = lazy(() => import("../pages/auth/user-login/UserLogin"));
 const Signup = lazy(() => import("../pages/auth/user-signup/UserSignup"));
 const Journal = lazy(() => import("../pages/journal"));
+const News = lazy(() => import("../pages/news"));
 const Auth = lazy(() => import("../pages/auth/auth-screen/Home"));
 const ResetPassword = lazy(() => import("../pages/auth/forgot-password"));
 const Sales = lazy(() => import("../pages/sales"));
@@ -25,10 +26,10 @@ const Contact = lazy(() => import("../pages/contact"));
 
 const AllPlaylists = lazy(() => import("../pages/learning"));
 const SinglePlaylist = lazy(() => import("../pages/learning/singleplaylist"));
-const PrivacyPolicy = lazy(()=>import("../pages/company/privacy-policy"))
-const TermsAndConditions = lazy(()=>import("../pages/company/terms-conditions"))
-const Pricing = lazy(()=>import("../pages/company/pricing"))
-const Refunds = lazy(()=>import("../pages/company/refunds"))
+const PrivacyPolicy = lazy(() => import("../pages/company/privacy-policy"))
+const TermsAndConditions = lazy(() => import("../pages/company/terms-conditions"))
+const Pricing = lazy(() => import("../pages/company/pricing"))
+const Refunds = lazy(() => import("../pages/company/refunds"))
 
 const router = createBrowserRouter([
   {
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
         <Suspense
           fallback={
             <div className="h-screen bg-darkBg w-full flex items-center justify-center">
-                 <div className="w-16 h-16 border-4 border-t-4 border-blue-600 rounded-full animate-spin"></div>
+              <div className="w-16 h-16 border-4 border-t-4 border-blue-600 rounded-full animate-spin"></div>
             </div>
           }
         >
@@ -102,7 +103,7 @@ const router = createBrowserRouter([
       {
         path: "news",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <NotAvailable servicename="News" /> }],
+        children: [{ path: "", element: <News /> }],
       },
       {
         path: "stocks",
@@ -112,12 +113,12 @@ const router = createBrowserRouter([
       {
         path: "course",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <AllPlaylists/> }],
+        children: [{ path: "", element: <AllPlaylists /> }],
       },
       {
         path: "learning/:playlistId",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <SinglePlaylist/> }],
+        children: [{ path: "", element: <SinglePlaylist /> }],
       },
       {
         path: "profile",
