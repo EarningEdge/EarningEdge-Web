@@ -1,6 +1,7 @@
 import { ExternalLink } from "lucide-react";
 import { Card, CardContent } from "./Cards";
 import { NewsItemType } from "../../types/data";
+import moment from 'moment';
 
 export const NewsCard: React.FC<{ item: NewsItemType }> = ({ item }) => {
   return (
@@ -28,7 +29,7 @@ export const NewsCard: React.FC<{ item: NewsItemType }> = ({ item }) => {
 
         <div className="flex items-center gap-2 text-sm text-slate-400 mt-3">
           <time dateTime={item.date} className="font-medium">
-            {item.date}
+            {moment(item.date).fromNow()}
           </time>
         </div>
 

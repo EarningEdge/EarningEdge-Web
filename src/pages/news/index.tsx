@@ -59,7 +59,7 @@ const News: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(5);
+  const [totalPages] = useState(5);
   const [activeCategory, setActiveCategory] = useState<NewsCategory>('NSE');
   const [cursors, setCursors] = useState<{ [key: number]: string }>({});
 
@@ -126,30 +126,29 @@ const News: React.FC = () => {
 
   return (
     <CustomLayout>
-      <div className="min-h-screen bg-gradient-to-b text-slate-100 p-6">
+      <div className="min-h-screen bg-gradient-to-b text-slate-100 p-6 pt-0">
         <div className="max-w-7xl mx-auto space-y-8">
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text">
-              Financial News Dashboard
+          <div className="flex flex-col md:flex-row justify-between items-center w-full">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text mb-4 md:mb-0">
+              Top Financial News
             </h1>
 
-            <form onSubmit={handleSearch} className="flex gap-2">
+            <form onSubmit={handleSearch} className="flex w-full md:w-auto gap-2">
               <input
                 type="search"
                 placeholder="Search news..."
                 value={searchQuery}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                className="w-64 px-4 py-2 rounded-lg bg-black/20 border border-slate-800 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="w-full md:w-64 px-4 py-2 rounded-lg bg-black/20 border border-slate-800 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               />
               <button
                 type="submit"
-                className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="p-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <Search className="h-4 w-4" />
               </button>
             </form>
           </div>
-
           <Tabs
             value={activeCategory}
             onValueChange={(value) => handleCategoryChange(value as NewsCategory)}
