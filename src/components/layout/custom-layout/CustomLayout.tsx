@@ -13,7 +13,7 @@ import { menuItems } from "../../../utils/menuItems";
 import { useAppSelector } from "../../../redux/hooks";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Footer, Header } from "antd/es/layout/layout";
-import {  IndianRupee,   LogOut,  User, Bell } from "lucide-react";
+import { IndianRupee, LogOut, User, Bell } from "lucide-react";
 
 import { useDispatch } from "react-redux";
 import { login, logout } from "../../../redux/slices/authSlice";
@@ -78,16 +78,13 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  const {
-    data: unreadNotifications,
-    // isLoading: isUnreadNotificationsLoading, isError: isUnreadNotificationsError, error: unUeadNotificationsError
-  } = useQuery({
+  const { data: unreadNotifications } = useQuery({
     queryKey: ["unreadNotifications"],
     queryFn: async () => {
-      return api.get("/notification/list/" + user?._id, {
+      return api.get("/notification/all", {
         params: {
-          fetchRead: false,
-          lastNotificationViewedAt: user?.lastNotificationViewedAt,
+          read: false,
+          userId: user?._id,
         },
       });
     },
@@ -99,14 +96,13 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
     // isLoading: isReadNotificationsLoading, isError: isReadNotificationsError, error: unRdNotificationsError
   } = useQuery({
     queryKey: ["readNotifications"],
-    queryFn: async () => {
-      return api.get("/notification/list/" + user?._id, {
+    queryFn: async () =>
+      api.get("/notification/all", {
         params: {
-          fetchRead: true,
-          lastNotificationViewedAt: user?.lastNotificationViewedAt,
+          read: true,
+          userId: user?._id,
         },
-      });
-    },
+      }),
     enabled: false,
   });
 
@@ -224,13 +220,14 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
       <Layout style={{ minHeight: "100vh" }}>
         {!isMobile && (
           <Sider
-            className="bg-dark-blue"
+            className="bg-darkBg"
             style={{
-              background: "#262633",
+              background: "#070707",
               position: "fixed",
               left: 0,
               height: "100vh",
               zIndex: 1000,
+              borderRight: "0.2px solid #2f2f2f",
             }}
           >
             <div className="text-xl text-white text-center mt-4 mb-8 font-bold">
@@ -240,7 +237,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
               theme="dark"
               mode="inline"
               selectedKeys={[location.pathname]}
-              style={{ background: "#262633" }}
+              style={{ background: "#070707" }}
             >
               {renderMenuItems(menuItems)}
             </Menu>
@@ -278,7 +275,6 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
                       if (value === "Read") {
                         handleFetchReadNotification();
                       }
-                      console.log(value); // string
                     }}
                     block
                     defaultValue="Unread"
@@ -354,14 +350,56 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
           <Footer className="bg-darkBg border-t border-darkStroke text-white">
             <div className="flex flex-col items-center">
               <ol className="flex flex-wrap justify-center gap-4 mb-4">
-                <li><a target="_blank" className="text-blue-400 hover:text-blue-300 underline" href="https://earningedge.in/sample-page/">Products/Services Offered</a></li>
-                <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/terms-and-conditions">Terms and Conditions</Link></li>
-                <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/privacy-policy">Privacy Policy</Link></li>
-                <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/refunds-cancellations">Refunds & Cancellations</Link></li>
-                <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/pricing">Pricing</Link></li>
-                <li><Link className="text-blue-400 hover:text-blue-300 underline" to="/contact">Contact Us</Link></li>
+                <li>
+                  <a
+                    target="_blank"
+                    className="text-blue-400 hover:text-blue-300 underline"
+                    href="https://earningedge.in/sample-page/"
+                  >
+                    Products/Services Offered
+                  </a>
+                </li>
+                <li>
+                  <Link
+                    className="text-blue-400 hover:text-blue-300 underline"
+                    to="/terms-and-conditions"
+                  >
+                    Terms and Conditions
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="text-blue-400 hover:text-blue-300 underline"
+                    to="/privacy-policy"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="text-blue-400 hover:text-blue-300 underline"
+                    to="/refunds-cancellations"
+                  >
+                    Refunds & Cancellations
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="text-blue-400 hover:text-blue-300 underline"
+                    to="/pricing"
+                  >
+                    Pricing
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="text-blue-400 hover:text-blue-300 underline"
+                    to="/contact"
+                  >
+                    Contact Us
+                  </Link>
+                </li>
               </ol>
-             
             </div>
           </Footer>
         </Layout>

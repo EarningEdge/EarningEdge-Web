@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import CustomLayout from '../../components/layout/custom-layout/CustomLayout';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs';
-import { NewsGrid } from './NewsGrid';
-import { NewsItemType, NewsResponse, NewsCategory } from '../../types/data';
-import { Search } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
+import { NewsGrid } from "./NewsGrid";
+import { NewsItemType, NewsResponse, NewsCategory } from "../../types/data";
+import { Search } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -14,24 +14,24 @@ import {
 } from "./Pagination";
 
 const CATEGORIES: NewsCategory[] = [
-  'NSE',
-  'BSE',
-  'Equity',
-  'Derivatives',
-  'Commodities',
-  'Forex',
-  'ETFs',
-  'IPO',
-  'Mutual Funds',
+  "NSE",
+  "BSE",
+  "Equity",
+  "Derivatives",
+  "Commodities",
+  "Forex",
+  "ETFs",
+  "IPO",
+  "Mutual Funds",
 ];
 
 const fetchNewsData = async (
   category: NewsCategory,
-  searchQuery: string = '',
+  searchQuery: string = "",
   cursor: string | null = null
 ): Promise<NewsResponse> => {
   const query = searchQuery ? searchQuery : category;
-  const baseUrl = 'https://google-news-api1.p.rapidapi.com/search';
+  const baseUrl = "https://google-news-api1.p.rapidapi.com/search";
   const ITEMS_PER_PAGE = 10;
 
   let url = `${baseUrl}?language=EN&q=${query}&limit=${ITEMS_PER_PAGE}`;
@@ -41,13 +41,13 @@ const fetchNewsData = async (
 
   const response = await fetch(url, {
     headers: {
-      'x-rapidapi-host': 'google-news-api1.p.rapidapi.com',
-      'x-rapidapi-key': import.meta.env.VITE_NEWS_API_KEY,
+      "x-rapidapi-host": "google-news-api1.p.rapidapi.com",
+      "x-rapidapi-key": import.meta.env.VITE_NEWS_API_KEY,
     },
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch news');
+    throw new Error("Failed to fetch news");
   }
 
   return response.json();
@@ -57,40 +57,40 @@ const News: React.FC = () => {
   const [news, setNews] = useState<NewsItemType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages] = useState(5);
-  const [activeCategory, setActiveCategory] = useState<NewsCategory>('NSE');
+  const [activeCategory, setActiveCategory] = useState<NewsCategory>("NSE");
   const [cursors, setCursors] = useState<{ [key: number]: string }>({});
-
 
   const fetchNews = async (
     category: NewsCategory,
-    search: string = '',
+    search: string = "",
     page: number = 1
   ) => {
     setLoading(true);
     setError(null);
     try {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
 
       const cursor = cursors[page];
       const data = await fetchNewsData(category, search, cursor);
-      console.log("data: ", data.news.news)
-      const validData = data.news.news.filter((item: any) => item.title !== 'MSN').slice(0, 7);
-      console.log("validData: ", validData)
+      console.log("data: ", data.news.news);
+      const validData = data.news.news
+        .filter((item: any) => item.title !== "MSN")
+        .slice(0, 7);
+      console.log("validData: ", validData);
 
       setNews(validData);
 
       if (data.news.next_cursor) {
-        setCursors(prev => ({
+        setCursors((prev) => ({
           ...prev,
           [page + 1]: data.news.next_cursor || "1",
         }));
       }
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -117,14 +117,14 @@ const News: React.FC = () => {
 
   const handleCategoryChange = (category: NewsCategory) => {
     setActiveCategory(category);
-    setSearchQuery('');
+    setSearchQuery("");
     setCurrentPage(1);
     setCursors({});
-    fetchNews(category, '', 1);
+    fetchNews(category, "", 1);
   };
 
   useEffect(() => {
-    fetchNews('NSE');
+    fetchNews("NSE");
   }, []);
 
   return (
@@ -136,12 +136,17 @@ const News: React.FC = () => {
               Top Financial News
             </h1>
 
-            <form onSubmit={handleSearch} className="flex w-full md:w-auto gap-2">
+            <form
+              onSubmit={handleSearch}
+              className="flex w-full md:w-auto gap-2"
+            >
               <input
                 type="search"
                 placeholder="Search news..."
                 value={searchQuery}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchQuery(e.target.value)
+                }
                 className="w-full md:w-64 px-4 py-2 rounded-lg bg-black/20 border border-slate-800 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               />
               <button
@@ -154,7 +159,9 @@ const News: React.FC = () => {
           </div>
           <Tabs
             value={activeCategory}
-            onValueChange={(value) => handleCategoryChange(value as NewsCategory)}
+            onValueChange={(value) =>
+              handleCategoryChange(value as NewsCategory)
+            }
             className="relative"
           >
             <div className="flex justify-center">
@@ -173,11 +180,7 @@ const News: React.FC = () => {
 
             {CATEGORIES.map((category) => (
               <TabsContent key={category} value={category} className="mt-6">
-                <NewsGrid
-                  news={news}
-                  loading={loading}
-                  error={error}
-                />
+                <NewsGrid news={news} loading={loading} error={error} />
               </TabsContent>
             ))}
           </Tabs>
@@ -187,25 +190,33 @@ const News: React.FC = () => {
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage <= 1 ? 'pointer-events-none opacity-50' : ''}
+                  className={
+                    currentPage <= 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    onClick={() => handlePageChange(page)}
-                    isActive={currentPage === page}
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => handlePageChange(page)}
+                      isActive={currentPage === page}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              )}
 
               <PaginationItem>
                 <PaginationNext
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage >= totalPages ? 'pointer-events-none opacity-50' : ''}
+                  className={
+                    currentPage >= totalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

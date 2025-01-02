@@ -34,18 +34,21 @@ const Home = () => {
             Empowering retail investor with our unique live mentorship and hand
             holding support
           </p>
+          <div className=" flex items-center justify-evenly space-x-2">
+
           <Link
-            className="text-xl rounded-md font-light p-3 border text-center border-white bg-black hover:bg-white hover:text-black duration-500"
+            className="text-xl rounded-md py-1 flex items-center font-light border text-center border-white justify-center bg-black  hover:bg-white w-1/2 hover:text-black duration-500"
             to={"/signup"}
           >
             Create Account
           </Link>
           <Link
             to={"/login"}
-            className="text-xl rounded-md font-light bg-white border text-black p-3 text-center hover:bg-black hover:border-white  hover:text-white duration-500"
+            className="text-xl flex items-center py-1 justify-center rounded-md w-1/2 font-light bg-white border text-black text-center hover:bg-black hover:border-white  hover:text-white duration-500"
           >
             Login
           </Link>
+          </div>
         </div>
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
       </div>
