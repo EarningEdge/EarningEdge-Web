@@ -2,6 +2,7 @@ import { ExternalLink } from "lucide-react";
 import { NewsItemType } from "../../types/data";
 import { Card, CardContent } from "./Cards";
 import moment from "moment";
+import { useEffect } from "react";
 
 interface NewsCardProps {
   news: NewsItemType;
@@ -22,8 +23,11 @@ export const NewsCard: React.FC<NewsCardProps> = ({
   smallItem,
   onImageError
 }) => {
+  useEffect(() => {
+    console.log("News: ", news.date);
+  }, [])
   return (
-    <Card className=" bg-[#262633] border-slate-800 hover:bg-slate-900/60 transition-all duration-300 backdrop-blur-sm">
+    <Card style={{ backgroundColor: '#111827' }} className=" border-slate-800 hover:bg-slate-900/60 transition-all duration-300 backdrop-blur-sm">
       <CardContent className={padding}>
         <div className="flex pt-2 md:pt-3 justify-between items-start gap-2">
           <div className={smallItem ? 'space-y-1' : 'space-y-2'}>

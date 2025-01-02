@@ -7,7 +7,7 @@ const SkeletonCard: React.FC<{
   padding: string;
 }> = ({ imageHeight, descriptionLines, padding }) => {
   return (
-    <Card className="bg-black/40 border-slate-800 backdrop-blur-sm">
+    <Card style={{ backgroundColor: '#111827' }} className="bg-black/40 border-slate-800 backdrop-blur-sm">
       <CardContent className={padding}>
         <div className="flex pt-2 md:pt-5 justify-between items-start gap-4">
           <div className="space-y-2 w-full">
