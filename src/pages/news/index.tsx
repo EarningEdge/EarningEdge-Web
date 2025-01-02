@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 import { NewsGrid } from "./NewsGrid";
 import { NewsItemType, NewsResponse, NewsCategory } from "../../types/data";
-import { Search } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -12,6 +12,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./Pagination";
+import { useMediaQuery } from "@mui/material";
+import AlertModal from "./AlertModel";
 
 const CATEGORIES: NewsCategory[] = [
   "NSE",
@@ -34,7 +36,7 @@ const fetchNewsData = async (
   const baseUrl = "https://google-news-api1.p.rapidapi.com/search";
   const ITEMS_PER_PAGE = 10;
 
-  let url = `${baseUrl}?language=EN&q=${query}&limit=${ITEMS_PER_PAGE}`;
+  let url = `${baseUrl}?language=EN&q=${query}&limit=${ITEMS_PER_PAGE}&sort=date:desc`;
 
   // Add cursor if available for pagination
   if (cursor) url += `&cursor=${cursor}`;
@@ -60,14 +62,17 @@ const News: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages] = useState(5);
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [activeCategory, setActiveCategory] = useState<NewsCategory>("NSE");
   const [cursors, setCursors] = useState<{ [key: number]: string }>({});
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const fetchNews = async (
     category: NewsCategory,
     search: string = "",
     page: number = 1
   ) => {
+    setIsAlertOpen(false);
     setLoading(true);
     setError(null);
     try {
@@ -75,11 +80,15 @@ const News: React.FC = () => {
 
       const cursor = cursors[page];
       const data = await fetchNewsData(category, search, cursor);
-      console.log("data: ", data.news.news);
+
       const validData = data.news.news
-        .filter((item: any) => item.title !== "MSN")
+        .filter((item: any) => item.title !== "MSN") // Invalid data
         .slice(0, 7);
-      console.log("validData: ", validData);
+
+      if (validData.length === 0) {
+        setIsAlertOpen(true);
+        return
+      }
 
       setNews(validData);
 
@@ -89,6 +98,7 @@ const News: React.FC = () => {
           [page + 1]: data.news.next_cursor || "1",
         }));
       }
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -127,8 +137,21 @@ const News: React.FC = () => {
     fetchNews("NSE");
   }, []);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = 200;
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <CustomLayout>
+      <AlertModal isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} />
       <div className="min-h-screen bg-gradient-to-b text-slate-100 p-6 pt-0">
         <div className="max-w-7xl mx-auto space-y-8">
           <div className="flex flex-col md:flex-row justify-between items-center w-full">
@@ -159,23 +182,49 @@ const News: React.FC = () => {
           </div>
           <Tabs
             value={activeCategory}
-            onValueChange={(value) =>
-              handleCategoryChange(value as NewsCategory)
-            }
+            onValueChange={(value) => handleCategoryChange(value as NewsCategory)}
             className="relative"
           >
-            <div className="flex justify-center">
-              <TabsList className="flex flex-wrap h-auto bg-black/40 p-2 rounded-xl border border-slate-800 backdrop-blur-sm gap-4">
-                {CATEGORIES.map((category) => (
-                  <TabsTrigger
-                    key={category}
-                    value={category}
-                    className="data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-300 text-slate-400 hover:text-slate-200 transition-colors"
-                  >
-                    {category}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+            <div className="flex items-center justify-center gap-2">
+              {!isDesktop && (
+                <button
+                  onClick={() => scroll('left')}
+                  className="p-2 rounded-full bg-slate-800 text-slate-200 hover:bg-slate-700"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+              )}
+
+
+              <div
+                ref={scrollRef}
+                className="overflow-x-auto scrollbar-hide"
+              >
+                <TabsList
+                  style={{ backgroundColor: '#111827' }}
+                  className="flex bg-slate-100 whitespace-nowrap h-auto bg-black/40 p-2 rounded-xl border border-slate-800 backdrop-blur-sm gap-4"
+                >
+                  {CATEGORIES.map((category) => (
+                    <TabsTrigger
+                      key={category}
+                      value={category}
+                      className="data-[state=active]:bg-indigo-500/20 data-[state=active]:text-indigo-300 text-slate-400 hover:text-slate-200 transition-colors"
+                    >
+                      {category}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </div>
+
+              {!isDesktop && (
+                <button
+                  onClick={() => scroll('right')}
+                  className="p-2 rounded-full bg-slate-800 text-slate-200 hover:bg-slate-700"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              )}
+
             </div>
 
             {CATEGORIES.map((category) => (
