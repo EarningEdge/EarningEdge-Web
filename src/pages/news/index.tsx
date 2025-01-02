@@ -106,7 +106,6 @@ const News: React.FC = () => {
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
 
-    // If we're moving forward and don't have the cursor for the next page, fetch it
     if (page > currentPage && !cursors[page] && !loading) {
       fetchNews(activeCategory, searchQuery, currentPage);
     } else {
