@@ -32,7 +32,7 @@ const fetchNewsData = async (
 ): Promise<NewsResponse> => {
   const query = searchQuery ? searchQuery : category;
   const baseUrl = 'https://google-news-api1.p.rapidapi.com/search';
-  const ITEMS_PER_PAGE = 6;
+  const ITEMS_PER_PAGE = 10;
 
   let url = `${baseUrl}?language=EN&q=${query}&limit=${ITEMS_PER_PAGE}`;
 
@@ -76,8 +76,11 @@ const News: React.FC = () => {
 
       const cursor = cursors[page];
       const data = await fetchNewsData(category, search, cursor);
+      console.log("data: ", data.news.news)
+      const validData = data.news.news.filter((item: any) => item.title !== 'MSN').slice(0, 7);
+      console.log("validData: ", validData)
 
-      setNews(data.news.news);
+      setNews(validData);
 
       if (data.news.next_cursor) {
         setCursors(prev => ({

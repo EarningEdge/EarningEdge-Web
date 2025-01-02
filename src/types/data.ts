@@ -166,6 +166,7 @@ export type NewsItemType = {
     image?: string;
   };
   created_at: string;
+  next_cursor?: string;
 }
 
 export type NewsResponse = {
