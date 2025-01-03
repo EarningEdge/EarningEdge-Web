@@ -24,8 +24,8 @@ const ResetPassword = lazy(() => import("../pages/auth/forgot-password"));
 const Sales = lazy(() => import("../pages/sales"));
 const Contact = lazy(() => import("../pages/contact"));
 
-const AllPlaylists = lazy(() => import("../pages/learning"));
-const SinglePlaylist = lazy(() => import("../pages/learning/singleplaylist"));
+const AllPlaylists = lazy(() => import("../pages/course"));
+const SinglePlaylist = lazy(() => import("../pages/course/singleplaylist"));
 const PrivacyPolicy = lazy(() => import("../pages/company/privacy-policy"))
 const TermsAndConditions = lazy(() => import("../pages/company/terms-conditions"))
 const Pricing = lazy(() => import("../pages/company/pricing"))
