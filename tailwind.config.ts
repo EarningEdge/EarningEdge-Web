@@ -5,15 +5,21 @@ import colors from "tailwindcss/colors";
 import { default as flattenColorPalette } from "tailwindcss/lib/util/flattenColorPalette";
  
 export default {
-  content: ["./src/**/*.{html,js,ts,tsx}"],
+    darkMode: ["class"],
+    content: ["./src/**/*.{html,js,ts,tsx}"],
   theme: {
-    extend: {
-      colors:{
-        darkBg:"#13111c",
-        darkSecondary:"#181623",
-        darkStroke:"#34323d",
-      }
-    },
+  	extend: {
+  		colors: {
+  			darkBg: '#13111c',
+  			darkSecondary: '#181623',
+  			darkStroke: '#34323d'
+  		},
+  		borderRadius: {
+  			lg: 'var(--radius)',
+  			md: 'calc(var(--radius) - 2px)',
+  			sm: 'calc(var(--radius) - 4px)'
+  		}
+  	}
   },
   plugins: [function ({ matchUtilities, theme }: any) {
     matchUtilities(
@@ -36,5 +42,7 @@ export default {
       },
       { values: flattenColorPalette(theme("backgroundColor")), type: "color" }
     );
-  },],
+  },
+      require("tailwindcss-animate")
+],
 }

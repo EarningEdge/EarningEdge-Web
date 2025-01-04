@@ -29,7 +29,7 @@ const PrivacyPolicy = lazy(()=>import("../pages/company/privacy-policy"))
 const TermsAndConditions = lazy(()=>import("../pages/company/terms-conditions"))
 const Pricing = lazy(()=>import("../pages/company/pricing"))
 const Refunds = lazy(()=>import("../pages/company/refunds"))
-
+const Home2 = lazy(()=>import("../pages/home/Home2"))
 const router = createBrowserRouter([
   {
     path: "/",
@@ -93,6 +93,11 @@ const router = createBrowserRouter([
         path: "home",
         element: <ProtectedRoute />,
         children: [{ path: "", element: <Home /> }],
+      },
+      {
+        path:"home2",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <Home2 /> }],
       },
       {
         path: "journal",

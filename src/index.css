@@ -134,3 +134,8 @@
   border: 1px solid #292922;
   background: #000 !important;
 }
+@layer base {
+  :root {
+        --radius: 0.5rem;
+    }
+}
