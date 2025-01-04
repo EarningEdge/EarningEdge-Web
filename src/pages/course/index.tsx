@@ -6,6 +6,7 @@ import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
+import { useAppSelector } from "@/redux/hooks";
 
 // Type for playlist data
 interface Playlist {
@@ -22,7 +23,9 @@ interface SubscriptionStatus {
 
 const PlaylistsPage: React.FC = () => {
   const api = useAxios();
-  const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
+  const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
+  const { user } = useAppSelector((state) => state.auth);
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
   // Fetch playlists using useQuery
   const { data: playlists, isLoading, error } = useQuery<{ data: Playlist[] }>({
@@ -34,23 +37,17 @@ const PlaylistsPage: React.FC = () => {
   });
 
   // Fetch subscription status with explicit typing for `onSuccess`
-  const { data, isLoading: loadingSubscription, error: subscriptionError } = useQuery<SubscriptionStatus, Error>({
+  const { isLoading: loadingSubscription, error: subscriptionError } = useQuery<SubscriptionStatus, Error>({
     queryKey: ["enrollmentStatus"],
     queryFn: async () => {
-      const response = await api.get("/user/getEnrollmentStatus");
-      console.log(data);
-      console.log("response.data.data.isEnrolled: ", response.data.data.isEnrolled);
-
+      const response = await api.get(`/user/getEnrollmentStatus/${user?._id}`);
       if (!response.data.data.isEnrolled) {
         setIsSubscribed(false);
-        console.log("Not Subscribed");
       }
 
       if (response.data.data.isEnrolled) {
         setIsSubscribed(true);
-        console.log("Subscribed");
       }
-
       return response.data.data;
     },
     onSuccess: (data: SubscriptionStatus) => {
@@ -59,7 +56,7 @@ const PlaylistsPage: React.FC = () => {
   } as UseQueryOptions<SubscriptionStatus, Error, SubscriptionStatus>);
 
 
-  const stripePromise = loadStripe("pk_test_51QdAO3RJiGRik51pha5mmd2EWtDDjiPb7S50uR6ghUMb5uRazBwFWNNBE5fCvwYk0Jlb9BpEbH8Ff6sxsXoh31gk00Mw9Y0gGn");
+  const stripePromise = loadStripe(STRIPE_KEY);
 
   // Loading and error handling
   if (loadingSubscription || isLoading)
@@ -94,9 +91,8 @@ const PlaylistsPage: React.FC = () => {
         ) : (
           // Show Stripe payment form if the user is not subscribed
           <div className="text-center">
-            <p className="text-xl text-red-500 mb-4">Please subscribe to access the playlists</p>
             <Elements stripe={stripePromise}>
-              <CheckoutForm />
+              <CheckoutForm setIsSubscribed={setIsSubscribed} isSubscribed={isSubscribed} />
             </Elements>
           </div>
         )}
