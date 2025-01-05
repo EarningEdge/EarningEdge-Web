@@ -32,6 +32,7 @@ const PlaylistsPage: React.FC = () => {
     queryKey: ["playlists"],
     queryFn: async () => {
       const response = await api.get("/playlist/getAll");
+      console.log(response.data);
       return response.data;
     },
   });
@@ -69,9 +70,9 @@ const PlaylistsPage: React.FC = () => {
   return (
     <CustomLayout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl mb-6 text-slate-300">Learning Playlists</h1>
 
-        {isSubscribed ? (
+        {isSubscribed ? (<>
+          <h1 className="text-3xl mb-6 text-slate-300">Learning Playlists</h1>
           // Show playlists if the user is subscribed
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {playlists?.data.map((playlist) => (
@@ -88,6 +89,7 @@ const PlaylistsPage: React.FC = () => {
               </Link>
             ))}
           </div>
+        </>
         ) : (
           // Show Stripe payment form if the user is not subscribed
           <div className="text-center">
@@ -96,7 +98,9 @@ const PlaylistsPage: React.FC = () => {
             </Elements>
           </div>
         )}
+
       </div>
+
     </CustomLayout>
   );
 };

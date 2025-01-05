@@ -45,7 +45,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ setIsSubscribed, isSubscrib
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [cardComplete, setCardComplete] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(!isSubscribed);
-  const enrollmentAmount = 1999;
+  const enrollmentAmount = 2999;
   const BACKEND_URL = import.meta.env.VITE_BASE_URL;
   const { user } = useAppSelector((state) => state.auth);
 
@@ -126,9 +126,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ setIsSubscribed, isSubscrib
     <>
       {showContent ? (
         <div style={{ backgroundColor: '#161616' }} className="max-w-md mx-auto p-6 rounded-lg shadow">
-          <p className="text-xl text-white mb-4">Please subscribe to access the playlists</p>
 
-          <h2 className="text-2xl font-bold text-gray-100 mb-6">Payment Details</h2>
+          <h2 className="text-2xl font-bold text-gray-100 ">Payment Details</h2>
+          <p className="text-sm text-blue-300 mb-6 ">Please subscribe to access the courses</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="rounded-md border border-gray-300 p-4">
