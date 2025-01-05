@@ -15,7 +15,7 @@ const ConnectionStatus: React.FC = () => {
     console.log(user)
 
   return (
-    <div className="flex h-96 items-center justify-center bg-gray-900">
+    <div className="flex h-full items-center justify-center bg-gray-900">
       <div className="relative flex flex-col items-center">
         <Dialog>
           <DialogTrigger asChild>
@@ -78,7 +78,7 @@ const ConnectionStatus: React.FC = () => {
             ? "Click the button to disconnect"
             : "Click the button to connect"}
         </p>
-        <p className="mt-2 text-base text-gray-400">Connected X days Age</p>
+        <p className="mt-2 text-base text-gray-400">Connected X days Ago</p>
       </div>
     </div>
   );

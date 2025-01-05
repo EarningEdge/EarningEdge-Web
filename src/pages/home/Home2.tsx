@@ -9,6 +9,8 @@ import { Navigate } from "react-router-dom";
 import ContactUs from "./ContactUs";
 import TopNews from "./TopNews";
 import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
+import Tables from "./Tables";
+import Graph from "./Graph";
 
 const Home2: React.FC = () => {
   const { token, user } = useAppSelector((state) => state.auth);
@@ -16,12 +18,14 @@ const Home2: React.FC = () => {
   const api = useAxios();
   const daysSinceCreation = moment().diff(moment(user?.createdAt), "days");
   const freeTrialDaysLeft = 30 - daysSinceCreation;
+
   const { data: userData } = useQuery({
     queryKey: ["user", user._id],
     queryFn: async () => {
       return await api.get("/user/details/" + user._id);
     },
   });
+
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (userData) {
@@ -37,6 +41,7 @@ const Home2: React.FC = () => {
   return (
     <div>
       <CustomLayout>
+        {/* Trial Information */}
         <div className="flex justify-start items-center space-x-2 mb-4">
           <h1 className="text-slate-500">
             {freeTrialDaysLeft <= 0 ? (
@@ -50,23 +55,23 @@ const Home2: React.FC = () => {
         </div>
 
         <div className="min-h-screen bg-darkBg text-white p-6 space-y-8">
-          {/* Top Section */}
-          <div className="flex gap-4">
-            {/* Connected Status Card (Left Half) */}
-            <div className="bg-gray-800 rounded-xl p-6 shadow-lg w-1/2">
+          {/* Flex Container */}
+          <div className="flex flex-wrap gap-4  lg:flex-nowrap">
+            {/* Left Card */}
+            <div className="bg-gray-800 rounded-xl p-6 shadow-lg w-full md:w-1/2">
               <ConnectionStatus />
             </div>
 
-            {/* Profit/Loss Graph (Right Half) */}
-            <div className="bg-gray-800 rounded-xl p-6 shadow-lg w-1/2">
-              <p>Graph</p>
+            {/* Right Card */}
+            <div className="bg-gray-800 rounded-xl p-6 shadow-lg w-full md:w-1/2">
+              <Graph />
             </div>
           </div>
 
-          {/* Bottom Section */}
+          {/* Table Section */}
           <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
             <h2 className="text-lg font-semibold mb-4">Today's Trade</h2>
-            <h1>Table</h1>
+            <Tables />
           </div>
         </div>
 
@@ -74,10 +79,9 @@ const Home2: React.FC = () => {
           <ContactUs firstName={user?.firstName || ""} />
         </div>
 
-        <div className="my-4">
+        <div className="my-4 flex justify-center">
           <iframe
-            width="560"
-            height="315"
+            className="w-full md:w-3/4 lg:w-1/2 h-60 md:h-80"
             src="https://www.youtube.com/embed/508c10J-ipc?si=HNVSkSca_tWQ38jL"
             title="YouTube video player"
             frameBorder="0"
