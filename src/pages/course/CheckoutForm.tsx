@@ -127,8 +127,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ setIsSubscribed, isSubscrib
       {showContent ? (
         <div style={{ backgroundColor: '#161616' }} className="max-w-md mx-auto p-6 rounded-lg shadow">
 
-          <h2 className="text-2xl font-bold text-gray-100 ">Payment Details</h2>
-          <p className="text-sm text-blue-300 mb-6 ">Please subscribe to access the courses</p>
+          <h2 className="text-2xl text-center font-bold text-gray-100 ">Payment Details</h2>
+          <p className="text-sm text-center text-blue-300 mb-6 ">Please subscribe to access the courses</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="rounded-md border border-gray-300 p-4">
