@@ -45,7 +45,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ setIsSubscribed, isSubscrib
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [cardComplete, setCardComplete] = useState<boolean>(false);
   const [showContent, setShowContent] = useState<boolean>(!isSubscribed);
-  const enrollmentAmount = 2999;
+  const enrollmentAmount = 2999.99;
   const BACKEND_URL = import.meta.env.VITE_BASE_URL;
   const { user } = useAppSelector((state) => state.auth);
 
@@ -95,7 +95,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ setIsSubscribed, isSubscrib
       const response = await axios.post(`${BACKEND_URL}/api/v1/user/enrollmentPayment`, {
         transactionId: paymentMethod.id,
         userId: user?._id,
-        price: enrollmentAmount,
+        price: Math.round(enrollmentAmount * 100),  // Converts to paise
       });
 
       if (!response.status) {
