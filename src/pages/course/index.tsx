@@ -6,7 +6,6 @@ import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
 import { loadStripe } from "@stripe/stripe-js";
 import { useAppSelector } from "@/redux/hooks";
 import LockedContent from "./LockedContent";
-import LoaderComponent from "./LoaderComponent";
 import { Loader2 } from "lucide-react";
 
 // Type for playlist data
@@ -32,7 +31,7 @@ const PlaylistsPage: React.FC = () => {
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
   // Fetch playlists using useQuery
-  const { data: playlists, isLoading, error } = useQuery<{ data: Playlist[] }>({
+  const { data: playlists, error } = useQuery<{ data: Playlist[] }>({
     queryKey: ["playlists"],
     queryFn: async () => {
       const response = await api.get("/playlist/getAll");
@@ -42,7 +41,7 @@ const PlaylistsPage: React.FC = () => {
   });
 
   // Fetch subscription status with explicit typing for `onSuccess`
-  const { isLoading: loadingSubscription, error: subscriptionError } = useQuery<SubscriptionStatus, Error>({
+  const { error: subscriptionError } = useQuery<SubscriptionStatus, Error>({
     queryKey: ["enrollmentStatus"],
     queryFn: async () => {
       const response = await api.get(`/user/getEnrollmentStatus/${user?._id}`);

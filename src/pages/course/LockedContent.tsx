@@ -26,7 +26,6 @@ interface LockedContentProps {
 }
 
 const LockedContent: React.FC<LockedContentProps> = ({
-  playlists,
   stripePromise,
   setIsSubscribed,
   isSubscribed
@@ -90,7 +89,6 @@ const LockedContent: React.FC<LockedContentProps> = ({
       </div>
 
 
-      {/* CSS for pulse animation */}
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
