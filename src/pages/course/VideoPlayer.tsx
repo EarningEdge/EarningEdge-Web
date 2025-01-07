@@ -1,3 +1,15 @@
+/*
+=============================================
+
+Old code to display the video playlist. 
+Kept this file just for reference.
+
+=============================================
+
+*/
+
+
+
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 
