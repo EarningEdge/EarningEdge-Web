@@ -179,3 +179,36 @@ export type NewsResponse = {
 }
 
 export type NewsCategory = 'NSE' | 'BSE' | 'Equity' | 'Derivatives' | 'Commodities' | 'Forex' | 'ETFs' | 'IPO' | 'Mutual Funds';
+
+
+export type VideoType = {
+  id: bigint;
+  title: string;
+  description: string;
+  courseId: string;
+  thumbnail: string;
+  duration: number;
+  videoUrl: string;
+}
+
+export type TimestampType = {
+  id: bigint;
+  videoId: string;
+  startTime: bigint;
+  endTime: bigint;
+  name: string;
+}
+
+export type CourseType = {
+  _id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+}
+
+export type ProgressType = {
+  id: bigint;
+  userId: string;
+  videoId: string;
+  courseId: bigint;
+}

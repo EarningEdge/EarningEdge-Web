@@ -5,6 +5,8 @@ import App from "../App";
 
 
 import ErrorBoundary from "../components/layout/error/ErrorBoundary";
+import VideosPage from "@/pages/course/VideoPage";
+import CoursePage from "@/pages/course/CoursePage";
 
 // Lazy Loading all the pages
 const AddPhno = lazy(() => import("../pages/auth/add-phnumber/AddPhno"));
@@ -24,8 +26,8 @@ const ResetPassword = lazy(() => import("../pages/auth/forgot-password"));
 const Sales = lazy(() => import("../pages/sales"));
 const Contact = lazy(() => import("../pages/contact"));
 
-const AllPlaylists = lazy(() => import("../pages/learning"));
-const SinglePlaylist = lazy(() => import("../pages/learning/singleplaylist"));
+// const AllPlaylists = lazy(() => import("../pages/course"));
+// const SinglePlaylist = lazy(() => import("../pages/course/singleplaylist"));
 const PrivacyPolicy = lazy(() => import("../pages/company/privacy-policy"))
 const TermsAndConditions = lazy(() => import("../pages/company/terms-conditions"))
 const Pricing = lazy(() => import("../pages/company/pricing"))
@@ -113,12 +115,12 @@ const router = createBrowserRouter([
       {
         path: "course",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <AllPlaylists /> }],
+        children: [{ path: "", element: <CoursePage /> }],
       },
       {
-        path: "learning/:playlistId",
+        path: "courseVideos/:courseId",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <SinglePlaylist /> }],
+        children: [{ path: "", element: <VideosPage /> }],
       },
       {
         path: "profile",
