@@ -30,7 +30,6 @@ const UserDashboard = () => {
   const dispatch = useAppDispatch();
   const [files, setFiles] = useState<File>();
 
-
   const { mutateAsync: disconnectUser } = useMutation({
     mutationKey: ["disconnect"],
     mutationFn: async () => {
@@ -130,10 +129,9 @@ const UserDashboard = () => {
 
   useEffect(() => {
     if (referralData && referralData.data) {
-        console.log(referralData.data.data)
+      console.log(referralData.data.data);
     }
   }, [referralData]);
-
 
   useEffect(() => {
     if (user && user._id) {
@@ -371,18 +369,24 @@ const UserDashboard = () => {
               <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                 <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
                   <h3 className="text-lg font-light mb-2">Current month</h3>
-                  <p className="text-3xl font-bold">{referralData?.data?.data?.currentMonthCount || 0}</p>
+                  <p className="text-3xl font-bold">
+                    {referralData?.data?.data?.currentMonthCount || 0}
+                  </p>
                 </div>
                 <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
                   <h3 className="text-lg font-light mb-2">Total users</h3>
-                  <p className="text-3xl font-bold">{referralData?.data?.data?.totalUsers || 0}</p>
+                  <p className="text-3xl font-bold">
+                    {referralData?.data?.data?.totalUsers || 0}
+                  </p>
                 </div>
               </div>
               <h1 className="mt-6 text-lg">Paid users count</h1>
               <div className=" grid grid-cols-2 md:grid-cols-2 gap-4">
                 <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
                   <h3 className="text-lg font-light mb-2">Current Month</h3>
-                  <p className="text-3xl font-bold">{user.paidUsersCount || 0}</p>
+                  <p className="text-3xl font-bold">
+                    {user.paidUsersCount || 0}
+                  </p>
                 </div>
                 <div className="bg-darkSecondary border-[0.4px] border-darkStroke p-4 rounded-md shadow">
                   <h3 className="text-lg font-light mb-2">Overall</h3>
@@ -394,7 +398,7 @@ const UserDashboard = () => {
               <div className="bg-darkSecondary border-[0.4px] mt-4 border-darkStroke p-4 rounded-md shadow">
                 <h3 className="text-lg font-light mb-2">Credits balance</h3>
                 <p className="text-3xl font-bold text-green-500">
-                  ₹{user.paidUsersCount*500 || 0}
+                  ₹{user.paidUsersCount * 500 || 0}
                 </p>
               </div>
               <Card className="max-w-4xl mx-auto mt-8">
@@ -473,28 +477,32 @@ const UserDashboard = () => {
         >
           <div className="space-y-4">
             <h1 className="text-slate-200">Your Leads</h1>
-            {leads?.map((lead) => (
-              <div
-                key={lead._id}
-                className="flex items-center p-2 bg-darkSecondary rounded-md"
-              >
-                <img
-                  src={lead.profile_image_url || "/fallback_profile.jpg"}
-                  alt={lead.firstName + " " + lead.lastName}
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div className="text-white">
-                  <p className="text-sm font-semibold">
-                    {lead.firstName + " " + lead.lastName}
-                  </p>
-                  <p className="text-xs text-gray-400">{lead.email}</p>
-                  <p className="text-xs text-gray-400">{lead.phoneNumber}</p>
-                  <p className="text-xs text-gray-400">
-                    Joined {moment(lead.createdAt).fromNow()}
-                  </p>
+            {leads && leads.length > 0 ? (
+              leads.map((lead) => (
+                <div
+                  key={lead._id}
+                  className="flex items-center p-2 bg-darkSecondary rounded-md"
+                >
+                  <img
+                    src={lead.profile_image_url || "/fallback_profile.jpg"}
+                    alt={lead.firstName + " " + lead.lastName}
+                    className="w-12 h-12 rounded-full mr-4"
+                  />
+                  <div className="text-white">
+                    <p className="text-sm font-semibold">
+                      {lead.firstName + " " + lead.lastName}
+                    </p>
+                    <p className="text-xs text-gray-400">{lead.email}</p>
+                    <p className="text-xs text-gray-400">{lead.phoneNumber}</p>
+                    <p className="text-xs text-gray-400">
+                      Joined {moment(lead.createdAt).fromNow()}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-400 text-sm">No leads found</p>
+            )}
           </div>
         </Modal>
       </div>

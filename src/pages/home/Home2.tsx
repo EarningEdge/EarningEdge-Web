@@ -58,18 +58,18 @@ const Home2: React.FC = () => {
           {/* Flex Container */}
           <div className="flex flex-wrap gap-4  lg:flex-nowrap">
             {/* Left Card */}
-            <div className="bg-gray-800 rounded-xl p-6 shadow-lg w-full md:w-1/2">
+            <div className="border border-darkStroke rounded-xl p-6 shadow-lg w-full md:w-1/2">
               <ConnectionStatus />
             </div>
 
             {/* Right Card */}
-            <div className="bg-gray-800 rounded-xl p-6 shadow-lg w-full md:w-1/2">
+            <div className="border border-darkStroke rounded-xl p-6 shadow-lg w-full md:w-1/2">
               <Graph />
             </div>
           </div>
 
           {/* Table Section */}
-          <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
+          <div className="border border-darkStroke rounded-xl p-6 shadow-lg">
             <h2 className="text-lg font-semibold mb-4">Today's Trade</h2>
             <Tables />
           </div>

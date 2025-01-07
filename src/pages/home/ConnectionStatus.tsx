@@ -15,7 +15,7 @@ const ConnectionStatus: React.FC = () => {
     console.log(user)
 
   return (
-    <div className="flex h-full items-center justify-center bg-gray-900">
+    <div className="flex h-full items-center justify-center ">
       <div className="relative flex flex-col items-center">
         <Dialog>
           <DialogTrigger asChild>
