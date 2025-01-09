@@ -9,7 +9,7 @@ const courses: CourseType[] = [
   },
   {
     _id: "course2",
-    title: "Advanced Trading Psychology",
+    title: "Trading Psychology",
     description: "Master discipline, patience, and focus to excel in trading",
     thumbnail: "https://img.freepik.com/free-vector/forex-trading-background_52683-41365.jpg"
   },

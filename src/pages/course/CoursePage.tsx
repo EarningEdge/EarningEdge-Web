@@ -78,7 +78,7 @@ const CoursePage = () => {
 
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full col-span-1 md:col-span-2 lg:col-span-3 min-h-[400px]">
               <FileX className="h-16 w-16 text-gray-400 mb-4" />
@@ -89,60 +89,67 @@ const CoursePage = () => {
           )}
           {filteredCourses.map((course) => {
             const videos = getVideosForCourse(course._id);
-            const totalDuration = calculateTotalDuration(videos);
+            // const totalDuration = calculateTotalDuration(videos);
 
             return (
               <div
-                key={course._id}
-                className="bg-gray-900 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                onClick={() => handleCourseClick(course._id)}
+                className="relative cursor-pointer rounded-xl overflow-hidden border border-blue-900/90 hover:border-blue-600/80 transition-all duration-300 hover:shadow-lg hover:shadow-blue-900/40"
               >
+                {/* Image Section */}
                 <div className="relative">
                   <img
                     src={course.thumbnail}
                     alt={course.title}
-                    className="w-full h-44 object-cover"
+                    className="w-full h-48 object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-60" />
+                  {/* Video Count Badge */}
+                  <div className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1 rounded-full text-sm flex items-center gap-1.5">
+                    <Play size={14} />
+
+                    <span>{videos.length === 1 ? "1 video" : `${videos.length} videos`}</span>
+                  </div>
                 </div>
 
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold text-white mb-2">{course.title}</h2>
-                  <p className="text-gray-400 mb-4">{course.description}</p>
-
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="flex items-center text-blue-400">
-                      <Play size={16} className="mr-1" />
-                      <span>{videos.length} videos</span>
-                    </div>
-                    <div className="flex items-center text-blue-400">
-                      <Clock size={16} className="mr-1" />
-                      <span>{formatDuration(totalDuration)}</span>
-                    </div>
+                {/* Content Section */}
+                <div className="p-3 flex justify-between items-start gap-1">
+                  {/* Left: Title and Description */}
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-base text-white line-clamp-1 mb-1.5">
+                      {course.title}
+                    </h3>
+                    <p className="text-gray-200 text-xs line-clamp-2">
+                      {course.description}
+                    </p>
                   </div>
 
-                  <div className="mb-4">
-                    <div className="flex justify-between text-sm text-gray-400 mb-1">
-                      <span>Progress</span>
-                      <span>{calculateProgress(course._id)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-700 rounded-full h-2">
-                      <div
-                        className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${calculateProgress(course._id)}%` }}
+                  {/* Right: Progress Circle */}
+                  <div className="relative w-14 h-14 shrink-0">
+                    <svg className="w-full h-full -rotate-90">
+                      <circle
+                        cx="28"
+                        cy="28"
+                        r="20"
+                        className="stroke-gray-200"
+                        fill="none"
+                        strokeWidth="5"
                       />
+                      <circle
+                        cx="28"
+                        cy="28"
+                        r="20"
+                        className="stroke-green-500"
+                        fill="none"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                        strokeDasharray={`${2 * Math.PI * 24}`}
+                        strokeDashoffset={`${2 * Math.PI * 24 * (1 - calculateProgress(course._id) / 100)}`}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center text-gray-200 justify-center text-xs font-medium">
+                      {calculateProgress(course._id)}%
                     </div>
                   </div>
-
-                  <button
-                    className="w-full py-2 px-4 bg-blue-900 hover:bg-blue-700 text-white rounded-lg transition duration-300 flex items-center justify-center gap-2"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCourseClick(course._id);
-                    }}
-                  >
-                    {getProgressIcon(calculateProgress(course._id))}
-                    {getProgressMessage(calculateProgress(course._id))}
-                  </button>
                 </div>
               </div>
             );
