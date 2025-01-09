@@ -25,6 +25,7 @@ const Auth = lazy(() => import("../pages/auth/auth-screen/Home"));
 const ResetPassword = lazy(() => import("../pages/auth/forgot-password"));
 const Sales = lazy(() => import("../pages/sales"));
 const Contact = lazy(() => import("../pages/contact"));
+const Course = lazy(() => import("../pages/course"));
 
 // const AllPlaylists = lazy(() => import("../pages/course"));
 // const SinglePlaylist = lazy(() => import("../pages/course/singleplaylist"));
@@ -115,7 +116,7 @@ const router = createBrowserRouter([
       {
         path: "course",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <CoursePage /> }],
+        children: [{ path: "", element: <Course /> }],
       },
       {
         path: "courseVideos/:courseId",

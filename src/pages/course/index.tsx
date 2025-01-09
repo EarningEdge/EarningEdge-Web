@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import useAxios from "../../hooks/useAxios";
-import { Link } from "react-router-dom";
 import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
 import { loadStripe } from "@stripe/stripe-js";
 import { useAppSelector } from "@/redux/hooks";
 import LockedContent from "./LockedContent";
 import { Loader2 } from "lucide-react";
+import CoursePage from "./CoursePage";
 
 // Type for playlist data
 interface Playlist {
@@ -81,24 +81,7 @@ const PlaylistsPage: React.FC = () => {
       ) : (
         <div className="container mx-auto px-4 py-8">
           {isSubscribed ? (
-            <>
-              <h1 className="text-3xl mb-6 text-slate-300">Courses</h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {playlists?.data.map((playlist) => (
-                  <Link
-                    key={playlist.playlist._id}
-                    to={`/learning/${playlist.playlist._id}`}
-                    className="bg-darkSecondary border-darkStroke border-[0.4px] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
-                  >
-                    <div className="p-4">
-                      <h2 className="text-xl text-white mb-2">{playlist.playlist.title}</h2>
-                      <p className="text-gray-300 mb-2">{playlist.playlist.description}</p>
-                      <p className="text-sm text-gray-300">{playlist.playlist.videoCount} videos</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </>
+            <CoursePage />
           ) : (
             <LockedContent
               playlists={playlists}

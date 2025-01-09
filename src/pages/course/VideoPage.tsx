@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Play, Clock, ChevronDown, ChevronUp } from 'lucide-react';
-import { getAllCourses, getVideosForCourse, getTimestampsForVideo } from './contentData';
+import { Play, Clock, ChevronDown, ChevronUp, Check } from 'lucide-react';
+import { getAllCourses, getVideosForCourse, getTimestampsForVideo, getUserProgress } from './contentData';
 import CustomLayout from '@/components/layout/custom-layout/CustomLayout';
 import { VideoType, CourseType, TimestampType } from '@/types/data';
 
@@ -13,8 +13,20 @@ const VideoPage = () => {
   const [courseVideos, setCourseVideos] = useState<VideoType[]>([]);
   const [courseInfo, setCourseInfo] = useState<CourseType | null>(null);
   const [timestamps, setTimestamps] = useState<TimestampType[]>([]);
-  const [isVideoListOpen, setIsVideoListOpen] = useState(true);
+  const [isVideoListOpen, setIsVideoListOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [completedVideos, setCompletedVideos] = useState<string[]>([]);
+
+
+  // Load user progress when course changes
+  useEffect(() => {
+    if (courseId) {
+      // Replace '1' with actual userId from your auth system
+      const userProgress = getUserProgress('1');
+      const completedVideoIds = userProgress.map(p => p.videoId);
+      setCompletedVideos(completedVideoIds);
+    }
+  }, [courseId]);
 
 
   // Load course data when courseId changes
@@ -45,6 +57,18 @@ const VideoPage = () => {
     return `${minutes}:${String(remainingSeconds).padStart(2, '0')}`;
   };
 
+  const handleVideoCompletion = () => {
+    if (!selectedVideo) return;
+
+    setCompletedVideos(prev => {
+      const videoId = selectedVideo.id.toString();
+      if (prev.includes(videoId)) {
+        return prev.filter(id => id !== videoId);
+      }
+      return [...prev, videoId];
+    });
+  };
+
   return (
     <CustomLayout>
       <div className="flex flex-col lg:flex-row min-h-screen ">
@@ -70,23 +94,34 @@ const VideoPage = () => {
 
           </div>
 
-          <div className={`${isVideoListOpen ? 'block' : 'hidden'} p-2 lg:block lg:h-[100vh] lg:overflow-y-auto custom-scrollbar space-y-4`}>
+          <div className={`${isVideoListOpen ? 'block' : 'hidden'} p-2 lg:block lg:h-[100vh] lg:overflow-y-auto custom-scrollbar space-y-4 relative`}>
             {courseVideos.map((video) => (
               <div
                 key={video.id.toString()}
                 onClick={() => {
                   setSelectedVideo(video);
                   setIsPlaying(false);
+                  setIsVideoListOpen(!isVideoListOpen)
                 }}
                 className={`
-              relative rounded-lg overflow-hidden cursor-pointer
-              transition-all duration-200 
-              ${selectedVideo?.id === video.id
-                    ? 'ring-2 ring-blue-500 bg-gray-900'
-                    : 'hover:ring-2 hover:ring-blue-400/50 bg-gray-900'}
-            `}
+                relative rounded-lg overflow-visible cursor-pointer
+                transition-all mt-3 
+                border border-blue-900/60 hover:border-blue-600/60
+                hover:shadow-lg hover:shadow-blue-900/20
+                ${selectedVideo?.id === video.id
+                    ? '!border-[0.1rem] !border-blue-900 shadow-lg shadow-blue-900/30'
+                    : ''}
+              `}
               >
-                <div className="flex gap-4 p-4">
+                {/* Completion Badge */}
+                {completedVideos.includes(video.id.toString()) && (
+                  <div className="absolute -top-2 -left-2 z-[100]">
+                    <div className="bg-green-500 rounded-full p-1 ring-2 ring-gray-900 shadow-md flex items-center justify-center w-5 h-5">
+                      <Check className="w-4 h-4 text-white stroke-[5]" />
+                    </div>
+                  </div>
+                )}
+                <div className="flex gap-4 p-4 ">
                   {/* Thumbnail with Play Icon */}
                   <div className="relative w-24 h-16 flex-shrink-0 rounded-md overflow-hidden">
                     <img
@@ -98,6 +133,7 @@ const VideoPage = () => {
                       <Play className="w-6 h-6 text-white/90" />
                     </div>
                   </div>
+
 
                   {/* Video Info */}
                   <div className="flex flex-col justify-between flex-1 min-w-0">
@@ -118,11 +154,11 @@ const VideoPage = () => {
         </div>
 
         {/* Main Content */}
-        <div className="lg:w-3/4 p-4 bg-gray-900">
+        <div className="lg:w-3/4 p-4 rounded-lg border border-blue-900/20 ">
           {selectedVideo && (
             <>
               {/* Video Player/Thumbnail */}
-              <div className="w-full aspect-video bg-black rounded-lg overflow-hidden mb-6 relative">
+              <div className="w-full aspect-video bg-black rounded-lg overflow-hidden mb-6 relative ">
                 {!isPlaying ? (
                   <div
                     className="relative w-full h-full cursor-pointer group"
@@ -152,9 +188,37 @@ const VideoPage = () => {
 
               {/* Video Info */}
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">
-                  {selectedVideo.title}
-                </h1>
+                <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
+                  <h1 className="text-3xl font-bold text-white">
+                    {selectedVideo.title}
+                  </h1>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleVideoCompletion();
+                    }}
+                    className={`
+    flex items-center gap-2 px-4 py-2 rounded-lg font-medium
+    transition-all duration-200 
+    ${completedVideos.includes(selectedVideo.id.toString())
+                        ? 'bg-blue-900 text-white hover:bg-blue-700'
+                        : 'border-2 border-blue-900/60 text-blue-400 hover:bg-blue-500/10'}
+    hover:shadow-lg transform hover:-translate-y-0.5
+  `}
+                  >
+                    {completedVideos.includes(selectedVideo.id.toString()) ? (
+                      <>
+                        <Check className="w-5 h-5 stroke-[3]" />
+                        <span>Completed</span>
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-5 h-5 stroke-[3]" />
+                        <span>Mark as Complete</span>
+                      </>
+                    )}
+                  </button>
+                </div>
                 <p className="text-gray-400 text-base">
                   {selectedVideo.description}
                 </p>
@@ -162,7 +226,7 @@ const VideoPage = () => {
 
               {/* Timestamps */}
               {timestamps.length > 0 && (
-                <div className="bg-gray-800 rounded-lg p-4">
+                <div className=" rounded-lg p-4 border border-blue-900/60 hover:border-blue-600/60 transition-all duration-300">
                   <h2 className="text-lg font-semibold text-white mb-4">
                     Video Time Stamps
                   </h2>

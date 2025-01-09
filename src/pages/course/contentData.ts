@@ -9,7 +9,7 @@ const courses: CourseType[] = [
   },
   {
     _id: "course2",
-    title: "Advanced Trading Psychology",
+    title: "Trading Psychology",
     description: "Master discipline, patience, and focus to excel in trading",
     thumbnail: "https://img.freepik.com/free-vector/forex-trading-background_52683-41365.jpg"
   },
@@ -44,7 +44,7 @@ const videos: VideoType[] = [
   {
     id: BigInt(1),
     title: "Understanding Stock Market Basics",
-    description: "Learn the fundamental concepts of stock exchanges, including their purpose and functioning. Explore the roles of key market participants such as brokers, investors, and institutions, and understand how they interact within the market. Gain insights into trading mechanics, including order types, market orders, limit orders, bid-ask spreads, and how trades are executed. This comprehensive overview is ideal for beginners looking to build a strong foundation in stock market operations.",
+    description: "Learn the fundamental concepts of stock exchanges, including their purpose and functioning. Explore the roles of key market participants such as brokers,",
     courseId: "course1",
     thumbnail: "https://img.pikbest.com/wp/202403/forex-trading-illuminated-bull-hologram-dominates-chart-in-prosperous-market-investing-and-concept-3d-rendering_9823645.jpg!bw700",
     duration: 1800, // 30 minutes
