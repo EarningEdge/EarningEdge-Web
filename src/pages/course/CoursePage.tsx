@@ -1,27 +1,11 @@
-import { Clock, Play, CheckCircle, RefreshCw, FileX } from 'lucide-react';
+import { Play, FileX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { CourseType, VideoType } from '@/types/data';
+import { CourseType } from '@/types/data';
 import { getAllCourses, getUserProgressForCourse, getVideosForCourse } from './contentData';
 import { Tabs, TabsList, TabsTrigger } from '../news/Tabs';
 
-const formatDuration = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  return `${hours}h ${minutes}m`;
-};
 
-const getProgressMessage = (progress: number): string => {
-  if (progress === 0) return "Start Course";
-  if (progress === 100) return "Course Completed";
-  return "Continue Learning";
-};
-
-const getProgressIcon = (progress: number) => {
-  if (progress === 0) return <Play size={18} />;
-  if (progress === 100) return <CheckCircle size={18} />;
-  return <RefreshCw size={18} />;
-};
 
 const CoursePage = () => {
   const navigate = useNavigate();
@@ -39,9 +23,15 @@ const CoursePage = () => {
     navigate(`/courseVideos/${courseId}`);
   };
 
-  const calculateTotalDuration = (courseVideos: VideoType[]) => {
-    return courseVideos.reduce((total, video) => total + video.duration, 0);
-  };
+  // const calculateTotalDuration = (courseVideos: VideoType[]) => {
+  //   return courseVideos.reduce((total, video) => total + video.duration, 0);
+  // };
+
+  // const formatDuration = (seconds: number) => {
+  //   const hours = Math.floor(seconds / 3600);
+  //   const minutes = Math.floor((seconds % 3600) / 60);
+  //   return `${hours}h ${minutes}m`;
+  // };
 
   const filterCourses = (courses: CourseType[]) => {
     switch (currentTab) {

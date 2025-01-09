@@ -104,14 +104,14 @@ const VideoPage = () => {
                   setIsVideoListOpen(!isVideoListOpen)
                 }}
                 className={`
-  relative rounded-lg overflow-visible cursor-pointer
-  transition-all duration-300 mt-3 
-  border border-blue-900/60 hover:border-blue-600/60
-  hover:shadow-lg hover:shadow-blue-900/20
-  ${selectedVideo?.id === video.id
-                    ? 'border-blue-700 shadow-lg shadow-blue-900/30'
+                relative rounded-lg overflow-visible cursor-pointer
+                transition-all mt-3 
+                border border-blue-900/60 hover:border-blue-600/60
+                hover:shadow-lg hover:shadow-blue-900/20
+                ${selectedVideo?.id === video.id
+                    ? '!border-[0.1rem] !border-blue-900 shadow-lg shadow-blue-900/30'
                     : ''}
-`}
+              `}
               >
                 {/* Completion Badge */}
                 {completedVideos.includes(video.id.toString()) && (
