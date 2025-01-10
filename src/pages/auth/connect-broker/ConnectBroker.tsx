@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import CustomLayout from "../../../components/layout/custom-layout/CustomLayout";
 import { message, Modal, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
@@ -72,8 +71,8 @@ const ConnectBroker: React.FC = () => {
   };
 
   return (
-    <CustomLayout>
-      <div className="flex justify-center items-center">
+    <div>
+      <div className=" bg-darkBg border-none">
         {/* <div>
           <iframe
             width="560"
@@ -86,8 +85,8 @@ const ConnectBroker: React.FC = () => {
             allowFullScreen
           ></iframe>
         </div> */}
-        <div className="flex justify-center items-center min-h-screen bg-darkBg">
-          <div className="bg-darkBg border-[0.4px] border-darkStroke p-8 rounded-lg shadow-md w-full max-w-md">
+        <div className="flex justify-center items-center  bg-darkBg">
+          <div className="bg-darkBg  p-8 rounded-lg shadow-md w-full max-w-md">
             <div className="flex items-center mb-6">
               <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-xl font-bold mr-3">
                 <img
@@ -253,7 +252,8 @@ const ConnectBroker: React.FC = () => {
           )}
         </div>
       </Modal>
-    </CustomLayout>
+      
+    </div>
   );
 };
 
