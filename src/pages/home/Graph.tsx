@@ -34,7 +34,8 @@ const chartConfig = {
 
 const Graph: React.FC = () => {
   return (
-    <div className="dark:bg-gray-900 dark:text-white p-4">
+    <div className="dark:bg-gray-900 dark:text-white p-4"> 
+      
        <Card  className="bg-darkBg text-white border-none">
       <CardHeader>
         <CardTitle>Line Chart</CardTitle>

@@ -11,6 +11,7 @@ import TopNews from "./TopNews";
 import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
 import Tables from "./Tables";
 import Graph from "./Graph";
+import { DatePicker } from "./DatePicker";
 
 const Home2: React.FC = () => {
   const { token, user } = useAppSelector((state) => state.auth);
@@ -63,7 +64,10 @@ const Home2: React.FC = () => {
             </div>
 
             {/* Right Card */}
-            <div className="border border-darkStroke rounded-xl p-6 shadow-lg w-full md:w-1/2">
+            <div className="relative border border-darkStroke rounded-xl p-6 shadow-lg w-full md:w-1/2">
+              <div className="absolute top-2 right-2">
+                <DatePicker />
+              </div>
               <Graph />
             </div>
           </div>
