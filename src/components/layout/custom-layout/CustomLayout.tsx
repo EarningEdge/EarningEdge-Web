@@ -149,7 +149,7 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
       label: (
         <div className="bg-darkBg border-darkStroke border-[0.4px] rounded-md px-24 flex justify-center flex-col items-center py-7 relative">
           <h1 className="text-slate-400 absolute top-1 left-1 rounded-md bg-slate-700 border-[0.4px] border-darkStroke text-center px-2">
-            Free trial
+            Free trialz
           </h1>
           <img
             className="h-12 w-12 rounded-full"
@@ -289,10 +289,10 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
                         <div key={index}>
                           <div className="px-4">
                             <div className="text-lg text-black font-bold">
-                              {item.notificationContent.title}
+                              {item?.notificationContent?.title}
                             </div>
                             <div className="text-base text-black">
-                              {item.notificationContent.message}
+                              {item?.notificationContent?.message}
                             </div>
                           </div>
                           <Divider

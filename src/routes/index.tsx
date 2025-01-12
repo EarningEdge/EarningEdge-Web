@@ -6,7 +6,6 @@ import App from "../App";
 
 import ErrorBoundary from "../components/layout/error/ErrorBoundary";
 import VideosPage from "@/pages/course/VideoPage";
-import CoursePage from "@/pages/course/CoursePage";
 
 // Lazy Loading all the pages
 const AddPhno = lazy(() => import("../pages/auth/add-phnumber/AddPhno"));
@@ -26,7 +25,7 @@ const ResetPassword = lazy(() => import("../pages/auth/forgot-password"));
 const Sales = lazy(() => import("../pages/sales"));
 const Contact = lazy(() => import("../pages/contact"));
 const Course = lazy(() => import("../pages/course"));
-
+const Home2 = lazy(()=>import("../pages/home/Home2"))
 // const AllPlaylists = lazy(() => import("../pages/course"));
 // const SinglePlaylist = lazy(() => import("../pages/course/singleplaylist"));
 const PrivacyPolicy = lazy(() => import("../pages/company/privacy-policy"))
@@ -102,6 +101,11 @@ const router = createBrowserRouter([
         path: "journal",
         element: <ProtectedRoute />,
         children: [{ path: "", element: <Journal /> }],
+      },
+      {
+        path:"home2",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <Home2 /> }],
       },
       {
         path: "news",
