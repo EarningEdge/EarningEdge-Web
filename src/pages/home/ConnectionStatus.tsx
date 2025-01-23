@@ -78,7 +78,7 @@ const ConnectionStatus: React.FC = () => {
             ? "Click the button to disconnect"
             : "Click the button to connect"}
         </p>
-        <p className="mt-2 text-base text-gray-400">Connected X days Ago</p>
+        <p className="mt-2 text-base text-gray-400">{user?.brokerLastConnectedAt?`Connected ${user?.brokerLastConnectedAt} days Ago`:"Broker Never Connected"}</p>
       </div>
     </div>
   );

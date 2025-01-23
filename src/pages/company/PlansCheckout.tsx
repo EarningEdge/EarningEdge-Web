@@ -1,0 +1,199 @@
+import React, { useState } from "react";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { useAppSelector } from "@/redux/hooks";
+import { Loader2 } from "lucide-react";
+import axios from "axios";
+import { toast } from "react-toastify";
+
+interface PaymentStatus {
+  error: string;
+  success: string;
+}
+
+interface CheckoutFormProps {
+  plan: string;
+  price: string;
+}
+
+const LoadingState = () => (
+  <div className="max-w-md mx-auto p-6 rounded-lg shadow flex flex-col items-center justify-center space-y-4">
+    <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+  </div>
+);
+
+const CARD_OPTIONS = {
+  style: {
+    base: {
+      color: "white",
+      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+      fontSmoothing: "antialiased",
+      fontSize: "14.6px",
+      padding: "12px",
+      with: "100%",
+      "::placeholder": {
+        color: "#aab7c4",
+      },
+    },
+    invalid: {
+      color: "#fa755a",
+      iconColor: "#fa755a",
+    },
+  },
+};
+
+const PlansCheckout: React.FC<CheckoutFormProps> = ({ plan, price }) => {
+  const [status, setStatus] = useState<PaymentStatus>({
+    error: "",
+    success: "",
+  });
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [cardComplete, setCardComplete] = useState<boolean>(false);
+  const [showContent, setShowContent] = useState<boolean>(true); // Always show content for Pro plan
+  const enrollmentAmount = 2000; // You can dynamically set this based on `price` if needed
+  const BACKEND_URL = import.meta.env.VITE_BASE_URL;
+  const { user } = useAppSelector((state) => state.auth);
+
+  const stripe = useStripe();
+  const elements = useElements();
+
+  const handleCardChange = (event: any) => {
+    setCardComplete(event.complete);
+    if (event.error) {
+      setStatus({ error: event.error.message, success: "" });
+    } else {
+      setStatus({ error: "", success: "" });
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setStatus({ error: "", success: "" });
+
+    if (!stripe || !elements) {
+      setStatus({ error: "Stripe has not been initialized", success: "" });
+      return;
+    }
+
+    if (!cardComplete) {
+      setStatus({ error: "Please complete card details", success: "" });
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) {
+        throw new Error("Card element not found");
+      }
+
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: "card",
+        card: cardElement,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const response = await axios.post(
+        `${BACKEND_URL}/api/v1/plans/planpayment`,
+        {
+          transactionId: paymentMethod.id,
+          userId: user?._id,
+          price: Math.round(enrollmentAmount * 100), // Converts to paise
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Payment successful!");
+      }
+      console.log("Response: ", response);
+      console.log("Payment Method ID: ", paymentMethod.id);
+      console.log("Plan Selected: ", plan);
+      console.log("Price: ", price);
+      console.log("User ", user?._id);
+
+      // if (!response.status) {
+      //   setShowContent(true)
+      //   console.log(response);
+      //   throw new Error("Payment failed on server");
+      // }
+      setStatus({ error: "", success: "Payment successful!" });
+
+      // Clear the card input
+      cardElement.clear();
+    } catch (err) {
+      setStatus({
+        error: err instanceof Error ? err.message : "Payment failed",
+        success: "",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <>
+      {showContent ? (
+        <div className="max-w-md mx-auto p-6 rounded-lg shadow bg-darkBg">
+          <h2 className="text-2xl text-center font-bold text-gray-100 mb-6 ">
+            Payment Details
+          </h2>
+
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 flex flex-col items-center"
+          >
+            <div className="rounded-md border border-gray-300 w-72">
+              <CardElement
+                options={CARD_OPTIONS}
+                onChange={handleCardChange}
+                className="p-2"
+              />
+            </div>
+
+            {status.error && (
+              <div className="bg-red-50 text-red-700 p-3 rounded-md">
+                {status.error}
+              </div>
+            )}
+
+            {status.success && (
+              <div className="bg-green-50 text-green-700 p-3 rounded-md">
+                {status.success}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={!stripe || !cardComplete || isProcessing}
+              className={`w-40 py-2 px-4 rounded-md text-white font-medium transition duration-300
+      ${
+        !stripe || !cardComplete || isProcessing
+          ? "bg-gray-700 cursor-not-allowed"
+          : "bg-blue-600 hover:bg-blue-700"
+      }`}
+            >
+              {isProcessing ? (
+                <span className="flex items-center justify-center space-x-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Processing...</span>
+                </span>
+              ) : (
+                `Pay ${price}`
+              )}
+            </button>
+          </form>
+          <p className="mt-4 text-sm text-gray-400 text-center">
+            Secured by Stripe
+          </p>
+        </div>
+      ) : (
+        <LoadingState />
+      )}
+    </>
+  );
+};
+
+export default PlansCheckout;

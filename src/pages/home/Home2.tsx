@@ -26,7 +26,7 @@ const Home2: React.FC = () => {
       return await api.get("/user/details/" + user._id);
     },
   });
-
+  console.log(user);
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (userData) {
