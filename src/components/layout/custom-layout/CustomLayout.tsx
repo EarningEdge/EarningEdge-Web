@@ -173,12 +173,12 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
     {
       key: "3",
       label: (
-        <Link to={"/"}>
+        <Link to={"/manage-subscription"}>
           <h1 className=" text-slate-300">Manage Subscription</h1>
         </Link>
       ),
       icon: <IndianRupee color="grey" size={15} />,
-      disabled: true,
+      // disabled: true,
     },
     {
       key: "4",

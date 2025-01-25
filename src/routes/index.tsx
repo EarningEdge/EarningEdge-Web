@@ -6,6 +6,8 @@ import App from "../App";
 
 import ErrorBoundary from "../components/layout/error/ErrorBoundary";
 import VideosPage from "@/pages/course/VideoPage";
+import ManageSubscription from "@/pages/company/ManageSubscription";
+import Success from "@/pages/company/Success";
 
 // Lazy Loading all the pages
 const AddPhno = lazy(() => import("../pages/auth/add-phnumber/AddPhno"));
@@ -156,6 +158,16 @@ const router = createBrowserRouter([
         path: "pricing",
         element: <ProtectedRoute />,
         children: [{ path: "", element: <Pricing /> }],
+      },
+      {
+        path: "manage-subscription",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <ManageSubscription /> }],
+      },
+      {
+        path: "success",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <Success /> }],
       },
       {
         path: "refunds-cancellations",

@@ -19,7 +19,15 @@ export interface IUser {
   isBrokerConnected: boolean;
   mentorId: string | null;
   mentor?: IUser | null;
+  brokerLastConnectedAt: Date | null;
 
+  // plan details
+  plan: string | undefined;
+  planSessionId : string | undefined;
+  planCustomerId : string | undefined;
+  planSubscriptionId : string | undefined;
+  planExpirationDate : number | undefined;
+  planStatus  : string | undefined;
   //Profile image
   profile_image_key: string;
   profile_image_url: string;
@@ -33,6 +41,7 @@ export interface IUser {
 
   createdAt?: string;
   lastNotificationViewedAt?: string;
+  
 }
 export interface ISales {
   _id: string;
