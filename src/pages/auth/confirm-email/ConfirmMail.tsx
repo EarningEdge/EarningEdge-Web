@@ -12,9 +12,8 @@ const ConfirmMail: React.FC = () => {
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  useEffect(()=>{navigate("/")},[])
-  const [isCancelling,setIsCancelling] = useState(false);
-  const {validateCurrentStep,getState} = useSignupFlow();
+  const [isCancelling, setIsCancelling] = useState(false);
+  const { validateCurrentStep, getState, updateState } = useSignupFlow();
   const { data, loading, error, postData } = usePostData<
     { otp: string; email: string },
     {
@@ -33,24 +32,25 @@ const ConfirmMail: React.FC = () => {
   useEffect(() => {
     validateCurrentStep()
     const email = getState().email
-    if(!email){
+    if (!email) {
       alert("Email not found")
       return;
     }
     setEmail(email)
-    // if (data?.status === "success") {
-    //   updateState({
-    //     emailVerified: true,
-    //   });
-    //   navigate("/add-phno");
-    // } else if (error) {
-    //   updateState({
-    //     emailVerified: false,
-    //   });
-    //   message.error(error.message || "Verification failed");
-    // }
+    if (data?.status === "success") {
+      updateState({
+        emailVerified: true,
+      });
+      notify("Email verified", "success")
+      navigate("/add-phno");
+    } else if (error) {
+      updateState({
+        emailVerified: false,
+      });
+      message.error(error.message || "Verification failed");
+    }
   }, [data, navigate]);
-  
+
   useEffect(() => {
     if (error) {
       message.error(
@@ -59,25 +59,25 @@ const ConfirmMail: React.FC = () => {
       );
     }
   }, [error]);
-  
-  const handleCancel = async()=>{
+
+  const handleCancel = async () => {
     try {
       setIsCancelling(true);
       const userId = localStorage.getItem("userId");
-      if(!userId){
-        notify("UserId not found","error")
+      if (!userId) {
+        notify("UserId not found", "error")
         return
       }
-      const res = await cancelSignUp(userId+"")
-      if(res?.status===202){
-        notify("Process terminated!","success")
+      const res = await cancelSignUp(userId + "")
+      if (res?.status === 202) {
+        notify("Process terminated!", "success")
         localStorage.clear();
         navigate("/")
       }
     } catch (error) {
-      notify("Failed to cancel the process","error");
+      notify("Failed to cancel the process", "error");
     }
-    finally{
+    finally {
       setIsCancelling(false);
     }
   }
@@ -102,7 +102,7 @@ const ConfirmMail: React.FC = () => {
             Create an
             <br /> <b>Account</b>
           </h1>
-          <p>OTP sent to {email||"your email address"}</p>
+          <p>OTP sent to {email || "your email address"}</p>
           <form onSubmit={handleSubmit}>
             <input
               type="text"
@@ -129,7 +129,7 @@ const ConfirmMail: React.FC = () => {
             </button>
           </form>
         </div>
-          <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
+        <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
       </div>
     </div>
   );

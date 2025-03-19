@@ -1,21 +1,24 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 enum SignupStep {
   EMAIL = 1,
-  PHONE = 2,
-  PHONE_OTP = 3,
-  USER_DETAILS = 4,
+  EMAIL_OTP = 2,
+  PHONE = 3,
+  PHONE_OTP = 4,
+  USER_DETAILS = 5,
 }
 
 interface SignupState {
   email: string;
   phoneNumber: string;
   phoneVerified: boolean;
+  emailVerified: boolean;
 }
 
 const initialState: SignupState = {
   email: '',
   phoneNumber: '',
   phoneVerified: false,
+  emailVerified: false,
 };
 
 export const useSignupFlow = () => {
@@ -26,6 +29,8 @@ export const useSignupFlow = () => {
     switch (location.pathname) {
       case '/signup':
         return SignupStep.EMAIL;
+      case '/confirm-email':
+        return SignupStep.EMAIL_OTP;
       case '/add-phno':
         return SignupStep.PHONE;
       case '/confirm-phno':
@@ -70,9 +75,9 @@ export const useSignupFlow = () => {
       case SignupStep.EMAIL:
         navigate('/signup');
         break;
-      // case SignupStep.EMAIL_OTP:
-      //   navigate('/confirm-email');
-      //   break;
+      case SignupStep.EMAIL_OTP:
+        navigate('/confirm-email');
+        break;
       case SignupStep.PHONE:
         navigate('/add-phno');
         break;
@@ -98,7 +103,7 @@ export const useSignupFlow = () => {
 
   const getExpectedStep = (state: SignupState): SignupStep => {
     if (!state.email) return SignupStep.EMAIL;
-    // if (!state.emailVerified) return SignupStep.EMAIL_OTP;
+    if (!state.emailVerified) return SignupStep.EMAIL_OTP;
     if (!state.phoneNumber) return SignupStep.PHONE;
     if (!state.phoneVerified) return SignupStep.PHONE_OTP;
     return SignupStep.USER_DETAILS;

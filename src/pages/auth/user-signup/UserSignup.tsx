@@ -35,16 +35,17 @@ const UserSignup: React.FC = () => {
     e.preventDefault();
     if (email) {
       await postData({ email });
+
     }
   };
 
   useEffect(() => {
     if (data?.status === "success") {
-      localStorage.setItem("userId",data.data._id)
+      localStorage.setItem("userId", data.data._id)
       updateState({
         email: data.data.email,
       });
-      navigate("/add-phno");
+      navigate("/confirm-email");
     } else if (data) {
       message.error(data.message || "Signup failed");
     }
