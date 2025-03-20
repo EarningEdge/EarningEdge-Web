@@ -36,9 +36,10 @@ const DhanBroker: React.FC<DhanBrokerProps> = ({ onHelpClick, navigate }) => {
       });
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.status === "success") {
         message.success("Connected to Dhan!");
+        await api.post(`/broker/brokerToggleConnection`, { connected: true });
         navigate("/");
       } else {
         message.error("Failed to connect to Dhan, please try again");

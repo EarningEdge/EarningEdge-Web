@@ -7,7 +7,7 @@ export const menuItems = [
     key: "1",
     icon: React.createElement(House),
     label: "Home",
-    path: "/home",
+    path: "/home2",
   },
   {
     key: "2",

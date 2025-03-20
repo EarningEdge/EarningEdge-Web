@@ -3,6 +3,8 @@ import { message } from "antd";
 import { NavigateFunction } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
+import { useNavigate } from "react-router-dom";
+
 
 interface ExnessBrokerProps {
   navigate: NavigateFunction;
@@ -23,7 +25,9 @@ const ExnessBroker: React.FC<ExnessBrokerProps> = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [server, setServer] = useState("Exness-MT5Tr4");
+
   const api = useAxios();
+  const navigateRoute = useNavigate();
   const FOREX_SERVER_URL = import.meta.env.VITE_FOREX_SERVER_URL;
 
   const {
@@ -38,14 +42,19 @@ const ExnessBroker: React.FC<ExnessBrokerProps> = () => {
         `${FOREX_SERVER_URL}/add-account`,
         accountData
       );
+
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log(data);
+      await api.post(`/broker/brokerToggleConnection`, { connected: true });
+
+
       message.success("Connected to Exness!");
-      // navigate("/home");
+
+      navigateRoute("/home2");
     },
-    onError: (error) => {
+    onError: async (error) => {
       console.log(error);
       message.error("Failed to connect to Exness, please try again");
     },
