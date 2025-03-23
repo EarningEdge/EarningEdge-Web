@@ -1,11 +1,8 @@
 import { Check } from "lucide-react";
 import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
 
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import axios from "axios";
 import { useAppSelector } from "@/redux/hooks";
-import { useQuery } from "@tanstack/react-query";
-import useAxios from "@/hooks/useAxios";
 interface Feature {
   name: string;
   included: boolean;
@@ -26,32 +23,32 @@ interface PricingCardProps {
 const PricingCard: React.FC<PricingCardProps> = ({ tier }) => {
   // const STRIPE_KEY =
   //   "pk_test_51QfxbRKynIN2V9qvzA7RDZhV3uZ8wDpigkARpEHrEWf2aWFL3pvHbwRUpaYhQwrwTLvYCB1rHxhiSyv1R8Ixq0wt002BZaUpoX";
-    const {  user } = useAppSelector((state) => state.auth);
-    
-    const handleProButtonClick = async (): Promise<void> => {
-      try {
-        console.log("user: ", user);
-        // if(user?.planStatus === 'active'){
-        //   return;
-        // }
-        // if(user?.planStatus === 'canceled'){
-        //   window.location.href = '/manage-subscription'
-        // }
+  const { user } = useAppSelector((state) => state.auth);
 
-        const res = await axios.post<{ url: string }>(
-          `${import.meta.env.VITE_BASE_URL}/api/v1/plans/create-checkout-session`,{userId:user?._id},
-        );
-        
-        const { url } = res.data; // Extract the URL from the response
-        window.location.href = url; // Navigate to the URL
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error('Axios error:', error.response?.data || error.message);
-        } else {
-          console.error('Unexpected error:', error);
-        }
+  const handleProButtonClick = async (): Promise<void> => {
+    try {
+      console.log("user: ", user);
+      // if(user?.planStatus === 'active'){
+      //   return;
+      // }
+      // if(user?.planStatus === 'canceled'){
+      //   window.location.href = '/manage-subscription'
+      // }
+
+      const res = await axios.post<{ url: string }>(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/plans/create-checkout-session`, { userId: user?._id },
+      );
+
+      const { url } = res.data; // Extract the URL from the response
+      window.location.href = url; // Navigate to the URL
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Axios error:', error.response?.data || error.message);
+      } else {
+        console.error('Unexpected error:', error);
       }
-    };
+    }
+  };
 
   return (
     <div
@@ -59,17 +56,15 @@ const PricingCard: React.FC<PricingCardProps> = ({ tier }) => {
     >
       <div className="px-6 py-8 text-center">
         <h3
-          className={`text-2xl font-semibold ${
-            tier.isPopular ? "text-blue-400" : "text-white"
-          }`}
+          className={`text-2xl font-semibold ${tier.isPopular ? "text-blue-400" : "text-white"
+            }`}
         >
           {tier.name}
         </h3>
         <div className="mt-4">
           <span
-            className={`text-5xl font-extrabold ${
-              tier.isPopular ? "text-blue-500" : "text-white"
-            }`}
+            className={`text-5xl font-extrabold ${tier.isPopular ? "text-blue-500" : "text-white"
+              }`}
           >
             {tier.price}
           </span>
@@ -83,16 +78,14 @@ const PricingCard: React.FC<PricingCardProps> = ({ tier }) => {
           {tier.features.map((feature, index) => (
             <li key={index} className="flex items-center">
               <Check
-                className={`h-5 w-5 mr-2 ${
-                  feature.included ? "text-green-500" : "text-gray-600"
-                }`}
+                className={`h-5 w-5 mr-2 ${feature.included ? "text-green-500" : "text-gray-600"
+                  }`}
               />
               <span
-                className={`${
-                  feature.included
+                className={`${feature.included
                     ? "text-gray-200"
                     : "text-gray-500 line-through"
-                }`}
+                  }`}
               >
                 {feature.name}
               </span>
@@ -101,13 +94,13 @@ const PricingCard: React.FC<PricingCardProps> = ({ tier }) => {
         </ul>
       </div>
       <div className="px-6 py-6 text-center">
-      {tier.name === "Pro" ? (
-              <button
-                onClick={handleProButtonClick}
-                className="w-full py-3 px-6 rounded-lg font-semibold text-white transition duration-300 bg-blue-600 hover:bg-blue-500"
-              >
+        {tier.name === "Pro" ? (
+          <button
+            onClick={handleProButtonClick}
+            className="w-full py-3 px-6 rounded-lg font-semibold text-white transition duration-300 bg-blue-600 hover:bg-blue-500"
+          >
             {user?.planStatus === 'active' ? `Subscribed` : user?.planStatus === 'canceled' ? `Activate` : `Get Started`}
-            </button>
+          </button>
           //   
         ) : (
           <button

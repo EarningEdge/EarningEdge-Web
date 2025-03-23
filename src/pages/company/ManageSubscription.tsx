@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import CustomLayout from "../../components/layout/custom-layout/CustomLayout";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import axios from "axios";
@@ -53,7 +53,6 @@ const ManageSubscription = () => {
 
 
 
-  const BACKEND_URL = import.meta.env.VITE_BASE_URL;
 
   // Calculate expiry date and days remaining
   useEffect(() => {
@@ -75,30 +74,30 @@ const ManageSubscription = () => {
   const handleCancel = async () => {
     try {
       setCanceling(true);
-      if(user?.planStatus === 'active'){
+      if (user?.planStatus === 'active') {
 
-      const response = await axios.post(
-        `http://localhost:8002/api/v1/plans/cancel-subscription`,
-        {userId:user?._id} 
-      );
-      // console.log(response.data);
-      if (response) {
-        toast.success("Subscription canceled successfully");
-        window.location.reload(); // Reload the page after cancellation
+        const response = await axios.post(
+          `http://localhost:8002/api/v1/plans/cancel-subscription`,
+          { userId: user?._id }
+        );
+        // console.log(response.data);
+        if (response) {
+          toast.success("Subscription canceled successfully");
+          window.location.reload(); // Reload the page after cancellation
+        }
       }
-    }
 
-    if(user?.planStatus === 'canceled'){
-      const response = await axios.post(
-        `http://localhost:8002/api/v1/plans/re-activate-subscription`,
-        {userId:user?._id}
-      );
-      console.log(response)
-      if (response) {
-        toast.success("Subscription re-activated successfully");
-        window.location.reload(); 
-      }
-    }// Reload the page after cancellation
+      if (user?.planStatus === 'canceled') {
+        const response = await axios.post(
+          `http://localhost:8002/api/v1/plans/re-activate-subscription`,
+          { userId: user?._id }
+        );
+        console.log(response)
+        if (response) {
+          toast.success("Subscription re-activated successfully");
+          window.location.reload();
+        }
+      }// Reload the page after cancellation
     } catch (error: any) {
       console.error("Error canceling subscription:", error);
       toast.error(error.response?.data?.message || "Failed to cancel subscription");
@@ -106,7 +105,7 @@ const ManageSubscription = () => {
       setCanceling(false);
     }
   };
-  
+
 
   if (loading) {
     return (
@@ -171,7 +170,7 @@ const ManageSubscription = () => {
               <AlertDialogTrigger asChild>
                 <Button
                   variant="outline"
-                  className={`text-white ${user?.planStatus === "canceled" ?"bg-green-600 hover:bg-green-500":"bg-red-600 hover:bg-red-500" }  `}
+                  className={`text-white ${user?.planStatus === "canceled" ? "bg-green-600 hover:bg-green-500" : "bg-red-600 hover:bg-red-500"}  `}
                   disabled={canceling}
                 >
                   {user?.planStatus === "canceled" ? "Re-activate Plan" : "Cancel Plan"}
@@ -197,11 +196,10 @@ const ManageSubscription = () => {
                   <AlertDialogAction
                     onClick={handleCancel}
                     disabled={canceling}
-                    className={`${user?.planStatus === "canceled" ?"bg-green-600 hover:bg-green-500":"bg-red-600 hover:bg-red-500" }  text-white ${
-                      canceling ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                    className={`${user?.planStatus === "canceled" ? "bg-green-600 hover:bg-green-500" : "bg-red-600 hover:bg-red-500"}  text-white ${canceling ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                   >
-                   {user?.planStatus === "canceled" ? "Re-activate Plan" : "Cancel Plan"}
+                    {user?.planStatus === "canceled" ? "Re-activate Plan" : "Cancel Plan"}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
