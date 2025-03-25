@@ -48,7 +48,7 @@ const PlansCheckout: React.FC<CheckoutFormProps> = ({ plan, price }) => {
   });
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [cardComplete, setCardComplete] = useState<boolean>(false);
-  const [showContent, setShowContent] = useState<boolean>(true); // Always show content for Pro plan
+  const [showContent] = useState<boolean>(true); // Always show content for Pro plan
   const enrollmentAmount = 2000; // You can dynamically set this based on `price` if needed
   const BACKEND_URL = import.meta.env.VITE_BASE_URL;
   const { user } = useAppSelector((state) => state.auth);
@@ -169,11 +169,10 @@ const PlansCheckout: React.FC<CheckoutFormProps> = ({ plan, price }) => {
               type="submit"
               disabled={!stripe || !cardComplete || isProcessing}
               className={`w-40 py-2 px-4 rounded-md text-white font-medium transition duration-300
-      ${
-        !stripe || !cardComplete || isProcessing
-          ? "bg-gray-700 cursor-not-allowed"
-          : "bg-blue-600 hover:bg-blue-700"
-      }`}
+      ${!stripe || !cardComplete || isProcessing
+                  ? "bg-gray-700 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+                }`}
             >
               {isProcessing ? (
                 <span className="flex items-center justify-center space-x-2">
