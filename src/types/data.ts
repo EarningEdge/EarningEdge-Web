@@ -16,6 +16,7 @@ export interface IUser {
   //Broker details
   dhan_auth_token: string | undefined;
   dhan_client_id: string | undefined;
+  broker_name: "dhan" | "exness" | undefined; 
   isBrokerConnected: boolean;
   mentorId: string | null;
   mentor?: IUser | null;

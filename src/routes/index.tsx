@@ -10,6 +10,8 @@ import ManageSubscription from "@/pages/company/ManageSubscription";
 import Success from "@/pages/company/Success";
 
 // Lazy Loading all the pages
+const ExnessBroker = lazy(() => import("../pages/auth/connect-broker/ExnessBroker"));
+const DhanBroker = lazy(() => import("../pages/auth/connect-broker/DhanBroker"));
 const AddPhno = lazy(() => import("../pages/auth/add-phnumber/AddPhno"));
 const Profile = lazy(() => import("../pages/profile"));
 const UserOB = lazy(() => import("../pages/auth/user-details/UserDetails"));
@@ -17,7 +19,6 @@ const NotAvailable = lazy(() => import("../pages/not-available"));
 const ConfirmMail = lazy(() => import("../pages/auth/confirm-email/ConfirmMail"));
 const Home = lazy(() => import("../pages/home"));
 const ConfirmPhno = lazy(() => import("../pages/auth/confirm-phnumber/ConfirmPhno"));
-const ConnectBroker = lazy(() => import("../pages/auth/connect-broker/ConnectBroker"));
 const Login = lazy(() => import("../pages/auth/user-login/UserLogin"));
 const Signup = lazy(() => import("../pages/auth/user-signup/UserSignup"));
 const Journal = lazy(() => import("../pages/journal"));
@@ -27,7 +28,7 @@ const ResetPassword = lazy(() => import("../pages/auth/forgot-password"));
 const Sales = lazy(() => import("../pages/sales"));
 const Contact = lazy(() => import("../pages/contact"));
 const Course = lazy(() => import("../pages/course"));
-const Home2 = lazy(()=>import("../pages/home/Home2"))
+const Home2 = lazy(() => import("../pages/home/Home2"))
 // const AllPlaylists = lazy(() => import("../pages/course"));
 // const SinglePlaylist = lazy(() => import("../pages/course/singleplaylist"));
 const PrivacyPolicy = lazy(() => import("../pages/company/privacy-policy"))
@@ -88,11 +89,15 @@ const router = createBrowserRouter([
         path: "user-details",
         element: <UserOB />,
       },
-
       {
-        path: "connectbroker",
+        path: "connect-dhan",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <ConnectBroker /> }],
+        children: [{ path: "", element: <DhanBroker /> }],
+      },
+      {
+        path: "connect-exness",
+        element: <ProtectedRoute />,
+        children: [{ path: "", element: <ExnessBroker /> }],
       },
       {
         path: "home",
@@ -105,7 +110,7 @@ const router = createBrowserRouter([
         children: [{ path: "", element: <Journal /> }],
       },
       {
-        path:"home2",
+        path: "home2",
         element: <ProtectedRoute />,
         children: [{ path: "", element: <Home2 /> }],
       },
