@@ -8,9 +8,9 @@ import { notify } from "../../../utils/notify";
 import { useSignupFlow } from "../../../hooks/useUserFlowManager";
 const AddPhno: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
-  const {validateCurrentStep,updateState}  = useSignupFlow()
+  const { validateCurrentStep, updateState } = useSignupFlow();
   const navigate = useNavigate();
-  const [isCancelling,setIsCancelling] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const { data, loading, error, postData } = usePostData<
     { phoneNumber: string; userId: string },
     {
@@ -28,9 +28,9 @@ const AddPhno: React.FC = () => {
   };
 
   useEffect(() => {
-    validateCurrentStep()
+    validateCurrentStep();
     if (data?.status === "success") {
-      updateState({phoneNumber})
+      updateState({ phoneNumber });
       navigate("/confirm-phno");
     } else if (error) {
       message.error(error.message || "Failed to add phone number");
@@ -45,27 +45,26 @@ const AddPhno: React.FC = () => {
       );
     }
   }, [error]);
-  const handleCancel = async()=>{
+  const handleCancel = async () => {
     try {
       setIsCancelling(true);
       const userId = localStorage.getItem("userId");
-      if(!userId){
-        notify("UserId not found","error")
-        return
+      if (!userId) {
+        notify("UserId not found", "error");
+        return;
       }
-      const res = await cancelSignUp(userId+"")
-      if(res?.status===202){
-        notify("Process terminated!","success")
+      const res = await cancelSignUp(userId + "");
+      if (res?.status === 202) {
+        notify("Process terminated!", "success");
         localStorage.clear();
-        navigate("/")
+        navigate("/");
       }
     } catch (error) {
-      notify("Failed to cancel the process","error");
-    }
-    finally{
+      notify("Failed to cancel the process", "error");
+    } finally {
       setIsCancelling(false);
     }
-  }
+  };
   return (
     <div className="bg-gray-900 min-h-screen flex items-end p-5 auth relative">
       <div className=" h-[90vh] w-full dark:bg-black bg-black  dark:bg-dot-white/[0.2] bg-dot-white/[0.2] relative flex items-end justify-center">
@@ -100,7 +99,13 @@ const AddPhno: React.FC = () => {
                 className="p-3 bg-black text-white text-xl border-[0.5px] focus:outline-none border-white rounded-md w-full"
                 placeholder="Phone number"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e) => {
+                  const input = e.target.value;
+                  // Allow only digits and limit to 10 characters
+                  if (/^\d{0,10}$/.test(input)) {
+                    setPhoneNumber(input);
+                  }
+                }}
                 required
               />
             </div>

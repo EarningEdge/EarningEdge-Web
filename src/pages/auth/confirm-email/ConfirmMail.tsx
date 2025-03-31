@@ -12,9 +12,9 @@ const ConfirmMail: React.FC = () => {
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  useEffect(()=>{navigate("/")},[])
-  const [isCancelling,setIsCancelling] = useState(false);
-  const {validateCurrentStep,getState} = useSignupFlow();
+  const [isCancelling, setIsCancelling] = useState(false);
+  const { validateCurrentStep, getState, updateState } = useSignupFlow();
+  
   const { data, loading, error, postData } = usePostData<
     { otp: string; email: string },
     {
@@ -31,25 +31,32 @@ const ConfirmMail: React.FC = () => {
   };
 
   useEffect(() => {
-    validateCurrentStep()
-    const email = getState().email
-    if(!email){
-      alert("Email not found")
+    validateCurrentStep();
+    const state = getState();
+    const emailFromState = state.email;
+    
+    if (!emailFromState) {
+      alert("Email not found");
+      navigate("/signup");
       return;
     }
-    setEmail(email)
-    // if (data?.status === "success") {
-    //   updateState({
-    //     emailVerified: true,
-    //   });
-    //   navigate("/add-phno");
-    // } else if (error) {
-    //   updateState({
-    //     emailVerified: false,
-    //   });
-    //   message.error(error.message || "Verification failed");
-    // }
-  }, [data, navigate]);
+    
+    setEmail(emailFromState);
+  }, []);
+  
+  useEffect(() => {
+    if (data?.status === "success") {
+      updateState({
+        emailVerified: true,
+      });
+      navigate("/add-phno");
+    } else if (error) {
+      updateState({
+        emailVerified: false,
+      });
+      message.error(error.message || "Verification failed");
+    }
+  }, [data, error]);
   
   useEffect(() => {
     if (error) {
@@ -60,49 +67,48 @@ const ConfirmMail: React.FC = () => {
     }
   }, [error]);
   
-  const handleCancel = async()=>{
+  const handleCancel = async () => {
     try {
       setIsCancelling(true);
       const userId = localStorage.getItem("userId");
-      if(!userId){
-        notify("UserId not found","error")
-        return
+      if (!userId) {
+        notify("UserId not found", "error");
+        return;
       }
-      const res = await cancelSignUp(userId+"")
-      if(res?.status===202){
-        notify("Process terminated!","success")
+      const res = await cancelSignUp(userId + "");
+      if (res?.status === 202) {
+        notify("Process terminated!", "success");
         localStorage.clear();
-        navigate("/")
+        navigate("/");
       }
     } catch (error) {
-      notify("Failed to cancel the process","error");
-    }
-    finally{
+      notify("Failed to cancel the process", "error");
+    } finally {
       setIsCancelling(false);
     }
-  }
+  };
 
   return (
     <div className="bg-gray-900 min-h-screen flex items-end p-5 auth relative">
-      <div className=" h-[90vh] w-full dark:bg-black bg-black  dark:bg-dot-white/[0.2] bg-dot-white/[0.2] relative flex items-end justify-center">
+      <div className="h-[90vh] w-full dark:bg-black bg-black dark:bg-dot-white/[0.2] bg-dot-white/[0.2] relative flex items-end justify-center">
         <div className="absolute top-0">
-          <div className="flex  flex-col w-fit mx-auto p-3 items-center relative ">
+          <div className="flex flex-col w-fit mx-auto p-3 items-center relative">
             <Beam className="top-0 left-0" />
             <Beam className="top-0 right-0" />
             <Beam className="bottom-0 left-0" />
             <Beam className="bottom-0 right-0" />
             <img
-              className=" rounded-full mix-blend-lighten top-0 w-72"
+              className="rounded-full mix-blend-lighten top-0 w-72"
               src="/logo.png"
             />
           </div>
         </div>
-        <div className="flex flex-col text-white gap-3 mb-10 z-10 w-full md:w-[30%] ">
+        <div className="flex flex-col text-white gap-3 mb-10 z-10 w-full md:w-[30%]">
           <h1 className="text-5xl text-thin">
             Create an
             <br /> <b>Account</b>
           </h1>
-          <p>OTP sent to {email||"your email address"}</p>
+          <p>OTP sent to {email || "your email address"}</p>
           <form onSubmit={handleSubmit}>
             <input
               type="text"
@@ -129,7 +135,7 @@ const ConfirmMail: React.FC = () => {
             </button>
           </form>
         </div>
-          <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
+        <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-black [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
       </div>
     </div>
   );
