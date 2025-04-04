@@ -20,6 +20,7 @@ import { login, logout } from "../../../redux/slices/authSlice";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
+import { CloseOutlined } from "@ant-design/icons";
 
 const { Sider, Content } = Layout;
 const CustomLayout = ({ children }: { children: ReactNode }) => {
@@ -262,12 +263,32 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
                 onClose={onClose}
                 open={open}
                 styles={{
+                  header: {
+                    background: "#070707",
+                    color: "white",
+                  },
                   body: {
                     padding: 0,
+                    background: "#070707",
                   },
+                  mask: {
+                    backgroundColor: "rgba(0, 0, 0, 0.6)",
+                  },
+                  content: {
+                    background: "#070707",
+                  },
+                  wrapper: {
+                    background: "#070707",
+                  },
+                  footer: {
+                    background: "#1f1f1f",
+                    borderTop: "1px solid #303030",
+                  }
                 }}
+                closeIcon={<CloseOutlined style={{ color: "white" }} />}
+                className="dark-mode-drawer"
               >
-                <div className="px-8 py-4">
+                <div className="px-8 py-4 bg-darkBg">
                   <Segmented
                     options={["Unread", "Read"]}
                     onChange={(value) => {
@@ -278,6 +299,11 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
                     }}
                     block
                     defaultValue="Unread"
+                    className="dark-segmented"
+                    style={{
+                      backgroundColor: "#2d2d2d",
+                      color: "white",
+                    }}
                   />
                 </div>
                 {currentTab === "Unread" &&
@@ -285,25 +311,24 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
                   unreadNotificationList.length > 0 &&
                   unreadNotificationList.map((item, index) => {
                     return (
-                      <>
-                        <div key={index}>
-                          <div className="px-4">
-                            <div className="text-lg text-black font-bold">
-                              {item?.notificationContent?.title}
-                            </div>
-                            <div className="text-base text-black">
-                              {item?.notificationContent?.message}
-                            </div>
+                      <div key={index}>
+                        <div className="px-4 py-2 bg-gray-800">
+                          <div className="text-lg text-white font-bold">
+                            {item?.notificationContent?.title}
                           </div>
-                          <Divider
-                            style={{
-                              margin: 0,
-                              marginTop: 8,
-                              marginBottom: 8,
-                            }}
-                          />
+                          <div className="text-base text-gray-300">
+                            {item?.notificationContent?.message}
+                          </div>
                         </div>
-                      </>
+                        <Divider
+                          style={{
+                            margin: 0,
+                            marginTop: 8,
+                            marginBottom: 8,
+                            borderColor: "#383838",
+                          }}
+                        />
+                      </div>
                     );
                   })}
                 {currentTab === "Read" &&
@@ -311,27 +336,36 @@ const CustomLayout = ({ children }: { children: ReactNode }) => {
                   readNotificationList.length > 0 &&
                   readNotificationList.map((item, index) => {
                     return (
-                      <>
-                        <div key={index}>
-                          <div className="px-4">
-                            <div className="text-lg text-black font-bold">
-                              {item.notificationContent.title}
-                            </div>
-                            <div className="text-base text-black">
-                              {item.notificationContent.message}
-                            </div>
+                      <div key={index}>
+                        <div className="px-4 py-2 bg-gray-800">
+                          <div className="text-lg text-white font-bold">
+                            {item.notificationContent.title}
                           </div>
-                          <Divider
-                            style={{
-                              margin: 0,
-                              marginTop: 8,
-                              marginBottom: 8,
-                            }}
-                          />
+                          <div className="text-base text-gray-300">
+                            {item.notificationContent.message}
+                          </div>
                         </div>
-                      </>
+                        <Divider
+                          style={{
+                            margin: 0,
+                            marginTop: 8,
+                            marginBottom: 8,
+                            borderColor: "#383838",
+                          }}
+                        />
+                      </div>
                     );
                   })}
+                {(currentTab === "Unread" &&
+                  (!unreadNotificationList ||
+                    unreadNotificationList.length === 0)) ||
+                (currentTab === "Read" &&
+                  (!readNotificationList ||
+                    readNotificationList.length === 0)) ? (
+                  <div className="flex justify-center items-center py-12 text-gray-400">
+                    No notifications found
+                  </div>
+                ) : null}
               </Drawer>
             </div>
           </Header>
