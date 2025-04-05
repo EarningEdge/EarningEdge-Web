@@ -1,0 +1,62 @@
+[
+  {
+    "_id": "grp1",
+    "name": "Tech Enthusiasts",
+    "description": "**🚀 Welcome to Tech Enthusiasts!**  \nA community for passionate individuals discussing the latest in AI, Blockchain, Cybersecurity, and more. Share insights, debate trends, and stay ahead in the tech world!",
+    "startTime": "2025-04-10T10:00:00Z",
+    "endTime": "2025-04-10T12:00:00Z",
+    "freezeDuration": 30,
+    "freezeThreshold": 5,
+    "participantsCount": 120
+  },
+  {
+    "_id": "grp2",
+    "name": "Book Readers",
+    "description": "**📖 A Haven for Bookworms!**  \nWhether you love fiction, self-help, or history, this group is for you! Discuss your favorite books, recommend must-reads, and dive into fascinating literary discussions.",
+    "startTime": "2025-05-01T15:00:00Z",
+    "endTime": "2025-05-01T17:30:00Z",
+    "freezeDuration": 45,
+    "freezeThreshold": 10,
+    "participantsCount": 85
+  },
+  {
+    "_id": "grp3",
+    "name": "Startup Founders",
+    "description": "**🏢 The Entrepreneurs' Hub!**  \nConnect with fellow founders, share startup ideas, discuss funding strategies, and learn from industry experts. Whether you're a beginner or a seasoned entrepreneur, this is the place for you.",
+    "startTime": "2025-06-15T18:00:00Z",
+    "endTime": "2025-06-15T20:00:00Z",
+    "freezeDuration": "Duration is not available",
+    "freezeThreshold": "Threshold is not available",
+    "participantsCount": 60
+  },
+  {
+    "_id": "grp4",
+    "name": "Fitness Freaks",
+    "description": "**🏋️ Stay Fit, Stay Strong!**  \nJoin us for daily workout challenges, diet tips, and motivation to achieve your fitness goals. Whether you're into yoga, weightlifting, or running, this group has something for everyone.",
+    "startTime": "2025-07-20T06:00:00Z",
+    "endTime": "2025-07-20T07:30:00Z",
+    "freezeDuration": 20,
+    "freezeThreshold": "Threshold is not available",
+    "participantsCount": 95
+  },
+  {
+    "_id": "grp5",
+    "name": "Gaming Hub",
+    "description": "**🕹️ Where Gamers Unite!**  \nDiscuss the latest game releases, share pro tips, and team up for multiplayer battles. From casual gaming to esports, we welcome all kinds of gamers! 🎯",
+    "startTime": "Start time is not available",
+    "endTime": "End time is not available",
+    "freezeDuration": "Duration is not available",
+    "freezeThreshold": "Threshold is not available",
+    "participantsCount": 150
+  },
+  {
+    "_id": "grp6",
+    "name": "Music Listeners",
+    "description": "**🎶 For the Love of Music!**  \nDiscover new tracks, share playlists, and discuss your favorite artists across all genres. From pop to classical, metal to jazz—this group is all about great music vibes! 🎧",
+    "startTime": "2025-08-30T14:00:00Z",
+    "endTime": "2025-08-30T16:00:00Z",
+    "freezeDuration": "Duration is not available",
+    "freezeThreshold": 7,
+    "participantsCount": 110
+  }
+]

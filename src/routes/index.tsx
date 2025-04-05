@@ -8,6 +8,7 @@ import ErrorBoundary from "../components/layout/error/ErrorBoundary";
 import VideosPage from "@/pages/course/VideoPage";
 import ManageSubscription from "@/pages/company/ManageSubscription";
 import Success from "@/pages/company/Success";
+import GroupPage from "@/pages/group";
 
 // Lazy Loading all the pages
 const AddPhno = lazy(() => import("../pages/auth/add-phnumber/AddPhno"));
@@ -115,9 +116,9 @@ const router = createBrowserRouter([
         children: [{ path: "", element: <News /> }],
       },
       {
-        path: "stocks",
+        path: "group",
         element: <ProtectedRoute />,
-        children: [{ path: "", element: <NotAvailable servicename="Stock Screener" /> }],
+        children: [{ path: "", element: <GroupPage /> }],
       },
       {
         path: "course",

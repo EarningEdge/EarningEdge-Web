@@ -1,7 +1,6 @@
 import React from "react";
+import { Newspaper, Users, House, Book, PlayCircle } from "lucide-react";
 
-
-import {Newspaper,CandlestickChartIcon,House, Book , PlayCircle} from 'lucide-react'
 export const menuItems = [
   {
     key: "1",
@@ -23,9 +22,9 @@ export const menuItems = [
   },
   {
     key: "4",
-    icon: React.createElement(CandlestickChartIcon),
-    label: "Stocks Screen",
-    path: "/stocks",
+    icon: React.createElement(Users), // Changed to Users icon for Groups
+    label: "Group",
+    path: "/group",
   },
   {
     key: "5",
@@ -33,5 +32,4 @@ export const menuItems = [
     label: "Course",
     path: "/course",
   },
-  
 ];
