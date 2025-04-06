@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 import { message } from "antd";
-import { NavigateFunction } from "react-router-dom";
+// import { NavigateFunction } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
 import { useNavigate } from "react-router-dom";
-
-
-interface ExnessBrokerProps {
-  navigate: NavigateFunction;
-}
+import { useAppSelector } from "@/redux/hooks";
 
 interface ConnectResponse {
   status?: string;
@@ -21,7 +17,7 @@ interface ExnessAccount {
   server: string;
 }
 
-const ExnessBroker: React.FC<ExnessBrokerProps> = () => {
+const ExnessBroker: React.FC = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [server, setServer] = useState("Exness-MT5Tr4");
@@ -29,7 +25,7 @@ const ExnessBroker: React.FC<ExnessBrokerProps> = () => {
   const api = useAxios();
   const navigateRoute = useNavigate();
   const FOREX_SERVER_URL = import.meta.env.VITE_FOREX_SERVER_URL;
-
+  const user = useAppSelector((state) => state.auth.user);
   const {
     mutateAsync: connectExnessBroker,
     isPending,
@@ -37,22 +33,22 @@ const ExnessBroker: React.FC<ExnessBrokerProps> = () => {
   } = useMutation<ConnectResponse, Error, ExnessAccount>({
     mutationKey: ["connectExnessBroker"],
     mutationFn: async (accountData) => {
-      console.log('accountData', accountData);
+      if (!user) {
+        throw new Error("User not found");
+      }
       const response = await api.post(
-        `${FOREX_SERVER_URL}/add-account`,
-        accountData
+        `${FOREX_SERVER_URL}/api/account/connect`,
+        { ...accountData, userId: user._id }
       );
 
       return response.data;
     },
     onSuccess: async (data) => {
       console.log(data);
-      await api.post(`/broker/brokerToggleConnection`, { connected: true });
-
-
+      // await api.post(`/broker/brokerToggleConnection`, { connected: true });
       message.success("Connected to Exness!");
 
-      navigateRoute("/home2");
+      navigateRoute("/home");
     },
     onError: async (error) => {
       console.log(error);
@@ -81,9 +77,7 @@ const ExnessBroker: React.FC<ExnessBrokerProps> = () => {
             />
           </div>
           <div>
-            <h2 className="text-2xl font-semibold text-white">
-              Exness Broker
-            </h2>
+            <h2 className="text-2xl font-semibold text-white">Exness Broker</h2>
             <p className="text-blue-400 text-sm">Forex & Commodities</p>
           </div>
         </div>
@@ -174,8 +168,19 @@ const ExnessBroker: React.FC<ExnessBrokerProps> = () => {
               ) : (
                 <div className="flex items-center">
                   <span>Connect to Exness</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 ml-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
                   </svg>
                 </div>
               )}

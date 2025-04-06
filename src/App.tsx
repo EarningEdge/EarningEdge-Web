@@ -6,7 +6,7 @@ const App = () => {
   if (!token || !user) {
     return <Navigate to={"/auth"} />;
   }
-  return user && user.role ? <Navigate to={"/home2"} /> : <Outlet />;
+  return user && user.role ? <Navigate to={"/home"} /> : <Outlet />;
 };
 
 export default App;

@@ -11,7 +11,7 @@ export default function Success({}: Props) {
   useEffect(() => {
     // Extract session ID from query params
     const searchParams = new URLSearchParams(location.search);
-    const sessionId = searchParams.get('session_id');
+    const sessionId = searchParams.get("session_id");
 
     if (sessionId) {
       // Call your backend to get the session details
@@ -21,13 +21,13 @@ export default function Success({}: Props) {
       );
       console.log("res: ", res);
     } else {
-      console.error('Session ID not found in URL');
+      console.error("Session ID not found in URL");
     }
   }, [location.search]);
 
   function handleClick() {
-    console.log('clicked');
-    window.location.href = '/home2';
+    console.log("clicked");
+    window.location.href = "/home";
   }
 
   return (

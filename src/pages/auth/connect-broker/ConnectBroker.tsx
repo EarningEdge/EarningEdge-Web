@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button } from "antd";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import DhanBroker from "./DhanBroker";
 import ExnessBroker from "./ExnessBroker";
 
@@ -8,7 +8,7 @@ const ConnectBroker: React.FC = () => {
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [accountInfoModalOpen, setAccountInfoModalOpen] = useState(false);
   const [hasAccount, setHasAccount] = useState<boolean | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleHelpClick = () => {
     setHelpModalOpen(true);
@@ -28,19 +28,17 @@ const ConnectBroker: React.FC = () => {
             Connect Your Trading Accounts
           </h1>
           <p className="text-gray-300 max-w-2xl mx-auto">
-            Link your brokers to access all trading features and automated strategies
+            Link your brokers to access all trading features and automated
+            strategies
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Dhan Broker Column */}
-          <DhanBroker
-            onHelpClick={handleHelpClick}
-            navigate={navigate}
-          />
+          <DhanBroker onHelpClick={handleHelpClick} />
 
           {/* Exness Broker Column */}
-          <ExnessBroker navigate={navigate} />
+          <ExnessBroker />
         </div>
       </div>
 
@@ -126,13 +124,23 @@ const ConnectBroker: React.FC = () => {
               </div>
 
               <div className="bg-gray-800/70 p-6 rounded-lg border border-gray-700 shadow-lg">
-                <h3 className="font-semibold text-lg mb-4 text-green-400">Step-by-step guide:</h3>
+                <h3 className="font-semibold text-lg mb-4 text-green-400">
+                  Step-by-step guide:
+                </h3>
                 <ol className="list-decimal pl-5 space-y-3">
                   <li className="text-base">Log in to your Dhan account</li>
-                  <li className="text-base">Navigate to the API section in your account settings</li>
-                  <li className="text-base">Generate your Client ID and Access Token</li>
-                  <li className="text-base">Copy and paste them into the respective fields on this page</li>
-                  <li className="text-base">Click "Connect to Dhan" to complete the integration</li>
+                  <li className="text-base">
+                    Navigate to the API section in your account settings
+                  </li>
+                  <li className="text-base">
+                    Generate your Client ID and Access Token
+                  </li>
+                  <li className="text-base">
+                    Copy and paste them into the respective fields on this page
+                  </li>
+                  <li className="text-base">
+                    Click "Connect to Dhan" to complete the integration
+                  </li>
                 </ol>
               </div>
 
@@ -149,7 +157,9 @@ const ConnectBroker: React.FC = () => {
           ) : (
             <>
               <div className="mb-8">
-                <h3 className="font-semibold text-lg mb-4 text-blue-400">Create your Dhan account:</h3>
+                <h3 className="font-semibold text-lg mb-4 text-blue-400">
+                  Create your Dhan account:
+                </h3>
                 <ol className="list-decimal pl-5 space-y-3">
                   <li className="text-base">
                     Click here 👉{" "}
@@ -163,11 +173,18 @@ const ConnectBroker: React.FC = () => {
                     </a>{" "}
                     to begin the registration process
                   </li>
-                  <li className="text-base">Click on "Start trading on dhan"</li>
-                  <li className="text-base">Complete the account creation process</li>
-                  <li className="text-base">Follow the verification steps as required</li>
                   <li className="text-base">
-                    Once your account is approved, return to this page and click "Need Help?" again
+                    Click on "Start trading on dhan"
+                  </li>
+                  <li className="text-base">
+                    Complete the account creation process
+                  </li>
+                  <li className="text-base">
+                    Follow the verification steps as required
+                  </li>
+                  <li className="text-base">
+                    Once your account is approved, return to this page and click
+                    "Need Help?" again
                   </li>
                 </ol>
               </div>
@@ -176,8 +193,9 @@ const ConnectBroker: React.FC = () => {
                 <div className="flex items-start">
                   <div className="text-blue-400 mr-3 text-xl">ℹ️</div>
                   <p>
-                    Account approval typically takes 1-2 business days. After your account is approved,
-                    you'll need to generate API credentials to connect with our platform.
+                    Account approval typically takes 1-2 business days. After
+                    your account is approved, you'll need to generate API
+                    credentials to connect with our platform.
                   </p>
                 </div>
               </div>

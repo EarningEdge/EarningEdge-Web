@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { message } from "antd";
-import { NavigateFunction } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
 
 interface DhanBrokerProps {
   onHelpClick: () => void;
-  navigate: NavigateFunction;
+  // navigate: NavigateFunction;
 }
 
 interface ConnectResponse {
@@ -14,7 +13,7 @@ interface ConnectResponse {
   message: string;
 }
 
-const DhanBroker: React.FC<DhanBrokerProps> = ({ onHelpClick, navigate }) => {
+const DhanBroker: React.FC<DhanBrokerProps> = ({ onHelpClick }) => {
   const [clientId, setClientId] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const api = useAxios();
@@ -40,7 +39,7 @@ const DhanBroker: React.FC<DhanBrokerProps> = ({ onHelpClick, navigate }) => {
       if (data.status === "success") {
         message.success("Connected to Dhan!");
         await api.post(`/broker/brokerToggleConnection`, { connected: true });
-        navigate("/");
+        // navigate("/");
       } else {
         message.error("Failed to connect to Dhan, please try again");
       }
@@ -71,9 +70,7 @@ const DhanBroker: React.FC<DhanBrokerProps> = ({ onHelpClick, navigate }) => {
             />
           </div>
           <div>
-            <h2 className="text-2xl font-semibold text-white">
-              Dhan Broker
-            </h2>
+            <h2 className="text-2xl font-semibold text-white">Dhan Broker</h2>
             <p className="text-green-400 text-sm">Indian Stock Market</p>
           </div>
         </div>
@@ -141,8 +138,19 @@ const DhanBroker: React.FC<DhanBrokerProps> = ({ onHelpClick, navigate }) => {
               ) : (
                 <div className="flex items-center">
                   <span>Connect to Dhan</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 ml-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
                   </svg>
                 </div>
               )}
