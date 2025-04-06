@@ -56,7 +56,7 @@ const GroupPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const fetchLeaderBoardData = async () => {
     try {
@@ -175,13 +175,7 @@ const GroupPage = () => {
                     </TableHeader>
                     <TableBody>
                       {leaderboard.leaderboard.map((item) => (
-                        <TableRow
-                          onClick={() => {
-                            navigate(`/user/${item.userId}`);
-                          }}
-                          className="cursor-pointer"
-                          key={item.accountId}
-                        >
+                        <TableRow key={item.accountId}>
                           <TableCell className="font-medium">
                             <Badge
                               variant={item.rank <= 3 ? "default" : "outline"}

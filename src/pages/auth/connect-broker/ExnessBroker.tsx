@@ -3,7 +3,6 @@ import { message } from "antd";
 // import { NavigateFunction } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
-import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/redux/hooks";
 
 interface ConnectResponse {
@@ -20,10 +19,10 @@ interface ExnessAccount {
 const ExnessBroker: React.FC = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-  const [server, setServer] = useState("Exness-MT5Tr4");
+  const [server, setServer] = useState("");
 
   const api = useAxios();
-  const navigateRoute = useNavigate();
+  // const navigateRoute = useNavigate();
   const FOREX_SERVER_URL = import.meta.env.VITE_FOREX_SERVER_URL;
   const user = useAppSelector((state) => state.auth.user);
   const {
@@ -47,8 +46,9 @@ const ExnessBroker: React.FC = () => {
       console.log(data);
       // await api.post(`/broker/brokerToggleConnection`, { connected: true });
       message.success("Connected to Exness!");
-
-      navigateRoute("/home");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     },
     onError: async (error) => {
       console.log(error);
@@ -145,7 +145,7 @@ const ExnessBroker: React.FC = () => {
                 required
               />
               <div className="absolute right-3 top-3 text-gray-400 text-sm">
-                Default: Exness-MT5Tr4
+                Example: Exness-MT5Trial14
               </div>
             </div>
           </div>
