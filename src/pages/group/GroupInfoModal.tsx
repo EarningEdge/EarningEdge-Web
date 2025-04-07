@@ -108,7 +108,7 @@ const GroupInfoModal: React.FC<GroupInfoModalProps> = ({ group, trigger }) => {
                 <p className="text-sm text-gray-500">Freeze Threshold</p>
                 <p className="font-medium">
                   {typeof group.freezeThreshold === "number"
-                    ? `${(group.freezeThreshold * 100).toFixed(2)}%`
+                    ? `${group.freezeThreshold}%`
                     : "Not available"}
                 </p>
               </div>
