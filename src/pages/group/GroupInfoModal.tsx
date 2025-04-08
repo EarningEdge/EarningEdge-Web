@@ -50,6 +50,27 @@ const GroupInfoModal: React.FC<GroupInfoModalProps> = ({ group, trigger }) => {
     });
   };
 
+  const formatDuration = (milliseconds: number) => {
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+
+    if (hours > 0) {
+      const remainingMinutes = minutes % 60;
+      return `${hours} ${hours === 1 ? "hour" : "hours"}${
+        remainingMinutes > 0
+          ? ` ${remainingMinutes} ${
+              remainingMinutes === 1 ? "minute" : "minutes"
+            }`
+          : ""
+      }`;
+    } else if (minutes > 0) {
+      return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
+    } else {
+      return `${seconds} ${seconds === 1 ? "second" : "seconds"}`;
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -98,7 +119,7 @@ const GroupInfoModal: React.FC<GroupInfoModalProps> = ({ group, trigger }) => {
                 <p className="text-sm text-gray-500">Freeze Duration</p>
                 <p className="font-medium">
                   {typeof group.freezeDuration === "number"
-                    ? `${(group.freezeDuration / 1000 / 60).toFixed(2)} minutes`
+                    ? formatDuration(group.freezeDuration)
                     : "Not available"}
                 </p>
               </div>
